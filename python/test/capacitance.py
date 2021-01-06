@@ -34,7 +34,19 @@ This means there are 128 capacitance steps.
 
 """
 
+# System imports
+import os, sys
 from time import sleep
+
+# Library imports
+testing = False
+try:
+    import RPi.GPIO as GPIO
+except ModuleNotFoundError:
+    print("Error importing RPi.GPIO! Using test mode.")
+    testing = True
+
+# Application imports
 
 # Maps relay to GPIO pins in BCM numbering scheme.
 # Corresponding to relays 0 - 6 where 0 == 16pf and 6 == 1024pf
@@ -75,7 +87,6 @@ def makeActMap():
                 rlys.append(capArray.index(v))
             actMap[c] = rlys
         
-        #print(actMap)
         # checkit
         acc = 0
         for v in actMap[c]:
@@ -92,7 +103,25 @@ def highCap(c):
         if v/c <= 1.0:
             return v
     return 0
+
+def all_off():
+    for pin in pinMap:
+        GPIO.output(pin, GPIO.LOW)
+
+def rly_on(rly):
+    GPIO.output(pinMap[rly], GPIO.HIGH)
     
 # Entry point
 if __name__ == '__main__':
+    
+    GPIO.setmode(GPIO.BCM)
     makeActMap()
+    # Cycle all relays
+    all_off()
+    for n in (16,32,64,128,256,1024):
+        rlys = actMap(n)
+        for rly in rlys:
+            rly_on(rly)
+        sleep(2)
+            
+    
