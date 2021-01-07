@@ -104,6 +104,10 @@ def highCap(c):
             return v
     return 0
 
+def init_pins():
+    for pin in pinArray:
+        GPIO.setup(pin, GPIO.OUT)
+    
 def all_off():
     for pin in pinArray:
         GPIO.output(pin, GPIO.LOW)
@@ -119,6 +123,7 @@ if __name__ == '__main__':
     if not testing:
         # Cycle all relays
         GPIO.setmode(GPIO.BCM)
+        init_pins()
         all_off()
         for n in (16,32,64,128,256,1024):
             rlys = actMap(n)
