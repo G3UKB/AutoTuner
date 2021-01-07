@@ -105,17 +105,17 @@ def highCap(c):
     return 0
 
 def all_off():
-    for pin in pinMap:
+    for pin in pinArray:
         GPIO.output(pin, GPIO.LOW)
 
 def rly_on(rly):
-    GPIO.output(pinMap[rly], GPIO.HIGH)
+    GPIO.output(pinArray[rly], GPIO.HIGH)
     
 # Entry point
 if __name__ == '__main__':
     
     makeActMap()
-    print(actMap)
+    #print(actMap)
     if not testing:
         # Cycle all relays
         GPIO.setmode(GPIO.BCM)
