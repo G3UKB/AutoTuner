@@ -126,7 +126,7 @@ if __name__ == '__main__':
         init_pins()
         all_off()
         for n in (16,32,64,128,256,1024):
-            rlys = actMap(n)
+            rlys = actMap[n]
             for rly in rlys:
                 rly_on(rly)
             sleep(2)
