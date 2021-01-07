@@ -114,14 +114,16 @@ def rly_on(rly):
 # Entry point
 if __name__ == '__main__':
     
-    GPIO.setmode(GPIO.BCM)
     makeActMap()
-    # Cycle all relays
-    all_off()
-    for n in (16,32,64,128,256,1024):
-        rlys = actMap(n)
-        for rly in rlys:
-            rly_on(rly)
-        sleep(2)
+    print(actMap)
+    if not testing:
+        # Cycle all relays
+        GPIO.setmode(GPIO.BCM)
+        all_off()
+        for n in (16,32,64,128,256,1024):
+            rlys = actMap(n)
+            for rly in rlys:
+                rly_on(rly)
+            sleep(2)
             
     
