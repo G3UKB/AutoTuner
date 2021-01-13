@@ -77,9 +77,9 @@ if __name__ == '__main__':
             all_off()
         for rly in rlys:
             if testing:
-                print("Set rly: ", rly)
+                print("Set rly: ", rly-1)
             else:
-                rly_on(rly)
+                rly_on(rly-1)
         sleep(3)
             
     
