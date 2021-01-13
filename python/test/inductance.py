@@ -67,11 +67,19 @@ if __name__ == '__main__':
         GPIO.setmode(GPIO.BCM)
         init_pins()
         all_off()
-        # Run through all values
-        for n in (25,50,75,100,125,150,175,200,225,250,275,300):
-            rlys = actMap[n]
-            for rly in rlys:
+        
+    # Run through all values
+    for n in (25,50,75,100,125,150,175,200,225,250,275,300):
+        rlys = actMap[n]
+        if testing:
+            print("Array for %duF is %s" % (n, str(rlys)))
+        else:
+            all_off()
+        for rly in rlys:
+            if testing:
+                print("Set rly: ", rly)
+            else:
                 rly_on(rly)
-            sleep(3)
+        sleep(3)
             
     
