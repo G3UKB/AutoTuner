@@ -35,11 +35,15 @@ pinArray = [26,16,12,25,24]
 # This map should be 12 elements long.
 # i.e. {inductor-value : [rel, rel, ..], inductor-value ...}
 actMap = {
-    6 : 1,
-    9 : 2,
-    17 : 3,
-    30 : 4,
-    42 : 5,
+    6 : [1,],
+    9 : [2,],
+    17 : [3,],
+    30 : [4,],
+    42 : [5,],
+    1 : [1,2],
+    2 : [2,3],
+    3 : [3,4],
+    4 : [4,5]
 }
 
 def init_pins():
@@ -62,16 +66,34 @@ if __name__ == '__main__':
         all_off()
         
     # Run through all values
+    print('Series values...')
     for n in (6,9,17,30,42):
-        rly = actMap[n]
+        rlys = actMap[n]
         if testing:
-            print("Array for %duF is %d" % (n, rly))
+            print("Array for %duH is %s" % (n, str(rlys)))
         else:
-            all_off()
-            if testing:
-                print("Set rly: ", rly-1)
-            else:
-                rly_on(rly-1)
+            print("Array for %duH is %s" % (n, str(rlys)))
+            for rly in rlys:
+                all_off()
+                if testing:
+                    print("Set rly: ", rly-1)
+                else:
+                    rly_on(rly-1)
+        sleep(3)
+        
+    print('Parallel values...')
+    for n in (1,2,3,4):
+        rlys = actMap[n]
+        if testing:
+            print("Array for %duH is %s" % (n, str(rlys)))
+        else:
+            print("Array for %duH is %s" % (n, str(rlys)))
+            for rly in rlys:
+                all_off()
+                if testing:
+                    print("Set rly: ", rly-1)
+                else:
+                    rly_on(rly-1)
         sleep(3)
             
     
