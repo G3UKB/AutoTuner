@@ -29,24 +29,17 @@ except ModuleNotFoundError:
 
 # Maps relay to GPIO pins in BCM numbering scheme.
 # Corresponding to relays 1 - 5
-pinArray = [26,23,24,25,12]
+pinArray = [26,16,12,25,24]
 
 # Inductance map
 # This map should be 12 elements long.
 # i.e. {inductor-value : [rel, rel, ..], inductor-value ...}
 actMap = {
-    25 : [2,5],
-    50 : [3,5],
-    75 : [1,3,5],
-    100 : [1,2,5],
-    125 : [5,],
-    150 : [3,4],
-    175 : [1,3,4],
-    200 : [1,],
-    225 : [2,],
-    250 : [3,],
-    275 : [1,2],
-    300 : []
+    6 : 1,
+    9 : 2,
+    17 : 3,
+    30 : 4,
+    42 : 5,
 }
 
 def init_pins():
@@ -69,13 +62,12 @@ if __name__ == '__main__':
         all_off()
         
     # Run through all values
-    for n in (25,50,75,100,125,150,175,200,225,250,275,300):
-        rlys = actMap[n]
+    for n in (6,9,17,30,42):
+        rly = actMap[n]
         if testing:
-            print("Array for %duF is %s" % (n, str(rlys)))
+            print("Array for %duF is %d" % (n, rly))
         else:
             all_off()
-        for rly in rlys:
             if testing:
                 print("Set rly: ", rly-1)
             else:
