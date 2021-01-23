@@ -110,26 +110,46 @@ class Device:
 
         """
         
-        for next_angle in range(self.__tx_last_angle, angle):
-            if ch == TX_TUNE:
+        if ch == TX_TUNE:
+            if angle > self.__tx_last_angle:
+                step = 1
+            else:
+                step = -1
+            for next_angle in range(self.__tx_last_angle, angle, step):
                 self.__tx_tune_servo.angle = next_angle
                 self.__tx_last_angle = next_angle
-            elif ch == ANT_TUNE:
+                sleep(0.03)
+        elif ch == ANT_TUNE:
+            if angle > self.__ant_last_angle:
+                step = 1
+            else:
+                step = -1
+            for next_angle in range(self.__ant_last_angle, angle, step):
                 self.__ant_tune_servo.angle = next_angle
                 self.__ant_last_angle = next_angle
-            sleep(0.01)
+                sleep(0.03)
 
 #------------------------------------------------------------------
 # Test Entry point            
 if __name__ == '__main__':
     dev = Device()
+    print('Moving home')
     dev.home()
+    print('Move TX - 90')
     dev.move(0,90)
+    sleep(1)
+    print('Move ANT - 90')
     dev.move(1,90)
     sleep(3)
+    print('Move TX - 180')
     dev.move(0,180)
+    sleep(1)
+    print('Move ANT - 180')
     dev.move(1,180)
     sleep(3)
+    print('Move TX - 0')
     dev.move(0,0)
+    sleep(1)
+    print('Move ANT - 0')
     dev.move(1,0)
     
