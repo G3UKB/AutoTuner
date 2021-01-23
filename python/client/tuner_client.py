@@ -37,7 +37,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLineEdit, QTextEdit, QComboBox, QPushButton, QCheckBox, QRadioButton, QSpinBox, QAction, QWidget, QGridLayout
 
 CMD_PORT = 10002
-SERVER_IP = '192.168.1.107'
+SERVER_IP = '192.168.1.110'
 
 class TunerClient(QMainWindow):
     
@@ -79,25 +79,29 @@ class TunerClient(QMainWindow):
         w.setLayout(self.__grid)
         
         # Add sliders
+        tx_lbl = QLabel("TX Cap")
+        self.__grid.addWidget(tx_lbl, 0,0)
         self.__tx = QSlider(QtCore.Qt.Horizontal)
         self.__tx.setMinimum(0)
         self.__tx.setMaximum(180)
         self.__tx.setValue(0)
-        self.__grid.addWidget(self.__tx, 0,0)
+        self.__grid.addWidget(self.__tx, 0,1)
         self.__tx.sliderReleased.connect(self.__tx_released)
         
-        self.__ant = QSlider(QtCore.Qt.Vertical)
+        ant_lbl = QLabel("Ant Cap")
+        self.__grid.addWidget(ant_lbl, 1,0)
+        self.__ant = QSlider(QtCore.Qt.Horizontal)
         self.__ant.setMinimum(0)
-        self.__ant.setMaximum(90)
+        self.__ant.setMaximum(180)
         self.__ant.setValue(0)
-        self.__grid.addWidget(self.__ant, 0,1)
+        self.__grid.addWidget(self.__ant, 1,1)
         self.__ant.sliderReleased.connect(self.__ant_released)
         
         # Add buttons
         self.__btngrid = QGridLayout()
         w1 = QWidget()
         w1.setLayout(self.__btngrid)
-        self.__grid.addWidget(w1, 1,0,1,2)
+        self.__grid.addWidget(w1, 2,0,1,2)
         self.__home = QPushButton("Home")
         self.__btngrid.addWidget(self.__home, 0,0)
         self.__home.clicked.connect(self.__do_home)
