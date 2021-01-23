@@ -67,11 +67,6 @@ class Device:
         self.__servo_min = 600
         self.__servo_max = 2000
         
-        # Home is minimum capacitance
-        self.__home = self.__servo_min
-        # Increment per degree 
-        self.__value_per_degree = (self.__servo_max - self.__servo_min) / RANGE
-        
         # Best for servos
         self.__dev.frequency = 60
         self.__dev.channels[0].duty_cycle = 0x7FFF
