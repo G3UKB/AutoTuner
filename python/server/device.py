@@ -85,7 +85,7 @@ class Device(threading.Thread):
         self.__ant_tune_servo = servo.Servo(self.__dev.channels[1],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
     
         # Send home
-        self.home()
+        self.__q.append((CMD_HOME, ()))
     
     #------------------------------------------------------------------
     # PUBLIC
