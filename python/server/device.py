@@ -112,6 +112,7 @@ class Device(threading.Thread):
                 if cmd == CMD_HOME:
                     self.__home()
             if len(self.__q) > 0:
+                cmd, params = self.__q.popleft()
                 if cmd == CMD_HOME:
                     self.__home()
                 elif cmd == CMD_MOVE:

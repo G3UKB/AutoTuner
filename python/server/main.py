@@ -67,6 +67,8 @@ class RemoteTuner:
             # Terminate the netif thread and wait for it to close
             self.__netif.terminate()
             self.__netif.join()
+            self.__dev.terminate()
+            self.__dev.join()
             
             print('Interrupt - exiting...')
     
@@ -94,7 +96,6 @@ class RemoteTuner:
                 if len(cmd) != 3:
                     print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
                     return
-                self.__dev.move(cmd[1], cmd[2])
                 self.__dev.post((CMD_MOVE, (cmd[1], cmd[2])))
             elif type == CMD_RESET:
                 if len(cmd) != 1:
