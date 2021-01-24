@@ -87,6 +87,10 @@ class TunerClient(QMainWindow):
         self.__tx.setValue(0)
         self.__grid.addWidget(self.__tx, 0,1)
         self.__tx.valueChanged.connect(self.__tx_changed)
+        self.__tx_val = QLabel("0")
+        self.__tx_val.setMinimumWidth(30)
+        self.__tx_val.setStyleSheet("color: green; font: 14px")
+        self.__grid.addWidget(self.__tx_val, 0,2)
         
         ant_lbl = QLabel("Ant Cap")
         self.__grid.addWidget(ant_lbl, 1,0)
@@ -96,6 +100,10 @@ class TunerClient(QMainWindow):
         self.__ant.setValue(0)
         self.__grid.addWidget(self.__ant, 1,1)
         self.__ant.valueChanged.connect(self.__ant_changed)
+        self.__ant_val = QLabel("0")
+        self.__ant_val.setMinimumWidth(30)
+        self.__ant_val.setStyleSheet("color: green; font: 14px")
+        self.__grid.addWidget(self.__ant_val, 1,2)
         
         # Add buttons
         self.__btngrid = QGridLayout()
@@ -156,7 +164,7 @@ class TunerClient(QMainWindow):
         # Value ranges 0 - 180
         val = self.__tx.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 0, val]), (SERVER_IP, CMD_PORT))
-        
+        self.__tx_val.setText(str(val))
         
     #=======================================================
     # Track Ant Tuning
@@ -165,6 +173,7 @@ class TunerClient(QMainWindow):
         # Value ranges 0 - 180
         val = self.__ant.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 1, val]), (SERVER_IP, CMD_PORT))
+        self.__ant_val.setText(str(val))
         
 #======================================================================================================================
 # Main code
