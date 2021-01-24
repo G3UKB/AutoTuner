@@ -46,6 +46,7 @@ class RemoteTuner:
         
         # Create device
         self.__dev = device.Device()
+        self.__dev.start()
         
     #------------------------------------------------------------------    
     def mainLoop(self):
@@ -88,12 +89,13 @@ class RemoteTuner:
                 if len(cmd) != 1:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
                     return
-                self.__dev.home()
+                self.__dev.post((CMD_HOME, ()))
             elif type == CMD_MOVE:
                 if len(cmd) != 3:
                     print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
                     return
                 self.__dev.move(cmd[1], cmd[2])
+                self.__dev.post((CMD_MOVE, (cmd[1], cmd[2])))
             elif type == CMD_RESET:
                 if len(cmd) != 1:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))

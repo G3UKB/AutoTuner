@@ -35,6 +35,8 @@
 """
 
 # System imports
+import threading
+from collections import deque
 from time import sleep
 
 # Application imports
@@ -49,7 +51,7 @@ from adafruit_motor import servo
 """
 Device class implements low level servo interface
 """
-class Device:
+class Device(threading.Thread):
     
     def __init__(self):
         """
@@ -62,6 +64,12 @@ class Device:
         # Initialise the library
         i2c_bus = busio.I2C(SCL, SDA)
         self.__dev = PCA9685(i2c_bus)
+        
+        # Flags
+        self.__terminate = False
+        
+        # Queue to post on
+        self.__q = deque()
         
         # Tweek for the correct range
         self.__servo_min = 600
@@ -78,15 +86,37 @@ class Device:
     
         # Send home
         self.home()
-        
-    def terminate(self):
-        
-        software_reset()
-        self.__dev = None
-        
+    
     #------------------------------------------------------------------
     # PUBLIC
-    def home(self):
+    
+    def terminate(self):
+        
+        self.__terminate = True
+        self.__dev = None
+    
+    def post(self, cmd):
+        
+        self.__q.append(cmd)
+        
+    #------------------------------------------------------------------
+    # PRIVATE
+    
+    def run(self):
+        
+        while not self.__terminate:
+            while len(self.__q) > 1:
+                cmd, params = self.__q.popleft()
+                if cmd == CMD_HOME:
+                    self.__home()
+            if len(self.__q) > 0:
+                if cmd == CMD_HOME:
+                    self.__home()
+                elif cmd == CMD_MOVE:
+                    ch, angle = params
+                    self.__move(ch, angle)
+            
+    def __home(self):
         """
         Move servos to the home position.
         
@@ -100,7 +130,7 @@ class Device:
         self.__tx_last_angle = 0
         self.__ant_last_angle = 0
         
-    def move(self, ch, angle):
+    def __move(self, ch, angle):
         """
         Move tx-servo or ant-servo to the given position.
         

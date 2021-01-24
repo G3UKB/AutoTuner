@@ -86,7 +86,7 @@ class TunerClient(QMainWindow):
         self.__tx.setMaximum(180)
         self.__tx.setValue(0)
         self.__grid.addWidget(self.__tx, 0,1)
-        self.__tx.sliderReleased.connect(self.__tx_released)
+        self.__tx.valueChanged.connect(self.__tx_changed)
         
         ant_lbl = QLabel("Ant Cap")
         self.__grid.addWidget(ant_lbl, 1,0)
@@ -95,7 +95,7 @@ class TunerClient(QMainWindow):
         self.__ant.setMaximum(180)
         self.__ant.setValue(0)
         self.__grid.addWidget(self.__ant, 1,1)
-        self.__ant.sliderReleased.connect(self.__ant_released)
+        self.__ant.valueChanged.connect(self.__ant_changed)
         
         # Add buttons
         self.__btngrid = QGridLayout()
@@ -151,15 +151,16 @@ class TunerClient(QMainWindow):
         
     #=======================================================
     # Track TX Tuning
-    def __tx_released(self):
+    def __tx_changed(self):
     
         # Value ranges 0 - 180
         val = self.__tx.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 0, val]), (SERVER_IP, CMD_PORT))
-    
+        
+        
     #=======================================================
     # Track Ant Tuning
-    def __ant_released(self):
+    def __ant_changed(self):
     
         # Value ranges 0 - 180
         val = self.__ant.value()
