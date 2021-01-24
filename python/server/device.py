@@ -61,6 +61,8 @@ class Device(threading.Thread):
         
         """
         
+        super(Device, self).__init__()
+        
         # Initialise the library
         i2c_bus = busio.I2C(SCL, SDA)
         self.__dev = PCA9685(i2c_bus)
