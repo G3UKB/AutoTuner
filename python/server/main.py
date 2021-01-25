@@ -45,7 +45,7 @@ class RemoteTuner:
         self.__netif.start()
         
         # Create device
-        self.__dev = device.Device()
+        self.__dev = device.Device(self.__deviceCallback)
         self.__dev.start()
         
     #------------------------------------------------------------------    
@@ -116,6 +116,18 @@ class RemoteTuner:
         except pickle.UnpicklingError:
             print('Failed to unpickle request data!')
 
+    #------------------------------------------------------------------        
+    def __deviceCallback(self, data):
+        
+        """
+        Callback from device interface for progress reports
+        
+        Arguments:
+            data    -- the progress data
+        """
+        
+        self.__netif.do_progress(data) 
+        
 # ===========================================================================                
 # Entry point            
 if __name__ == '__main__':

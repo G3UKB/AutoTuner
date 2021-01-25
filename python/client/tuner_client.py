@@ -58,6 +58,13 @@ class TunerClient(QMainWindow):
 
         # Initialise the GUI
         self.initUI()
+        
+        # Start monitor thread
+        self.__monitor = Monitor(self.__sock, self.__monitor_callback)
+        self.__monitor.start()
+        
+        # Start idle processing
+        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
     
     #========================================================================================    
     # UI initialisation and window event handlers
@@ -133,7 +140,6 @@ class TunerClient(QMainWindow):
         self.show()
         self.repaint()
         
-        
         # Enter event loop
         return self.__qt_app.exec_()    
     
@@ -144,16 +150,24 @@ class TunerClient(QMainWindow):
         self.__close()
     
     def __close(self):
-        # close socket
+        
+        # Stop monitor
+        self.__monitor.terminate()
+        self.__monitor.join()
+        
+        # Close socket
         self.__sock.close()
     
     def __do_home(self):
+        
         self.__sock.sendto(pickle.dumps(['CMD_HOME']), (SERVER_IP, CMD_PORT))
     
     def __do_reset(self):
+        
         self.__sock.sendto(pickle.dumps(['CMD_RESET']), (SERVER_IP, CMD_PORT))
 
     def __do_exit(self):
+        
         self.__close()
         sys.exit()
         
@@ -174,7 +188,49 @@ class TunerClient(QMainWindow):
         val = self.__ant.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 1, val]), (SERVER_IP, CMD_PORT))
         self.__ant_val.setText(str(val))
+    
+    #======================================================= 
+    def __monitor_callback(self, data):
         
+        self.__progress = data
+        
+    #======================================================= 
+    def __idleProcessing   (self):
+        
+        print(self.__progress)
+
+#======================================================================================================================
+# Monitor thread
+class Monitor(threading.Thread):
+    
+    def __init__(self, sock, callback):
+        """
+        Constructor
+        
+        Arguments:
+            sock        -- socket to listen on
+            callback    -- callback with data
+        """
+        
+        super(Monitor, self).__init__()#
+        
+        self.__sock = sock
+        self.__callback = callback
+        self.__terminate = False
+        
+    def terminate(self):
+        
+        self.__terminate = True
+        
+    def run(self):
+        
+        while not self.__terminate:
+            try:
+                data, self.__address = self.__sock.recvfrom(100)
+                self.__callback(pickle.loads(data))
+            except socket.timeout:
+                continue
+            
 #======================================================================================================================
 # Main code
 def main():

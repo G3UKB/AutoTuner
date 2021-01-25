@@ -53,15 +53,18 @@ Device class implements low level servo interface
 """
 class Device(threading.Thread):
     
-    def __init__(self):
+    def __init__(self, callback):
         """
         Constructor
         
         Arguments:
-        
+            callback    -- callback here with progress
+            
         """
         
         super(Device, self).__init__()
+        
+        self.__callback = callback
         
         # Initialise the library
         i2c_bus = busio.I2C(SCL, SDA)
@@ -132,6 +135,7 @@ class Device(threading.Thread):
         self.__ant_tune_servo.angle = 0
         self.__tx_last_angle = 0
         self.__ant_last_angle = 0
+        self.__callback({'TX': 0, 'ANT': 0})
         
     def __move(self, ch, angle):
         """
@@ -151,6 +155,7 @@ class Device(threading.Thread):
             for next_angle in range(self.__tx_last_angle, angle, step):
                 self.__tx_tune_servo.angle = next_angle
                 self.__tx_last_angle = next_angle
+                self.__callback({'TX': next_angle, 'ANT': self.__ant_last_angle})
                 sleep(0.03)
         elif ch == ANT_TUNE:
             if angle > self.__ant_last_angle:
@@ -160,6 +165,7 @@ class Device(threading.Thread):
             for next_angle in range(self.__ant_last_angle, angle, step):
                 self.__ant_tune_servo.angle = next_angle
                 self.__ant_last_angle = next_angle
+                self.__callback({'TX': self.__tx_last_angle, 'ANT': next_angle})
                 sleep(0.03)
 
 #------------------------------------------------------------------

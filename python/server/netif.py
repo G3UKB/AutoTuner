@@ -58,12 +58,12 @@ class NetIF(threading.Thread):
         
         self.__terminate = True
     
-    def response(self, data):
+    def do_progress(self, data):
         """
-        Send response data
+        Send progress data
         
         Arguments:
-            data    --  bytestream to send
+            data    --  opaque data to send
         
         """
         
