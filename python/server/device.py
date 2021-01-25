@@ -134,11 +134,11 @@ class Device(threading.Thread):
         while len(self.__q) > 0:
             cmd, params = self.__q.popleft()
             if cmd == CMD_HOME:
-                home = (cmd, [])
+                home = params
             elif cmd == CMD_MOVE and params[0] == 0:
-                move_tx = (cmd, params)
+                move_tx = params
             elif cmd == CMD_MOVE and params[0] == 1:
-                move_ant = (cmd, params)
+                move_ant = params
         return home, move_tx, move_ant
                
     def __home(self):
