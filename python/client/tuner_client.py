@@ -101,32 +101,23 @@ class TunerClient(QMainWindow):
         w1 = QWidget()
         w1.setLayout(self.__macrogrid)
         self.__grid.addWidget(w1, 0,0)
-        self.__macro_btns1 = [self.__m0,self.__m1,self.__m2,self.__m3,self.__m4,self.__m5]
-        macro_procs1 = [self.__m0_proc,self.__m1_proc,self.__m2_proc,self.__m3_proc,self.__m4_proc,self.__m5_proc]
+        self.__macro_btns = [self.__m0,self.__m1,self.__m2,self.__m3,self.__m4,self.__m5,self.__m6,self.__m7,self.__m8,self.__m9,self.__m10,self.__m11]
+        macro_procs = [self.__m0_proc,self.__m1_proc,self.__m2_proc,self.__m3_proc,self.__m4_proc,self.__m5_proc,self.__m6_proc,self.__m7_proc,self.__m8_proc,self.__m9_proc,self.__m10_proc,self.__m11_proc]
         index = 0
-        for macro_btn in self.__macro_btns1:
-            #macro_btn = QPushButton("Set")
+        for macro_btn in self.__macro_btns:
             macro_btn = QComboBox()
             macro_btn.addItem("Set")
-            #macro_btn.addItem("Run")
-            self.__macrogrid.addWidget(macro_btn, 0,index)
-            #macro_btn.clicked.connect(macro_procs1[index])
-            macro_btn.activated[str].connect(macro_procs1[index])
-            self.__macro_btns1[index] = macro_btn
+            row = 0
+            col = index
+            if index > 5:
+                row = 1
+                col = index -6
+            self.__macrogrid.addWidget(macro_btn, row,col)
+            macro_btn.activated[str].connect(macro_procs[index])
+            self.__macro_btns[index] = macro_btn
             index += 1
-        self.__macro_btns2 = [self.__m6,self.__m7,self.__m8,self.__m9,self.__m10,self.__m11]
-        macro_procs2 = [self.__m6_proc,self.__m7_proc,self.__m8_proc,self.__m9_proc,self.__m10_proc,self.__m11_proc]
-        index = 0
-        for macro_btn in self.__macro_btns2:
-            #macro_btn = QPushButton("Set")
-            macro_btn = QComboBox()
-            macro_btn.addItem("Set")
-            #macro_btn.addItem("Run")
-            self.__macrogrid.addWidget(macro_btn, 1,index)
-            #macro_btn.clicked.connect(macro_procs2[index])
-            macro_btn.activated[str].connect(macro_procs2[index])
-            self.__macro_btns2[index] = macro_btn
-            index += 1
+        self.__set_macro_btn_back_color(-1)
+            
         # Control area
         self.__ctrgrid = QGridLayout()
         w2 = QWidget()
@@ -247,6 +238,7 @@ class TunerClient(QMainWindow):
         val = self.__tx.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 0, val]), (SERVER_IP, CMD_PORT))
         self.__tx_val.setText(str(val))
+        self.__set_macro_btn_back_color(-1)
         
     #=======================================================
     # Track Ant Tuning
@@ -256,6 +248,7 @@ class TunerClient(QMainWindow):
         val = self.__ant.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 1, val]), (SERVER_IP, CMD_PORT))
         self.__ant_val.setText(str(val))
+        self.__set_macro_btn_back_color(-1)
     
     #=======================================================
     # macro buttons
@@ -294,25 +287,27 @@ class TunerClient(QMainWindow):
             self.__tx_changed()
             self.__ant.setValue(ant)
             self.__ant_changed()
+            self.__set_macro_btn_back_color(id)
         else:
             # No entry or update
             if id in self.__macros:
                 del self.__macros[id]
-            if id <=5:
-                while self.__macro_btns1[id].count() > 0:
-                    self.__macro_btns1[id].removeItem(0)
-                self.__macro_btns1[id].addItem('Set')
-            else:
-                while self.__macro_btns2[id].count() > 0:
-                    self.__macro_btns2[id].removeItem(0)
-                self.__macro_btns2[id].addItem('Set')
+            while self.__macro_btns[id].count() > 0:
+                self.__macro_btns[id].removeItem(0)
+            self.__macro_btns[id].addItem('Set')
             name, ok = QInputDialog.getText(self, "Configure Macro", "Name ")
             if ok and len(name) > 0:
                 self.__macros[id] = [name, self.__tx.value(), self.__ant.value()]
-                if id <=5:
-                    self.__macro_btns1[id].addItem(name)
-                else:
-                    self.__macro_btns2[id].addItem(name)
+                self.__macro_btns[id].addItem(name)
+    
+    def __set_macro_btn_back_color(self, id):
+        
+        # Set all to neutral
+        for w in self.__macro_btns:
+            w.setStyleSheet("background-color: lightgray")
+        if id != -1:
+            self.__macro_btns[id].setStyleSheet("background-color: red")
+        
         
     #======================================================= 
     def __monitor_callback(self, data):
