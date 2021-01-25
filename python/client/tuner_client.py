@@ -91,46 +91,79 @@ class TunerClient(QMainWindow):
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
         
+        # Macro buttons
+        self.__m0 = self.__m1 = self.__m2 = self.__m3 = self.__m4 = self.__m5 = None
+        self.__m6 = self.__m7 = self.__m8 = self.__m9 = self.__m10 = self.__m11 = None
+        self.__macrogrid = QGridLayout()
+        w1 = QWidget()
+        w1.setLayout(self.__macrogrid)
+        self.__grid.addWidget(w1, 0,0)
+        macro_btns = [self.__m0,self.__m1,self.__m2,self.__m3,self.__m4,self.__m5]
+        index = 0
+        for macro_btn in macro_btns:
+            macro_btn = QPushButton("Set")
+            self.__macrogrid.addWidget(macro_btn, 0,index)
+            index += 1
+        macro_btns = [self.__m6,self.__m7,self.__m8,self.__m9,self.__m10,self.__m11]
+        index = 0
+        for macro_btn in macro_btns:
+            macro_btn = QPushButton("Set")
+            self.__macrogrid.addWidget(macro_btn, 1,index)
+            index += 1
+        # Control area
+        self.__ctrgrid = QGridLayout()
+        w2 = QWidget()
+        w2.setLayout(self.__ctrgrid)
+        self.__grid.addWidget(w2, 1,0)
+        
+        # Top labels
+        slider_tag = QLabel("Adjust")
+        self.__ctrgrid.addWidget(slider_tag, 0,1)
+        setpoint_tag = QLabel("Set")
+        self.__ctrgrid.addWidget(setpoint_tag, 0,2)
+        actual_tag = QLabel("Act")
+        self.__ctrgrid.addWidget(actual_tag, 0,3)
+        
         # Add sliders
         tx_lbl = QLabel("TX Cap")
-        self.__grid.addWidget(tx_lbl, 0,0)
+        self.__ctrgrid.addWidget(tx_lbl, 1,0)
         self.__tx = QSlider(QtCore.Qt.Horizontal)
         self.__tx.setMinimum(0)
         self.__tx.setMaximum(180)
         self.__tx.setValue(0)
-        self.__grid.addWidget(self.__tx, 0,1)
+        self.__ctrgrid.addWidget(self.__tx, 1,1)
         self.__tx.valueChanged.connect(self.__tx_changed)
         self.__tx_val = QLabel("0")
         self.__tx_val.setMinimumWidth(30)
         self.__tx_val.setStyleSheet("color: green; font: 14px")
-        self.__grid.addWidget(self.__tx_val, 0,2)
+        self.__ctrgrid.addWidget(self.__tx_val, 1,2)
         self.__tx_actual = QLabel("0")
         self.__tx_actual.setMinimumWidth(30)
         self.__tx_actual.setStyleSheet("color: red; font: 14px")
-        self.__grid.addWidget(self.__tx_actual, 0,3)
+        self.__ctrgrid.addWidget(self.__tx_actual, 1,3)
         
         ant_lbl = QLabel("Ant Cap")
-        self.__grid.addWidget(ant_lbl, 1,0)
+        self.__ctrgrid.addWidget(ant_lbl, 2,0)
         self.__ant = QSlider(QtCore.Qt.Horizontal)
         self.__ant.setMinimum(0)
         self.__ant.setMaximum(180)
         self.__ant.setValue(0)
-        self.__grid.addWidget(self.__ant, 1,1)
+        self.__ctrgrid.addWidget(self.__ant, 2,1)
         self.__ant.valueChanged.connect(self.__ant_changed)
         self.__ant_val = QLabel("0")
         self.__ant_val.setMinimumWidth(30)
         self.__ant_val.setStyleSheet("color: green; font: 14px")
-        self.__grid.addWidget(self.__ant_val, 1,2)
+        self.__ctrgrid.addWidget(self.__ant_val, 2,2)
         self.__ant_actual = QLabel("0")
         self.__ant_actual.setMinimumWidth(30)
         self.__ant_actual.setStyleSheet("color: red; font: 14px")
-        self.__grid.addWidget(self.__ant_actual, 1,3)
+        self.__ctrgrid.addWidget(self.__ant_actual, 2,3)
         
         # Add buttons
         self.__btngrid = QGridLayout()
-        w1 = QWidget()
-        w1.setLayout(self.__btngrid)
-        self.__grid.addWidget(w1, 2,0,1,2)
+        w3 = QWidget()
+        w3.setLayout(self.__btngrid)
+        self.__grid.addWidget(w3, 2,0)
         self.__home = QPushButton("Home")
         self.__btngrid.addWidget(self.__home, 0,0)
         self.__home.clicked.connect(self.__do_home)
@@ -175,7 +208,11 @@ class TunerClient(QMainWindow):
     def __do_home(self):
         
         self.__sock.sendto(pickle.dumps(['CMD_HOME']), (SERVER_IP, CMD_PORT))
-    
+        self.__tx.setValue(0)
+        self.__tx_val.setText('0')
+        self.__ant.setValue(0)
+        self.__ant_val.setText('0')
+        
     def __do_reset(self):
         
         self.__sock.sendto(pickle.dumps(['CMD_RESET']), (SERVER_IP, CMD_PORT))
