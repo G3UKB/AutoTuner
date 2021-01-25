@@ -290,7 +290,6 @@ class TunerClient(QMainWindow):
         if id in self.__macros and action != 'Set':
             # Yup
             name, tx, ant = self.__macros[id]
-            print(tx, ant)
             self.__tx.setValue(tx)
             self.__tx_changed()
             self.__ant.setValue(ant)

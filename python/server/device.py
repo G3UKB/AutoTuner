@@ -191,27 +191,4 @@ class Device(threading.Thread):
             self.__ant_last_angle = angle
             self.__callback({'TX': self.__tx_last_angle, 'ANT': angle})
 
-#------------------------------------------------------------------
-# Test Entry point            
-if __name__ == '__main__':
-    dev = Device()
-    print('Moving home')
-    dev.home()
-    print('Move TX - 90')
-    dev.move(0,90)
-    sleep(1)
-    print('Move ANT - 90')
-    dev.move(1,90)
-    sleep(3)
-    print('Move TX - 180')
-    dev.move(0,180)
-    sleep(1)
-    print('Move ANT - 180')
-    dev.move(1,180)
-    sleep(3)
-    print('Move TX - 0')
-    dev.move(0,0)
-    sleep(1)
-    print('Move ANT - 0')
-    dev.move(1,0)
     
