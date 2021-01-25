@@ -38,6 +38,7 @@ from PyQt5.QtWidgets import QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLi
 
 CMD_PORT = 10002
 SERVER_IP = '192.168.1.110'
+IDLE_TICKER = 100
 
 class TunerClient(QMainWindow):
     
@@ -47,9 +48,14 @@ class TunerClient(QMainWindow):
         
         # Create a datagram socket
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.__sock.bind(('', 10002))
+        self.__sock.settimeout(3)
 
         # The application
         self.__qt_app = qt_app
+        
+        # Track progress
+        self.__progress = {'TX': 0, 'ANT': 0}
         
         # Set the back colour
         palette = QtGui.QPalette()
@@ -98,6 +104,10 @@ class TunerClient(QMainWindow):
         self.__tx_val.setMinimumWidth(30)
         self.__tx_val.setStyleSheet("color: green; font: 14px")
         self.__grid.addWidget(self.__tx_val, 0,2)
+        self.__tx_actual = QLabel("0")
+        self.__tx_actual.setMinimumWidth(30)
+        self.__tx_actual.setStyleSheet("color: red; font: 14px")
+        self.__grid.addWidget(self.__tx_actual, 0,3)
         
         ant_lbl = QLabel("Ant Cap")
         self.__grid.addWidget(ant_lbl, 1,0)
@@ -111,6 +121,10 @@ class TunerClient(QMainWindow):
         self.__ant_val.setMinimumWidth(30)
         self.__ant_val.setStyleSheet("color: green; font: 14px")
         self.__grid.addWidget(self.__ant_val, 1,2)
+        self.__ant_actual = QLabel("0")
+        self.__ant_actual.setMinimumWidth(30)
+        self.__ant_actual.setStyleSheet("color: red; font: 14px")
+        self.__grid.addWidget(self.__ant_actual, 1,3)
         
         # Add buttons
         self.__btngrid = QGridLayout()
@@ -197,7 +211,11 @@ class TunerClient(QMainWindow):
     #======================================================= 
     def __idleProcessing   (self):
         
-        print(self.__progress)
+        # Update UI with actual progress
+        self.__tx_actual.setText(str(self.__progress['TX']))
+        self.__ant_actual.setText(str(self.__progress['ANT']))
+        # Set timer
+        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
 
 #======================================================================================================================
 # Monitor thread
