@@ -156,9 +156,9 @@ class Device(threading.Thread):
                 self.__tx_tune_servo.angle = next_angle
                 self.__tx_last_angle = next_angle
                 self.__callback({'TX': next_angle, 'ANT': self.__ant_last_angle})
-                sleep(0.03)
+                sleep(0.02)
             self.__tx_last_angle = angle
-            self.__callback({'TX': next_angle, 'ANT': self.__ant_last_angle})
+            self.__callback({'TX': angle, 'ANT': self.__ant_last_angle})
         elif ch == ANT_TUNE:
             if angle > self.__ant_last_angle:
                 step = 1
@@ -168,9 +168,9 @@ class Device(threading.Thread):
                 self.__ant_tune_servo.angle = next_angle
                 self.__ant_last_angle = next_angle
                 self.__callback({'TX': self.__tx_last_angle, 'ANT': next_angle})
-                sleep(0.03)
+                sleep(0.02)
             self.__ant_last_angle = angle
-            self.__callback({'TX': self.__tx_last_angle, 'ANT': next_angle})
+            self.__callback({'TX': self.__tx_last_angle, 'ANT': angle})
 
 #------------------------------------------------------------------
 # Test Entry point            
