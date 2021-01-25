@@ -110,18 +110,37 @@ class Device(threading.Thread):
     def run(self):
         
         while not self.__terminate:
-            while len(self.__q) > 1:
-                cmd, params = self.__q.popleft()
-                if cmd == CMD_HOME:
-                    self.__home()
-            if len(self.__q) > 0:
-                cmd, params = self.__q.popleft()
-                if cmd == CMD_HOME:
-                    self.__home()
-                elif cmd == CMD_MOVE:
-                    ch, angle = params
-                    self.__move(ch, angle)
-            
+            home, move_tx, move_ant = self.__rationalise()
+            if home != None:
+               self.__home()
+            if move_tx != None:
+                ch, angle = move_tx
+                self.__move(ch, angle)
+            if move_ant != None:
+                ch, angle = move_ant
+                self.__move(ch, angle) 
+    
+    def __rationalise(self):
+        """
+        Rationalise the commands to HOME and MOVE for each servo
+        
+        Arguments:
+        
+        """
+        home = None
+        move_tx = None
+        move_ant = None
+        
+        while len(self.__q) > 0:
+            cmd, params = self.__q.popleft()
+            if cmd == CMD_HOME:
+                home = (cmd, [])
+            elif cmd == CMD_MOVE and params[0] == 0:
+                move_tx = (cmd, params)
+            elif cmd == CMD_MOVE and params[0] == 1:
+                move_ant = (cmd, params)
+        return home, move_tx, move_ant
+               
     def __home(self):
         """
         Move servos to the home position.

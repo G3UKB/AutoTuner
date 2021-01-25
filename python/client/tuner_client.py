@@ -34,7 +34,7 @@ from time import sleep
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtGui import QPainter, QPainterPath, QColor, QPen, QFont
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLineEdit, QTextEdit, QComboBox, QPushButton, QCheckBox, QRadioButton, QSpinBox, QAction, QWidget, QGridLayout
+from PyQt5.QtWidgets import QInputDialog, QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLineEdit, QTextEdit, QComboBox, QPushButton, QCheckBox, QRadioButton, QSpinBox, QAction, QWidget, QGridLayout
 
 CMD_PORT = 10002
 SERVER_IP = '192.168.1.110'
@@ -56,6 +56,9 @@ class TunerClient(QMainWindow):
         
         # Track progress
         self.__progress = {'TX': 0, 'ANT': 0}
+        
+        # Macro store
+        self.__macros = {}
         
         # Set the back colour
         palette = QtGui.QPalette()
@@ -98,17 +101,31 @@ class TunerClient(QMainWindow):
         w1 = QWidget()
         w1.setLayout(self.__macrogrid)
         self.__grid.addWidget(w1, 0,0)
-        macro_btns = [self.__m0,self.__m1,self.__m2,self.__m3,self.__m4,self.__m5]
+        self.__macro_btns1 = [self.__m0,self.__m1,self.__m2,self.__m3,self.__m4,self.__m5]
+        macro_procs1 = [self.__m0_proc,self.__m1_proc,self.__m2_proc,self.__m3_proc,self.__m4_proc,self.__m5_proc]
         index = 0
-        for macro_btn in macro_btns:
-            macro_btn = QPushButton("Set")
+        for macro_btn in self.__macro_btns1:
+            #macro_btn = QPushButton("Set")
+            macro_btn = QComboBox()
+            macro_btn.addItem("Set")
+            #macro_btn.addItem("Run")
             self.__macrogrid.addWidget(macro_btn, 0,index)
+            #macro_btn.clicked.connect(macro_procs1[index])
+            macro_btn.activated[str].connect(macro_procs1[index])
+            self.__macro_btns1[index] = macro_btn
             index += 1
-        macro_btns = [self.__m6,self.__m7,self.__m8,self.__m9,self.__m10,self.__m11]
+        self.__macro_btns2 = [self.__m6,self.__m7,self.__m8,self.__m9,self.__m10,self.__m11]
+        macro_procs2 = [self.__m6_proc,self.__m7_proc,self.__m8_proc,self.__m9_proc,self.__m10_proc,self.__m11_proc]
         index = 0
-        for macro_btn in macro_btns:
-            macro_btn = QPushButton("Set")
+        for macro_btn in self.__macro_btns2:
+            #macro_btn = QPushButton("Set")
+            macro_btn = QComboBox()
+            macro_btn.addItem("Set")
+            #macro_btn.addItem("Run")
             self.__macrogrid.addWidget(macro_btn, 1,index)
+            #macro_btn.clicked.connect(macro_procs2[index])
+            macro_btn.activated[str].connect(macro_procs2[index])
+            self.__macro_btns2[index] = macro_btn
             index += 1
         # Control area
         self.__ctrgrid = QGridLayout()
@@ -240,6 +257,64 @@ class TunerClient(QMainWindow):
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 1, val]), (SERVER_IP, CMD_PORT))
         self.__ant_val.setText(str(val))
     
+    #=======================================================
+    # macro buttons
+    def __m0_proc(self, action):
+        self.__do_set_macro(0, action)
+    def __m1_proc(self, action):
+        self.__do_set_macro(1, action)
+    def __m2_proc(self, action):
+        self.__do_set_macro(2, action)
+    def __m3_proc(self, action):
+        self.__do_set_macro(3, action)
+    def __m4_proc(self, action):
+        self.__do_set_macro(4, action)
+    def __m5_proc(self, action):
+        self.__do_set_macro(5, action)
+    def __m6_proc(self, action):
+        self.__do_set_macro(6, action)
+    def __m7_proc(self, action):
+        self.__do_set_macro(7, action)
+    def __m8_proc(self, action):
+        self.__do_set_macro(8, action)
+    def __m9_proc(self, action):
+        self.__do_set_macro(9, action)
+    def __m10_proc(self, action):
+        self.__do_set_macro(10, action)
+    def __m11_proc(self, action):
+        self.__do_set_macro(11, action)
+    
+    def __do_set_macro(self, id, action):
+        # Do we have a macro to run
+
+        if id in self.__macros and action != 'Set':
+            # Yup
+            name, tx, ant = self.__macros[id]
+            print(tx, ant)
+            self.__tx.setValue(tx)
+            self.__tx_changed()
+            self.__ant.setValue(ant)
+            self.__ant_changed()
+        else:
+            # No entry or update
+            if id in self.__macros:
+                del self.__macros[id]
+            if id <=5:
+                while self.__macro_btns1[id].count() > 0:
+                    self.__macro_btns1[id].removeItem(0)
+                self.__macro_btns1[id].addItem('Set')
+            else:
+                while self.__macro_btns2[id].count() > 0:
+                    self.__macro_btns2[id].removeItem(0)
+                self.__macro_btns2[id].addItem('Set')
+            name, ok = QInputDialog.getText(self, "Configure Macro", "Name ")
+            if ok and len(name) > 0:
+                self.__macros[id] = [name, self.__tx.value(), self.__ant.value()]
+                if id <=5:
+                    self.__macro_btns1[id].addItem(name)
+                else:
+                    self.__macro_btns2[id].addItem(name)
+        
     #======================================================= 
     def __monitor_callback(self, data):
         
