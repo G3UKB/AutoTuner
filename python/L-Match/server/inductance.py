@@ -90,6 +90,7 @@ def set_value(index):
     item = actMap[index]
     print("Setting inductor for %duH" % item[0])
     if not testing:
+        all_off()
         for rly in item[1]:
             rly_on(rly)
 
