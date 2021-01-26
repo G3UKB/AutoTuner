@@ -148,7 +148,7 @@ def init():
 def set_value(index):
     # Index 0-127 as there are 128 values in the matrix
     item = actMap[index]
-    print("Setting relays for %dpf" % item[0])
+    print("Setting relays for %dpf" % item[0], item[1])
     if not testing:
         all_off()
         for rly in item[1]:
