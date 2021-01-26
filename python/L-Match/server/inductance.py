@@ -58,11 +58,11 @@ pinArray = [26,16,12,25,24]
 # This map should be 12 elements long.
 # i.e. {inductor-value : [rel, rel, ..], inductor-value ...}
 actMap = [
-    [4, [1,]],
-    [8, [2,]],
-    [15, [3,]],
-    [28, [4,]],
-    [42, [5,]],
+    [4, [0,]],
+    [8, [1,]],
+    [15, [2,]],
+    [28, [3,]],
+    [42, [4,]],
 ]
 
 def init_pins():
