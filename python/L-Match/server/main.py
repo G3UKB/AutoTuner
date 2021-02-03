@@ -30,7 +30,8 @@ import subprocess
 # Application imports
 from defs import *
 import netif
-import device
+import servo
+import relays
 
 """
     Main program for the Remote Auto_Tuner.
@@ -44,9 +45,11 @@ class RemoteTuner:
         self.__netif = netif.NetIF(self.__netCallback)
         self.__netif.start()
         
-        # Create device
+        # Create servo
         self.__servo = servo.Servo(self.__servoCallback)
         self.__dev.start()
+        # Create relays
+        self.__relays = relay.Relay()
         
     #------------------------------------------------------------------    
     def mainLoop(self):
@@ -64,7 +67,11 @@ class RemoteTuner:
         except KeyboardInterrupt:
             
             # User requested exit
-            # Terminate the netif thread and wait for it to close
+            
+            # Cleanup GPIO
+            self.__relays.close()
+            
+            # Terminate the netif and servo threads and wait for thread exit
             self.__netif.terminate()
             self.__netif.join()
             self.__servo.terminate()
@@ -97,6 +104,16 @@ class RemoteTuner:
                     print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
                     return
                 self.__servo.post((CMD_SERVO_MOVE, (cmd[1])))
+            elif type == CMD_RELAYS_INIT:
+                if len(cmd) != 2:
+                    print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
+                    return
+                self.__relays.init_pins(cmd[1])
+            elif type == CMD_RELAYS_SET:
+                if len(cmd) != 2:
+                    print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
+                    return
+                self.__relays.set_pins(cmd[1])
             elif type == CMD_RESET:
                 if len(cmd) != 1:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
@@ -107,9 +124,11 @@ class RemoteTuner:
                 sleep(1)
                 self.__netif = netif.NetIF(self.__netCallback)
                 self.__netif.start()
-                # Restart the device
+                # Restart the servo
                 self.__device.terminate()
-                self.__servo = device.Device()
+                self.__servo = servo.Device()
+                self.__relays.close()
+                self.__relays = relay.Relay()
             else:
                 print('Unknown request type %s!' % (type))
             

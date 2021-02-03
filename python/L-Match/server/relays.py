@@ -59,6 +59,11 @@ class Relays:
         if not testing:
             self.__rlys_on(self.__pinArray, pin_array)
     
+    #----------------------------------------------------
+    def close(self):
+        # Cleanup before exit
+        GPIO.cleanup()
+    
     # =================================================================================
     # PRIVATE
     def __init_pins(self, all_pins):
