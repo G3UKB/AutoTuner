@@ -37,6 +37,13 @@ class Config(QMainWindow):
         palette.setColor(QtGui.QPalette.Background,QtGui.QColor(195,195,195,255))
         self.setPalette(palette)
 
+        # Available pins
+        self.__pins = [4,17,27,22,5,,13,26,23,24,25,12,16]
+        self.__cap_values = (1000,2000,3000)
+        self.__cap_extra_values = (0,1000,2000,3000)
+        self.__ind_values = (1,2,3,4,5,6,7,8,9,10)
+        self.__band_values = (160,80,60,40,30,20,17,15,12,10)
+        
         # Initialise the GUI
         self.initUI()
         
@@ -61,3 +68,122 @@ class Config(QMainWindow):
         self.setCentralWidget(w)
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
+        
+        # Within this we need 3 sub-layouts
+        self.__span_grid = QGridLayout()
+        w1 = QWidget()
+        w1.setLayout(self.__span_grid)
+        self.__grid.addWidget(w1, 0,0)
+        
+        self.__map_grid = QGridLayout()
+        w2 = QWidget()
+        w2.setLayout(self.__map_grid)
+        self.__grid.addWidget(w2, 1,0)
+        
+        self.__op_grid = QGridLayout()
+        w3 = QWidget()
+        w3.setLayout(self.__map_grid)
+        self.__grid.addWidget(w3, 2,0)
+        
+        # Populate grids
+        self.__pop_span()
+        self.__pop_map()
+        self.__pop_op()
+        
+    #-------------------------------------------------------------
+    # Set the servo limits to achieve 0-180 degrees rotation
+    def __pop_span(self, g):
+        
+        # We need two fields for PWM values
+        # and two buttons for execution
+        
+        # Values for PWM upper and lower
+        lower_lbl = QLabel("Lower PWM")
+        upper_lbl = QLabel("Upper PWM")
+        self.__sb_lower = QSpinBox()
+        self.__sb_lower.setRange(500, 3000, 10)
+        self.__sb_lower.setValue(1000)
+        self.__sb_upper = QSpinBox()
+        self.__sb_upper.setRange(500, 3000, 10)
+        self.__sb_upper.setValue(1000)
+        g.addWidget(lower_lbl, 0,0)
+        g.addWidget(self.__sb_lower, 0,1)
+        g.addWidget(upper_lbl, 1,0)
+        g.addWidget(self.__sb_upper, 1,1)
+        # Activation buttons
+        self.__btn_set_pwm = QPushButton("Set")
+        g.addWidget(self.__btn_set_pwm, 2,0)
+        self.__btn_set_pwm.clicked.connect(self.__do_set_pwm)
+        self.__btn_tst_pwm = QPushButton("Test")
+        g.addWidget(self.__btn_tst_pwm, 3,0)
+        self.__btn_tst_pwm.clicked.connect(self.__do_test_range)
+        
+    #-------------------------------------------------------------
+    # Set the pin maps for capacitor values and inductor taps
+    def __pop_map(self, g):
+        
+        # We need two sets of pin allocations
+        # for capacitor and inductor connections
+        
+        # Capacitor
+        cap_lbl = QLabel("Cap pinmap")
+        self.__cb_cap = QComboBox()
+        self.__cb_cap.additems(self.__cap_values)
+        self.__cb_capmap = QComboBox()
+        self.__cb_capmap.additems(self.__pins)
+        self.__btn_cap = QPushButton("Set")
+        g.addWidget(cap_lbl, 0,0)
+        g.addWidget(self.__cb_cap, 0,1)
+        g.addWidget(self.__cb_capmap, 0,2)
+        g.addWidget(self.__btn_cap, 0,3)
+        self.__btn_cap.clicked.connect(self.__do_set_cap)
+        
+        # Inductor
+        ind_lbl = QLabel("Ind Pinmap")
+        self.__cb_ind = QComboBox()
+        self.__cb_ind.additems(self.__ind_values)
+        self.__cb_indmap = QComboBox()
+        self.__cb_indmap.additems(self.__pins)
+        self.__btn_ind = QPushButton("Set")
+        g.addWidget(cap_lbl, 1,0)
+        g.addWidget(self.__cb_ind, 1,1)
+        g.addWidget(self.__cb_indmap, 1,2)
+        g.addWidget(self.__btn_ind, 1,3)
+        self.__btn_ind.clicked.connect(self.__do_set_ind)
+        
+    #-------------------------------------------------------------
+    # Set the inductor tap and capacitor value for each band
+    def __pop_op(self, g):
+        
+        # We need a band combo against capacitor degrees and extra pf
+        # plus the inductor tap
+        
+        # Bands
+        band_lbl = QLabel("Band")
+        self.__cb_band = QComboBox()
+        self.__cb_band.additems(self.__band_values)
+        g.addWidget(band_lbl, 0,0)
+        g.addWidget(self.__cb_band, 0,1)
+        
+        # Variable capacitor
+        variable_cap_lbl = QLabel("Variable degrees")
+        g.addWidget(variable_cap_lbl, 1,0)
+        self.__sb_cap_degrees = QSpinBox()
+        self.__sb_cap_degrees.setRange(0, 180, 1)
+        self.__sb_cap_degrees.setValue(90)
+        g.addWidget(self.__sb_cap_degrees, 1,1)
+        
+        # Extra capacitance
+        variable_cap_lbl = QLabel("Extra capacitance")
+        g.addWidget(variable_cap_lbl, 2,0)
+        self.__cb_cap_extra = QComboBox()
+        self.__cb_cap_extra.additems(self.__cap_extra_values)
+        g.addWidget(self.__cb_cap_extra, 2,1)
+        
+        
+        # Inductor tap
+        variable_ind_lbl = QLabel("Inductor tap")
+        g.addWidget(variable_ind_lbl, 3,0)
+        self.__cb_ind_tap = QComboBox()
+        self.__cb_ind_tap.additems(self.__ind_values)
+        g.addWidget(self.__cb_ind_tap, 3,1)
