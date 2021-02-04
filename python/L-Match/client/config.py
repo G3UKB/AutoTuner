@@ -38,7 +38,7 @@ class Config(QMainWindow):
         self.setPalette(palette)
 
         # Available pins
-        self.__pins = [4,17,27,22,5,,13,26,23,24,25,12,16]
+        self.__pins = [4,17,27,22,5,13,26,23,24,25,12,16]
         self.__cap_values = (1000,2000,3000)
         self.__cap_extra_values = (0,1000,2000,3000)
         self.__ind_values = (1,2,3,4,5,6,7,8,9,10)
@@ -86,9 +86,9 @@ class Config(QMainWindow):
         self.__grid.addWidget(w3, 2,0)
         
         # Populate grids
-        self.__pop_span()
-        self.__pop_map()
-        self.__pop_op()
+        self.__pop_span(self.__span_grid)
+        self.__pop_map(self.__map_grid)
+        self.__pop_op(self.__op_grid)
         
     #-------------------------------------------------------------
     # Set the servo limits to achieve 0-180 degrees rotation
@@ -187,3 +187,42 @@ class Config(QMainWindow):
         self.__cb_ind_tap = QComboBox()
         self.__cb_ind_tap.additems(self.__ind_values)
         g.addWidget(self.__cb_ind_tap, 3,1)
+    
+        self.__btn_save = QPushButton("Save")
+        g.addWidget(self.__btn_save, 4,1)
+        self.__btn_save.clicked.connect(self.__do_save)
+    
+    # Event procs
+    def __do_set_pwm(self):
+        print ("__do_set_pwm")
+    
+    def __do_test_range(self):
+        print ("__do_test_range")
+    
+    def __do_set_cap(self):
+        print ("__do_set_cap")
+    
+    def __do_set_ind(self):
+        print ("__do_set_ind")
+    
+    def __do_save(self):
+        print ("__do_save")
+        
+#======================================================================================================================
+# Test code
+def main():
+    
+    try:
+        # The one and only QApplication 
+        qt_app = QApplication(sys.argv)
+        # Crete instance
+        client = Config(qt_app)
+        # Run application loop
+        sys.exit(client.run())
+       
+    except Exception as e:
+        print ('Exception [%s][%s]' % (str(e), traceback.format_exc()))
+ 
+# Entry point       
+if __name__ == '__main__':
+    main()
