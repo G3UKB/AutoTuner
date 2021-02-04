@@ -21,25 +21,11 @@
 #     bob@bobcowdery.plus.com
 #
 
-import os, sys
-import threading
-import socket
-import pickle
-import platform
-import subprocess
-import traceback
-from time import sleep
+# Applicaion imports
+from imports import *
 
-# PyQt5 imports
-from PyQt5.QtWidgets import QMainWindow, QApplication
-from PyQt5.QtGui import QPainter, QPainterPath, QColor, QPen, QFont
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QInputDialog, QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLineEdit, QTextEdit, QComboBox, QPushButton, QCheckBox, QRadioButton, QSpinBox, QAction, QWidget, QGridLayout
-
-CMD_PORT = 10002
-SERVER_IP = '192.168.1.110'
-IDLE_TICKER = 100
-
+#======================================================================================
+# Main application window
 class TunerClient(QMainWindow):
     
     def __init__(self, qt_app):
