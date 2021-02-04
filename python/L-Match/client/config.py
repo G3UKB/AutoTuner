@@ -38,17 +38,17 @@ class Config(QMainWindow):
         self.setPalette(palette)
 
         # Available pins
-        self.__pins = [4,17,27,22,5,13,26,23,24,25,12,16]
-        self.__cap_values = (1000,2000,3000)
-        self.__cap_extra_values = (0,1000,2000,3000)
-        self.__ind_values = (1,2,3,4,5,6,7,8,9,10)
-        self.__band_values = (160,80,60,40,30,20,17,15,12,10)
+        self.__pins = ['4','17','27','22','5','13','26','23','24','25','12','16']
+        self.__cap_values = ('1000','2000','3000')
+        self.__cap_extra_values = ('0','1000','2000','3000')
+        self.__ind_values = ('1','2','3','4','5','6','7','8','9','10')
+        self.__band_values = ('160','80','60','40','30','20','17','15','12','10')
         
         # Initialise the GUI
         self.initUI()
         
         # Start idle processing
-        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        #QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
     
     #========================================================================================    
     # UI initialisation and window event handlers
@@ -101,10 +101,10 @@ class Config(QMainWindow):
         lower_lbl = QLabel("Lower PWM")
         upper_lbl = QLabel("Upper PWM")
         self.__sb_lower = QSpinBox()
-        self.__sb_lower.setRange(500, 3000, 10)
+        self.__sb_lower.setRange(500, 3000)
         self.__sb_lower.setValue(1000)
         self.__sb_upper = QSpinBox()
-        self.__sb_upper.setRange(500, 3000, 10)
+        self.__sb_upper.setRange(500, 3000)
         self.__sb_upper.setValue(1000)
         g.addWidget(lower_lbl, 0,0)
         g.addWidget(self.__sb_lower, 0,1)
@@ -128,9 +128,9 @@ class Config(QMainWindow):
         # Capacitor
         cap_lbl = QLabel("Cap pinmap")
         self.__cb_cap = QComboBox()
-        self.__cb_cap.additems(self.__cap_values)
+        self.__cb_cap.addItems(self.__cap_values)
         self.__cb_capmap = QComboBox()
-        self.__cb_capmap.additems(self.__pins)
+        self.__cb_capmap.addItems(self.__pins)
         self.__btn_cap = QPushButton("Set")
         g.addWidget(cap_lbl, 0,0)
         g.addWidget(self.__cb_cap, 0,1)
@@ -141,9 +141,9 @@ class Config(QMainWindow):
         # Inductor
         ind_lbl = QLabel("Ind Pinmap")
         self.__cb_ind = QComboBox()
-        self.__cb_ind.additems(self.__ind_values)
+        self.__cb_ind.addItems(self.__ind_values)
         self.__cb_indmap = QComboBox()
-        self.__cb_indmap.additems(self.__pins)
+        self.__cb_indmap.addItems(self.__pins)
         self.__btn_ind = QPushButton("Set")
         g.addWidget(cap_lbl, 1,0)
         g.addWidget(self.__cb_ind, 1,1)
@@ -161,7 +161,7 @@ class Config(QMainWindow):
         # Bands
         band_lbl = QLabel("Band")
         self.__cb_band = QComboBox()
-        self.__cb_band.additems(self.__band_values)
+        self.__cb_band.addItems(self.__band_values)
         g.addWidget(band_lbl, 0,0)
         g.addWidget(self.__cb_band, 0,1)
         
@@ -169,7 +169,7 @@ class Config(QMainWindow):
         variable_cap_lbl = QLabel("Variable degrees")
         g.addWidget(variable_cap_lbl, 1,0)
         self.__sb_cap_degrees = QSpinBox()
-        self.__sb_cap_degrees.setRange(0, 180, 1)
+        self.__sb_cap_degrees.setRange(0, 180)
         self.__sb_cap_degrees.setValue(90)
         g.addWidget(self.__sb_cap_degrees, 1,1)
         
@@ -177,7 +177,7 @@ class Config(QMainWindow):
         variable_cap_lbl = QLabel("Extra capacitance")
         g.addWidget(variable_cap_lbl, 2,0)
         self.__cb_cap_extra = QComboBox()
-        self.__cb_cap_extra.additems(self.__cap_extra_values)
+        self.__cb_cap_extra.addItems(self.__cap_extra_values)
         g.addWidget(self.__cb_cap_extra, 2,1)
         
         
@@ -185,13 +185,27 @@ class Config(QMainWindow):
         variable_ind_lbl = QLabel("Inductor tap")
         g.addWidget(variable_ind_lbl, 3,0)
         self.__cb_ind_tap = QComboBox()
-        self.__cb_ind_tap.additems(self.__ind_values)
+        self.__cb_ind_tap.addItems(self.__ind_values)
         g.addWidget(self.__cb_ind_tap, 3,1)
     
         self.__btn_save = QPushButton("Save")
         g.addWidget(self.__btn_save, 4,1)
         self.__btn_save.clicked.connect(self.__do_save)
     
+    #========================================================================================
+    # Run application
+    def run(self, ):
+        """ Run the application """
+        
+        # Start idle processing
+        #QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        
+        # Returns when application exits
+        # Show the GUI
+        self.show()
+        self.repaint()
+        
+    #========================================================================================
     # Event procs
     def __do_set_pwm(self):
         print ("__do_set_pwm")
@@ -216,10 +230,12 @@ def main():
         # The one and only QApplication 
         qt_app = QApplication(sys.argv)
         # Crete instance
-        client = Config(qt_app)
+        config = Config(qt_app)
         # Run application loop
-        sys.exit(client.run())
-       
+        config.run()
+        # Enter event loop
+        qt_app.exec_()
+               
     except Exception as e:
         print ('Exception [%s][%s]' % (str(e), traceback.format_exc()))
  
