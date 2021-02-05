@@ -82,7 +82,7 @@ class Config(QMainWindow):
         
         self.__op_grid = QGridLayout()
         w3 = QWidget()
-        w3.setLayout(self.__map_grid)
+        w3.setLayout(self.__op_grid)
         self.__grid.addWidget(w3, 2,0)
         
         # Populate grids
@@ -98,11 +98,11 @@ class Config(QMainWindow):
         # and two buttons for execution
         
         # Values for PWM upper and lower
-        lower_lbl = QLabel("Lower PWM")
-        upper_lbl = QLabel("Upper PWM")
+        lower_lbl = QLabel("Low PWM")
+        upper_lbl = QLabel("High PWM")
         self.__sb_lower = QSpinBox()
         self.__sb_lower.setRange(500, 3000)
-        self.__sb_lower.setValue(1000)
+        self.__sb_lower.setValue(0)
         self.__sb_upper = QSpinBox()
         self.__sb_upper.setRange(500, 3000)
         self.__sb_upper.setValue(1000)
@@ -115,7 +115,7 @@ class Config(QMainWindow):
         g.addWidget(self.__btn_set_pwm, 2,0)
         self.__btn_set_pwm.clicked.connect(self.__do_set_pwm)
         self.__btn_tst_pwm = QPushButton("Test")
-        g.addWidget(self.__btn_tst_pwm, 3,0)
+        g.addWidget(self.__btn_tst_pwm, 2,1)
         self.__btn_tst_pwm.clicked.connect(self.__do_test_range)
         
     #-------------------------------------------------------------
@@ -145,7 +145,7 @@ class Config(QMainWindow):
         self.__cb_indmap = QComboBox()
         self.__cb_indmap.addItems(self.__pins)
         self.__btn_ind = QPushButton("Set")
-        g.addWidget(cap_lbl, 1,0)
+        g.addWidget(ind_lbl, 1,0)
         g.addWidget(self.__cb_ind, 1,1)
         g.addWidget(self.__cb_indmap, 1,2)
         g.addWidget(self.__btn_ind, 1,3)
