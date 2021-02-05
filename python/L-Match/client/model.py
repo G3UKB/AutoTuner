@@ -32,7 +32,7 @@ IND_TOGGLE = 'IND_TOGGLE'
 BAND = 'BAND'
 STATE = 'STATE'
 
-model = {
+auto_tune_model = {
     CONFIG: {
         LOW_PWM: 500,
         HIGH_PWM: 1000,

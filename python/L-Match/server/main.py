@@ -40,7 +40,7 @@ import relays
 class RemoteTuner:
     
     def __init__(self):
-        
+            
         # Run the net interface as this is the active thread.
         self.__netif = netif.NetIF(self.__netCallback)
         self.__netif.start()

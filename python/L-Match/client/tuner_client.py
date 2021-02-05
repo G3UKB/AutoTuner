@@ -32,6 +32,15 @@ class TunerClient(QMainWindow):
         
         super(TunerClient, self).__init__()
         
+        # Manage configuration
+        config = persist.getSavedCfg(CONFIG_PATH)
+        if config == None:
+            print ('Configuration not found, using defaults')
+            persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
+        else:
+            # Use persisted version
+            model.auto_tune_model = config
+            
         # Create a datagram socket
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__sock.bind(('', 10002))
@@ -78,47 +87,51 @@ class TunerClient(QMainWindow):
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
             
-        # Control area
-        self.__ctrgrid = QGridLayout()
+        # Band area
+        self.__bandgrid = QGridLayout()
         w1 = QWidget()
-        w1.setLayout(self.__ctrgrid)
-        self.__grid.addWidget(w1, 1,0)
+        w1.setLayout(self.__bandgrid)
+        self.__grid.addWidget(w1, 0,0)
         
         # Band
         band_lbl = QLabel("Band")
         self.__cb_band = QComboBox()
-        self.__cb_band.addItems(g_cap_values)
-        self.__ctrgrid.addWidget(band_lbl, 0,0)
-        self.__ctrgrid.addWidget(self.__cb_band, 0,1)
+        self.__cb_band.addItems(g_band_values)
+        self.__bandgrid.addWidget(band_lbl, 0,0)
+        self.__bandgrid.addWidget(self.__cb_band, 0,1)
         self.__set_band = QPushButton("Set")
-        self.__ctrgrid.addWidget(self.__set_band, 0,2)
+        self.__bandgrid.addWidget(self.__set_band, 0,2)
         self.__set_band.clicked.connect(self.__do_set_band)
         
+        # Capacitor area
+        self.__capgrid = QGridLayout()
+        w1 = QWidget()
+        w1.setLayout(self.__capgrid)
+        self.__grid.addWidget(w1, 1,0)
+        
         # Slider labels
-        slider_tag = QLabel("Adjust")
-        self.__ctrgrid.addWidget(slider_tag, 0,1)
         setpoint_tag = QLabel("Set")
-        self.__ctrgrid.addWidget(setpoint_tag, 0,2)
+        self.__capgrid.addWidget(setpoint_tag, 0,2)
         actual_tag = QLabel("Act")
-        self.__ctrgrid.addWidget(actual_tag, 0,3)
+        self.__capgrid.addWidget(actual_tag, 0,3)
         
         # Add sliders
         cap_lbl = QLabel("Variable Cap")
-        self.__ctrgrid.addWidget(cap_lbl, 1,0)
+        self.__capgrid.addWidget(cap_lbl, 1,0)
         self.__cap = QSlider(QtCore.Qt.Horizontal)
         self.__cap.setMinimum(0)
         self.__cap.setMaximum(180)
         self.__cap.setValue(0)
-        self.__ctrgrid.addWidget(self.__cap, 1,1)
+        self.__capgrid.addWidget(self.__cap, 1,1)
         self.__cap.valueChanged.connect(self.__cap_changed)
         self.__cap_val = QLabel("0")
         self.__cap_val.setMinimumWidth(30)
         self.__cap_val.setStyleSheet("color: green; font: 14px")
-        self.__ctrgrid.addWidget(self.__cap_val, 1,2)
+        self.__capgrid.addWidget(self.__cap_val, 1,2)
         self.__cap_actual = QLabel("0")
         self.__cap_actual.setMinimumWidth(30)
         self.__cap_actual.setStyleSheet("color: red; font: 14px")
-        self.__ctrgrid.addWidget(self.__cap_actual, 1,3)
+        self.__capgrid.addWidget(self.__cap_actual, 1,3)
         
         # Add buttons
         self.__btngrid = QGridLayout()
@@ -131,8 +144,11 @@ class TunerClient(QMainWindow):
         self.__reset = QPushButton("Reset")
         self.__btngrid.addWidget(self.__reset, 0,1)
         self.__reset.clicked.connect(self.__do_reset)
+        self.__config = QPushButton("Config")
+        self.__btngrid.addWidget(self.__config, 0,2)
+        self.__config.clicked.connect(self.__do_config)
         self.__exit = QPushButton("Exit")
-        self.__btngrid.addWidget(self.__exit, 0,2)
+        self.__btngrid.addWidget(self.__exit, 0,3)
         self.__exit.clicked.connect(self.__do_exit)
         
     #========================================================================================
@@ -159,6 +175,9 @@ class TunerClient(QMainWindow):
     
     def __close(self):
         
+        # Save the model
+        persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
+
         # Stop monitor
         self.__monitor.terminate()
         self.__monitor.join()
@@ -178,6 +197,11 @@ class TunerClient(QMainWindow):
         
         self.__sock.sendto(pickle.dumps(['CMD_RESET']), (SERVER_IP, CMD_PORT))
 
+    def __do_config(self):
+        
+        # Create the configuration window
+        self.__config_win = config.Config()
+        
     def __do_exit(self):
         
         self.__close()

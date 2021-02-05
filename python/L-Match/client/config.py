@@ -28,7 +28,7 @@ from imports import *
 # Configuration window
 class Config(QMainWindow):
     
-    def __init__(self, qt_app):
+    def __init__(self):
         
         super(Config, self).__init__()
         
@@ -36,19 +36,11 @@ class Config(QMainWindow):
         palette = QtGui.QPalette()
         palette.setColor(QtGui.QPalette.Background,QtGui.QColor(195,195,195,255))
         self.setPalette(palette)
-
-        # Available pins
-        self.__pins = ['4','17','27','22','5','13','26','23','24','25','12','16']
-        self.__cap_values = ('1000','2000','3000')
-        self.__cap_extra_values = ('0','1000','2000','3000')
-        self.__ind_values = ('1','2','3','4','5','6','7','8','9','10')
-        self.__band_values = ('160','80','60','40','30','20','17','15','12','10')
         
         # Initialise the GUI
         self.initUI()
-        
-        # Start idle processing
-        #QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        self.show()
+        self.repaint()
     
     #========================================================================================    
     # UI initialisation and window event handlers
@@ -161,7 +153,7 @@ class Config(QMainWindow):
         # Bands
         band_lbl = QLabel("Band")
         self.__cb_band = QComboBox()
-        self.__cb_band.addItems(self.__band_values)
+        self.__cb_band.addItems(g_band_values)
         g.addWidget(band_lbl, 0,0)
         g.addWidget(self.__cb_band, 0,1)
         
@@ -188,23 +180,15 @@ class Config(QMainWindow):
         self.__cb_ind_tap.addItems(g_ind_values)
         g.addWidget(self.__cb_ind_tap, 3,1)
     
+        self.__btn_tst_band = QPushButton("Test")
+        g.addWidget(self.__btn_tst_band, 4,0)
+        self.__btn_tst_band.clicked.connect(self.__do_band_test)
+        
         self.__btn_save = QPushButton("Save")
         g.addWidget(self.__btn_save, 4,1)
         self.__btn_save.clicked.connect(self.__do_save)
     
-    #========================================================================================
-    # Run application
-    def run(self, ):
-        """ Run the application """
-        
-        # Start idle processing
-        #QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
-        
-        # Returns when application exits
-        # Show the GUI
-        self.show()
-        self.repaint()
-        
+    
     #========================================================================================
     # Event procs
     def __do_set_pwm(self):
@@ -219,6 +203,9 @@ class Config(QMainWindow):
     def __do_set_ind(self):
         print ("__do_set_ind")
     
+    def __do_band_test(self):
+        print ("__do_band_set")
+    
     def __do_save(self):
         print ("__do_save")
         
@@ -230,7 +217,7 @@ def main():
         # The one and only QApplication 
         qt_app = QApplication(sys.argv)
         # Crete instance
-        config = Config(qt_app)
+        config = Config()
         # Run application loop
         config.run()
         # Enter event loop

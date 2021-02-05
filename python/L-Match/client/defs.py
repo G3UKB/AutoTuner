@@ -28,6 +28,8 @@ SERVER_IP = '192.168.1.110'
 # UI
 IDLE_TICKER = 100
 
+# Configuration
+CONFIG_PATH = '../config/auto_tuner.cfg'
 g_pins = ['4','17','27','22','5','13','26','23','24','25','12','16']
 g_cap_values = ('1000','2000','3000')
 g_cap_extra_values = ('0','1000','2000','3000')
