@@ -214,7 +214,7 @@ class TunerClient(QMainWindow):
         # Value ranges 0 - 180
         val = self.__cap.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 0, val]), (SERVER_IP, CMD_PORT))
-        self.__cap.setText(str(val))
+        self.__cap_val.setText(str(val))
     
     #=======================================================
     # Set server to band paramters
