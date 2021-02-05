@@ -33,6 +33,7 @@ from time import sleep
 
 # Application imports
 from defs import *
+from model import *
 
 # PyQt5 imports
 from PyQt5.QtWidgets import QMainWindow, QApplication

@@ -41,10 +41,8 @@ class TunerClient(QMainWindow):
         self.__qt_app = qt_app
         
         # Track progress
-        self.__progress = {'TX': 0, 'ANT': 0}
-        
-        # Macro store
-        self.__macros = {}
+        self.__progress = 0
+        self.__actual = 0
         
         # Set the back colour
         palette = QtGui.QPalette()
@@ -79,38 +77,24 @@ class TunerClient(QMainWindow):
         self.setCentralWidget(w)
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
-        
-        # Macro buttons
-        self.__m0 = self.__m1 = self.__m2 = self.__m3 = self.__m4 = self.__m5 = None
-        self.__m6 = self.__m7 = self.__m8 = self.__m9 = self.__m10 = self.__m11 = None
-        self.__macrogrid = QGridLayout()
-        w1 = QWidget()
-        w1.setLayout(self.__macrogrid)
-        self.__grid.addWidget(w1, 0,0)
-        self.__macro_btns = [self.__m0,self.__m1,self.__m2,self.__m3,self.__m4,self.__m5,self.__m6,self.__m7,self.__m8,self.__m9,self.__m10,self.__m11]
-        macro_procs = [self.__m0_proc,self.__m1_proc,self.__m2_proc,self.__m3_proc,self.__m4_proc,self.__m5_proc,self.__m6_proc,self.__m7_proc,self.__m8_proc,self.__m9_proc,self.__m10_proc,self.__m11_proc]
-        index = 0
-        for macro_btn in self.__macro_btns:
-            macro_btn = QComboBox()
-            macro_btn.addItem("Set")
-            row = 0
-            col = index
-            if index > 5:
-                row = 1
-                col = index -6
-            self.__macrogrid.addWidget(macro_btn, row,col)
-            macro_btn.activated[str].connect(macro_procs[index])
-            self.__macro_btns[index] = macro_btn
-            index += 1
-        self.__set_macro_btn_back_color(-1)
             
         # Control area
         self.__ctrgrid = QGridLayout()
-        w2 = QWidget()
-        w2.setLayout(self.__ctrgrid)
-        self.__grid.addWidget(w2, 1,0)
+        w1 = QWidget()
+        w1.setLayout(self.__ctrgrid)
+        self.__grid.addWidget(w1, 1,0)
         
-        # Top labels
+        # Band
+        band_lbl = QLabel("Band")
+        self.__cb_band = QComboBox()
+        self.__cb_band.addItems(g_cap_values)
+        self.__ctrgrid.addWidget(band_lbl, 0,0)
+        self.__ctrgrid.addWidget(self.__cb_band, 0,1)
+        self.__set_band = QPushButton("Set")
+        self.__ctrgrid.addWidget(self.__set_band, 0,2)
+        self.__set_band.clicked.connect(self.__do_set_band)
+        
+        # Slider labels
         slider_tag = QLabel("Adjust")
         self.__ctrgrid.addWidget(slider_tag, 0,1)
         setpoint_tag = QLabel("Set")
@@ -119,39 +103,22 @@ class TunerClient(QMainWindow):
         self.__ctrgrid.addWidget(actual_tag, 0,3)
         
         # Add sliders
-        tx_lbl = QLabel("TX Cap")
-        self.__ctrgrid.addWidget(tx_lbl, 1,0)
-        self.__tx = QSlider(QtCore.Qt.Horizontal)
-        self.__tx.setMinimum(0)
-        self.__tx.setMaximum(180)
-        self.__tx.setValue(0)
-        self.__ctrgrid.addWidget(self.__tx, 1,1)
-        self.__tx.valueChanged.connect(self.__tx_changed)
-        self.__tx_val = QLabel("0")
-        self.__tx_val.setMinimumWidth(30)
-        self.__tx_val.setStyleSheet("color: green; font: 14px")
-        self.__ctrgrid.addWidget(self.__tx_val, 1,2)
-        self.__tx_actual = QLabel("0")
-        self.__tx_actual.setMinimumWidth(30)
-        self.__tx_actual.setStyleSheet("color: red; font: 14px")
-        self.__ctrgrid.addWidget(self.__tx_actual, 1,3)
-        
-        ant_lbl = QLabel("Ant Cap")
-        self.__ctrgrid.addWidget(ant_lbl, 2,0)
-        self.__ant = QSlider(QtCore.Qt.Horizontal)
-        self.__ant.setMinimum(0)
-        self.__ant.setMaximum(180)
-        self.__ant.setValue(0)
-        self.__ctrgrid.addWidget(self.__ant, 2,1)
-        self.__ant.valueChanged.connect(self.__ant_changed)
-        self.__ant_val = QLabel("0")
-        self.__ant_val.setMinimumWidth(30)
-        self.__ant_val.setStyleSheet("color: green; font: 14px")
-        self.__ctrgrid.addWidget(self.__ant_val, 2,2)
-        self.__ant_actual = QLabel("0")
-        self.__ant_actual.setMinimumWidth(30)
-        self.__ant_actual.setStyleSheet("color: red; font: 14px")
-        self.__ctrgrid.addWidget(self.__ant_actual, 2,3)
+        cap_lbl = QLabel("Variable Cap")
+        self.__ctrgrid.addWidget(cap_lbl, 1,0)
+        self.__cap = QSlider(QtCore.Qt.Horizontal)
+        self.__cap.setMinimum(0)
+        self.__cap.setMaximum(180)
+        self.__cap.setValue(0)
+        self.__ctrgrid.addWidget(self.__cap, 1,1)
+        self.__cap.valueChanged.connect(self.__cap_changed)
+        self.__cap_val = QLabel("0")
+        self.__cap_val.setMinimumWidth(30)
+        self.__cap_val.setStyleSheet("color: green; font: 14px")
+        self.__ctrgrid.addWidget(self.__cap_val, 1,2)
+        self.__cap_actual = QLabel("0")
+        self.__cap_actual.setMinimumWidth(30)
+        self.__cap_actual.setStyleSheet("color: red; font: 14px")
+        self.__ctrgrid.addWidget(self.__cap_actual, 1,3)
         
         # Add buttons
         self.__btngrid = QGridLayout()
@@ -217,84 +184,19 @@ class TunerClient(QMainWindow):
         sys.exit()
         
     #=======================================================
-    # Track TX Tuning
-    def __tx_changed(self):
+    # Set server to new capacitor degrees
+    def __cap_changed(self):
     
         # Value ranges 0 - 180
-        val = self.__tx.value()
+        val = self.__cap.value()
         self.__sock.sendto(pickle.dumps(['CMD_MOVE', 0, val]), (SERVER_IP, CMD_PORT))
-        self.__tx_val.setText(str(val))
-        self.__set_macro_btn_back_color(-1)
-        
-    #=======================================================
-    # Track Ant Tuning
-    def __ant_changed(self):
-    
-        # Value ranges 0 - 180
-        val = self.__ant.value()
-        self.__sock.sendto(pickle.dumps(['CMD_MOVE', 1, val]), (SERVER_IP, CMD_PORT))
-        self.__ant_val.setText(str(val))
-        self.__set_macro_btn_back_color(-1)
+        self.__cap.setText(str(val))
     
     #=======================================================
-    # macro buttons
-    def __m0_proc(self, action):
-        self.__do_set_macro(0, action)
-    def __m1_proc(self, action):
-        self.__do_set_macro(1, action)
-    def __m2_proc(self, action):
-        self.__do_set_macro(2, action)
-    def __m3_proc(self, action):
-        self.__do_set_macro(3, action)
-    def __m4_proc(self, action):
-        self.__do_set_macro(4, action)
-    def __m5_proc(self, action):
-        self.__do_set_macro(5, action)
-    def __m6_proc(self, action):
-        self.__do_set_macro(6, action)
-    def __m7_proc(self, action):
-        self.__do_set_macro(7, action)
-    def __m8_proc(self, action):
-        self.__do_set_macro(8, action)
-    def __m9_proc(self, action):
-        self.__do_set_macro(9, action)
-    def __m10_proc(self, action):
-        self.__do_set_macro(10, action)
-    def __m11_proc(self, action):
-        self.__do_set_macro(11, action)
-    
-    def __do_set_macro(self, id, action):
-        # Do we have a macro to run
-
-        if id in self.__macros and action != 'Set':
-            # Yup
-            name, tx, ant = self.__macros[id]
-            self.__tx.setValue(tx)
-            self.__tx_changed()
-            self.__ant.setValue(ant)
-            self.__ant_changed()
-            self.__set_macro_btn_back_color(id)
-        else:
-            # No entry or update
-            if id in self.__macros:
-                del self.__macros[id]
-            while self.__macro_btns[id].count() > 0:
-                self.__macro_btns[id].removeItem(0)
-            self.__macro_btns[id].addItem('Set')
-            name, ok = QInputDialog.getText(self, "Configure Macro", "Name ")
-            if ok and len(name) > 0:
-                self.__macros[id] = [name, self.__tx.value(), self.__ant.value()]
-                self.__macro_btns[id].addItem(name)
-    
-    def __set_macro_btn_back_color(self, id):
-        
-        # Set all to neutral
-        for w in self.__macro_btns:
-            w.setStyleSheet("background-color: lightgray")
-        if id != -1:
-            self.__macro_btns[id].setStyleSheet("background-color: red")
-        
-        
+    # Set server to band paramters
+    def __do_set_band(self):
+        pass
+       
     #======================================================= 
     def __monitor_callback(self, data):
         
@@ -304,8 +206,7 @@ class TunerClient(QMainWindow):
     def __idleProcessing   (self):
         
         # Update UI with actual progress
-        self.__tx_actual.setText(str(self.__progress['TX']))
-        self.__ant_actual.setText(str(self.__progress['ANT']))
+        self.__cap_actual.setText(str(self.__progress))
         # Set timer
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
 

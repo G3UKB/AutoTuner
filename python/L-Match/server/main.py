@@ -48,6 +48,7 @@ class RemoteTuner:
         # Create servo
         self.__servo = servo.Servo(self.__servoCallback)
         self.__dev.start()
+        
         # Create relays
         self.__relays = relay.Relay()
         

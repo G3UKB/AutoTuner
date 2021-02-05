@@ -24,21 +24,22 @@
 # The application model contains persisted configuration and state data
 
 CONFIG = 'CONFIG'
-LOW-PWM = 'LOW-PWM'
-HIGH-PWM = 'HIGH-PWM'
-CAP-PINMAP ='CAP-PINMAP'
-IND-PINMAP = 'IND-PINMAP'
+LOW_PWM = 'LOW-PWM'
+HIGH_PWM = 'HIGH-PWM'
+CAP_PINMAP ='CAP-PINMAP'
+IND_PINMAP = 'IND-PINMAP'
+IND_TOGGLE = 'IND_TOGGLE'
 BAND = 'BAND'
 STATE = 'STATE'
 
 model = {
     CONFIG: {
-        LOW-PWM: 500,
-        HIGH-PWM: 1000,
-        CAP-PINMAP: {1000: 4, 2000: 17, 3000: 27},
-        IND-PINMAP: {1: 22, 2: 5, 3: 13, 4: 26, 5: 23, 6: 24, 7: 25, 8: 12, 9: 16, 10: 12},
+        LOW_PWM: 500,
+        HIGH_PWM: 1000,
+        CAP_PINMAP: {1000: 4, 2000: 17, 3000: 27},
+        IND_PINMAP: {1: 22, 2: 5, 3: 13, 4: 26, 5: 23, 6: 24, 7: 25, 8: 12, 9: 16, 10: 12},
         IND_TOGGLE: 16,
-        BAND {
+        BAND: {
             160: [90, 0, 1],
             80: [90, 0, 1],
             60: [90, 0, 1],

@@ -128,9 +128,9 @@ class Config(QMainWindow):
         # Capacitor
         cap_lbl = QLabel("Cap pinmap")
         self.__cb_cap = QComboBox()
-        self.__cb_cap.addItems(self.__cap_values)
+        self.__cb_cap.addItems(g_cap_values)
         self.__cb_capmap = QComboBox()
-        self.__cb_capmap.addItems(self.__pins)
+        self.__cb_capmap.addItems(g_pins)
         self.__btn_cap = QPushButton("Set")
         g.addWidget(cap_lbl, 0,0)
         g.addWidget(self.__cb_cap, 0,1)
@@ -141,9 +141,9 @@ class Config(QMainWindow):
         # Inductor
         ind_lbl = QLabel("Ind Pinmap")
         self.__cb_ind = QComboBox()
-        self.__cb_ind.addItems(self.__ind_values)
+        self.__cb_ind.addItems(g_ind_values)
         self.__cb_indmap = QComboBox()
-        self.__cb_indmap.addItems(self.__pins)
+        self.__cb_indmap.addItems(g_pins)
         self.__btn_ind = QPushButton("Set")
         g.addWidget(ind_lbl, 1,0)
         g.addWidget(self.__cb_ind, 1,1)
@@ -177,7 +177,7 @@ class Config(QMainWindow):
         variable_cap_lbl = QLabel("Extra capacitance")
         g.addWidget(variable_cap_lbl, 2,0)
         self.__cb_cap_extra = QComboBox()
-        self.__cb_cap_extra.addItems(self.__cap_extra_values)
+        self.__cb_cap_extra.addItems(g_cap_extra_values)
         g.addWidget(self.__cb_cap_extra, 2,1)
         
         
@@ -185,7 +185,7 @@ class Config(QMainWindow):
         variable_ind_lbl = QLabel("Inductor tap")
         g.addWidget(variable_ind_lbl, 3,0)
         self.__cb_ind_tap = QComboBox()
-        self.__cb_ind_tap.addItems(self.__ind_values)
+        self.__cb_ind_tap.addItems(g_ind_values)
         g.addWidget(self.__cb_ind_tap, 3,1)
     
         self.__btn_save = QPushButton("Save")
