@@ -76,9 +76,9 @@ class Servo(threading.Thread):
         # Queue to post on
         self.__q = deque()
         
-        # Tweek for the correct range
-        self.__servo_min = 600
-        self.__servo_max = 2000
+        # Required range is set during init
+        self.__servo_min = 500
+        self.__servo_max = 1000
         
         # Best for servos
         self.__dev.frequency = 60
@@ -86,10 +86,9 @@ class Servo(threading.Thread):
         self.__dev.channels[1].duty_cycle = 0x7FFF
         
         # Create the servo instance.
-        self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
-        
-        # Send home
-        self.__q.append((CMD_SERVO, (0)))
+        #self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
+        # Create with default min and max pulse
+        self.__servo = servo.Servo(self.__dev.channels[0])
     
     #------------------------------------------------------------------
     # PUBLIC
@@ -99,6 +98,17 @@ class Servo(threading.Thread):
         self.__terminate = True
         self.__dev = None
     
+    def set_pwm_range(self, low, high):
+        self.__servo_min = low
+        self.__servo_max = high
+        self.__servo = None
+        self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
+    
+    def test_range(self):
+        self.__q.append(CMD_SERVO_TEST, 0)
+        sleep(2.0)
+        self.__q.append(CMD_SERVO_TEST, 180)
+        
     def post(self, cmd):
         
         self.__q.append(cmd)
