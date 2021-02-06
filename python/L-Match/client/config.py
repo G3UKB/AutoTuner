@@ -143,6 +143,16 @@ class Config(QMainWindow):
         g.addWidget(self.__btn_ind, 1,3)
         self.__btn_ind.clicked.connect(self.__do_set_ind)
         
+        # Inductor separator
+        sep_lbl = QLabel("Ind Sep")
+        self.__cb_indsep = QComboBox()
+        self.__cb_indsep.addItems(g_pins)
+        self.__btn_sep = QPushButton("Set")
+        g.addWidget(sep_lbl, 2,0)
+        g.addWidget(self.__cb_indsep, 2,1)
+        g.addWidget(self.__btn_sep, 2,3)
+        self.__btn_ind.clicked.connect(self.__do_set_sep)
+        
     #-------------------------------------------------------------
     # Set the inductor tap and capacitor value for each band
     def __pop_op(self, g):
@@ -158,12 +168,30 @@ class Config(QMainWindow):
         g.addWidget(self.__cb_band, 0,1)
         
         # Variable capacitor
-        variable_cap_lbl = QLabel("Variable degrees")
-        g.addWidget(variable_cap_lbl, 1,0)
-        self.__sb_cap_degrees = QSpinBox()
-        self.__sb_cap_degrees.setRange(0, 180)
-        self.__sb_cap_degrees.setValue(90)
-        g.addWidget(self.__sb_cap_degrees, 1,1)
+        #variable_cap_lbl = QLabel("Variable degrees")
+        #g.addWidget(variable_cap_lbl, 1,0)
+        #self.__sb_cap_degrees = QSpinBox()
+        #self.__sb_cap_degrees.setRange(0, 180)
+        #self.__sb_cap_degrees.setValue(90)
+        #g.addWidget(self.__sb_cap_degrees, 1,1)
+        
+        # Variable capacitor
+        cap_lbl = QLabel("Variable Cap")
+        g.addWidget(cap_lbl, 1,0)
+        self.__sld_cap = QSlider(QtCore.Qt.Horizontal)
+        self.__sld_cap.setMinimum(0)
+        self.__sld_cap.setMaximum(180)
+        self.__sld_cap.setValue(0)
+        g.addWidget(self.__sld_cap, 1,1)
+        self.__sld_cap.valueChanged.connect(self.__cap_changed)
+        self.__sld_cap_val = QLabel("0")
+        self.__sld_cap_val.setMinimumWidth(30)
+        self.__sld_cap_val.setStyleSheet("color: green; font: 14px")
+        g.addWidget(self.__sld_cap_val, 1,2)
+        self.__sld_cap_actual = QLabel("0")
+        self.__sld_cap_actual.setMinimumWidth(30)
+        self.__sld_cap_actual.setStyleSheet("color: red; font: 14px")
+        g.addWidget(self.__sld_cap_actual, 1,3)
         
         # Extra capacitance
         variable_cap_lbl = QLabel("Extra capacitance")
@@ -196,6 +224,9 @@ class Config(QMainWindow):
     
     def __do_test_range(self):
         print ("__do_test_range")
+        
+    def __cap_changed(self):
+        print ("__do_test_range")    
     
     def __do_set_cap(self):
         print ("__do_set_cap")
@@ -203,6 +234,9 @@ class Config(QMainWindow):
     def __do_set_ind(self):
         print ("__do_set_ind")
     
+    def __do_set_sep(self):
+        print ("__do_set_sep")
+        
     def __do_band_test(self):
         print ("__do_band_set")
     
