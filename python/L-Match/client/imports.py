@@ -38,7 +38,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QInputDialog, QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLineEdit, QTextEdit, QComboBox, QPushButton, QCheckBox, QRadioButton, QSpinBox, QAction, QWidget, QGridLayout
 
 # Application imports
-from defs import *
+from client_defs import *
 import model
 import persist
 import config

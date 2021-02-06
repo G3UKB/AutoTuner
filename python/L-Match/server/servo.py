@@ -40,7 +40,7 @@ from collections import deque
 from time import sleep
 
 # Application imports
-from defs import *
+from server_defs import *
 
 # Import the Adafruit libs
 from board import SCL, SDA

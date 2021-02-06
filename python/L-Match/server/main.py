@@ -28,7 +28,7 @@ import pickle
 import subprocess
 
 # Application imports
-from defs import *
+from server_defs import *
 import netif
 import servo
 import relays

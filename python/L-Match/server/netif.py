@@ -26,7 +26,7 @@ import threading
 import socket
 import pickle
 
-from defs import *
+from server_defs import *
 
 """
 Interface to the Remote Auto-Tuner client application:

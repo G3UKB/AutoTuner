@@ -35,7 +35,6 @@ except ModuleNotFoundError:
 
 # Application imports
 
-
 class Relays:
 
     #----------------------------------------------------
