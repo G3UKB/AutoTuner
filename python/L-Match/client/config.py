@@ -50,7 +50,7 @@ class Config(QMainWindow):
         self.setToolTip('Configuration')
         
         # Arrange window
-        self.setGeometry(300,300,300,200)
+        self.setGeometry(300,300,300,300)
                          
         self.setWindowTitle('Configure Auto-Tuner')
         
@@ -63,17 +63,17 @@ class Config(QMainWindow):
         
         # Within this we need 3 sub-layouts
         self.__span_grid = QGridLayout()
-        w1 = QWidget()
+        w1 = QGroupBox('Servo Config')
         w1.setLayout(self.__span_grid)
         self.__grid.addWidget(w1, 0,0)
         
         self.__map_grid = QGridLayout()
-        w2 = QWidget()
+        w2 = QGroupBox('GPIO Config')
         w2.setLayout(self.__map_grid)
         self.__grid.addWidget(w2, 1,0)
         
         self.__op_grid = QGridLayout()
-        w3 = QWidget()
+        w3 = QGroupBox('Tuner Config')
         w3.setLayout(self.__op_grid)
         self.__grid.addWidget(w3, 2,0)
         
@@ -99,15 +99,15 @@ class Config(QMainWindow):
         self.__sb_upper.setRange(500, 3000)
         self.__sb_upper.setValue(1000)
         g.addWidget(lower_lbl, 0,0)
-        g.addWidget(self.__sb_lower, 0,1)
+        g.addWidget(self.__sb_lower, 0,1,1,2)
         g.addWidget(upper_lbl, 1,0)
-        g.addWidget(self.__sb_upper, 1,1)
+        g.addWidget(self.__sb_upper, 1,1,1,2)
         # Activation buttons
         self.__btn_set_pwm = QPushButton("Set")
-        g.addWidget(self.__btn_set_pwm, 2,0)
+        g.addWidget(self.__btn_set_pwm, 2,1)
         self.__btn_set_pwm.clicked.connect(self.__do_set_pwm)
         self.__btn_tst_pwm = QPushButton("Test")
-        g.addWidget(self.__btn_tst_pwm, 2,1)
+        g.addWidget(self.__btn_tst_pwm, 2,2)
         self.__btn_tst_pwm.clicked.connect(self.__do_test_range)
         
     #-------------------------------------------------------------
@@ -165,55 +165,47 @@ class Config(QMainWindow):
         self.__cb_band = QComboBox()
         self.__cb_band.addItems(g_band_values)
         g.addWidget(band_lbl, 0,0)
-        g.addWidget(self.__cb_band, 0,1)
+        g.addWidget(self.__cb_band, 0,1,1,2)
         
         # Variable capacitor
-        #variable_cap_lbl = QLabel("Variable degrees")
-        #g.addWidget(variable_cap_lbl, 1,0)
-        #self.__sb_cap_degrees = QSpinBox()
-        #self.__sb_cap_degrees.setRange(0, 180)
-        #self.__sb_cap_degrees.setValue(90)
-        #g.addWidget(self.__sb_cap_degrees, 1,1)
-        
-        # Variable capacitor
-        cap_lbl = QLabel("Variable Cap")
+        cap_lbl = QLabel("Var Cap")
         g.addWidget(cap_lbl, 1,0)
         self.__sld_cap = QSlider(QtCore.Qt.Horizontal)
         self.__sld_cap.setMinimum(0)
         self.__sld_cap.setMaximum(180)
         self.__sld_cap.setValue(0)
-        g.addWidget(self.__sld_cap, 1,1)
+        g.addWidget(self.__sld_cap, 1,1,1,2)
         self.__sld_cap.valueChanged.connect(self.__cap_changed)
         self.__sld_cap_val = QLabel("0")
         self.__sld_cap_val.setMinimumWidth(30)
         self.__sld_cap_val.setStyleSheet("color: green; font: 14px")
-        g.addWidget(self.__sld_cap_val, 1,2)
+        g.addWidget(self.__sld_cap_val, 1,3)
         self.__sld_cap_actual = QLabel("0")
         self.__sld_cap_actual.setMinimumWidth(30)
         self.__sld_cap_actual.setStyleSheet("color: red; font: 14px")
-        g.addWidget(self.__sld_cap_actual, 1,3)
+        g.addWidget(self.__sld_cap_actual, 1,4)
         
         # Extra capacitance
-        variable_cap_lbl = QLabel("Extra capacitance")
+        variable_cap_lbl = QLabel("Plus Cap")
         g.addWidget(variable_cap_lbl, 2,0)
         self.__cb_cap_extra = QComboBox()
         self.__cb_cap_extra.addItems(g_cap_extra_values)
-        g.addWidget(self.__cb_cap_extra, 2,1)
+        g.addWidget(self.__cb_cap_extra, 2,1,1,2)
         
         
         # Inductor tap
-        variable_ind_lbl = QLabel("Inductor tap")
+        variable_ind_lbl = QLabel("Ind tap")
         g.addWidget(variable_ind_lbl, 3,0)
         self.__cb_ind_tap = QComboBox()
         self.__cb_ind_tap.addItems(g_ind_values)
-        g.addWidget(self.__cb_ind_tap, 3,1)
+        g.addWidget(self.__cb_ind_tap, 3,1,1,2)
     
         self.__btn_tst_band = QPushButton("Test")
-        g.addWidget(self.__btn_tst_band, 4,0)
+        g.addWidget(self.__btn_tst_band, 4,1)
         self.__btn_tst_band.clicked.connect(self.__do_band_test)
         
         self.__btn_save = QPushButton("Save")
-        g.addWidget(self.__btn_save, 4,1)
+        g.addWidget(self.__btn_save, 4,2)
         self.__btn_save.clicked.connect(self.__do_save)
     
     
