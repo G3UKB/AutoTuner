@@ -95,11 +95,11 @@ class RemoteTuner:
             cmd = pickle.loads(data)
             # Command is an array of type followed by one or more parameters
             type = cmd[0]
-            if type == CMD_SERVO_INIT:
-                if len(cmd) != 3:
+            if type == CMD_SERVO_SET_PWM:
+                if len(cmd) != 2:
                     print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
                     return
-                self.__servo.set_pwm_range(cmd[1], cmd[2]))
+                self.__servo.set_pwm_range(cmd[1][0], cmd[1][1]))
             if type == CMD_SERVO_TEST:
                 if len(cmd) != 1:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))

@@ -28,9 +28,11 @@ from imports import *
 # Configuration window
 class Config(QMainWindow):
     
-    def __init__(self):
+    def __init__(self, callback):
         
         super(Config, self).__init__()
+        
+        self.__callback = callback
         
         # Set the back colour
         palette = QtGui.QPalette()
@@ -212,10 +214,10 @@ class Config(QMainWindow):
     #========================================================================================
     # Event procs
     def __do_set_pwm(self):
-        print ("__do_set_pwm")
+        self.__callback(CMD_SERVO_SET_PWM, (self.__sb_lower.value(), self.__sb_upper.value()))
     
     def __do_test_range(self):
-        print ("__do_test_range")
+        self.__callback(CMD_SERVO_TEST, ())
         
     def __cap_changed(self):
         print ("__do_test_range")    

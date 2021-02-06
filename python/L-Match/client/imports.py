@@ -39,6 +39,8 @@ from PyQt5.QtWidgets import QInputDialog, QFrame, QGroupBox, QMessageBox, QLabel
 
 # Application imports
 from client_defs import *
+sys.path.append('../server')
+from server_defs import *
 import model
 import persist
 import config
