@@ -21,10 +21,6 @@
 #     bob@bobcowdery.plus.com
 #
 
-# Net interface
-RQST_IP = ''
-RQST_PORT = 10002
-
 # Command types
 CMD_SERVO_SET_PWM = 'CMD_SERVO_SET_PWM'
 CMD_SERVO_TEST = 'CMD_SERVO_TEST'

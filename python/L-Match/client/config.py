@@ -71,18 +71,18 @@ class Config(QMainWindow):
         
         self.__span_grid = QGridLayout()
         w2 = QGroupBox('Servo Config')
-        ww21.setLayout(self.__span_grid)
-        self.__grid.addWidget(w2, 0,0)
+        w2.setLayout(self.__span_grid)
+        self.__grid.addWidget(w2, 1,0)
         
         self.__map_grid = QGridLayout()
         w3 = QGroupBox('GPIO Config')
         w3.setLayout(self.__map_grid)
-        self.__grid.addWidget(w3, 1,0)
+        self.__grid.addWidget(w3, 2,0)
         
         self.__op_grid = QGridLayout()
         w4 = QGroupBox('Tuner Config')
         w4.setLayout(self.__op_grid)
-        self.__grid.addWidget(w4, 2,0)
+        self.__grid.addWidget(w4, 3,0)
         
         # Populate grids
         self.__rpi(self.__rpi_grid)
@@ -92,8 +92,8 @@ class Config(QMainWindow):
         
         # Close
         self.__btn_close = QPushButton("Close")
-        self.__grid.addWidget(self.__btn_close, 3,0)
-        self.__btn_tst_band.clicked.connect(self.__do_close)
+        self.__grid.addWidget(self.__btn_close, 4,0)
+        self.__btn_close.clicked.connect(self.__do_close)
     
     #-------------------------------------------------------------
     # Set the RPi network config
@@ -115,7 +115,7 @@ class Config(QMainWindow):
         self.__porttxt = QLineEdit()
         self.__porttxt.setInputMask('00000;_')
         self.__porttxt.setMaximumWidth(100)
-        grid.addWidget(self.__porttxt, 1, 1)
+        g.addWidget(self.__porttxt, 1, 1)
         self.__porttxt.editingFinished.connect(self.__port_changed)
         
     #-------------------------------------------------------------
@@ -255,8 +255,8 @@ class Config(QMainWindow):
     def __ip_changed(self):
         model.auto_tune_model[CONFIG][RPi][IP] = self.__iptxt.text()
         
-    def __port_changed(elf):
-        model.auto_tune_model[CONFIG][RPi][PORT] = self.__porttxt.text()
+    def __port_changed(self):
+        model.auto_tune_model[CONFIG][RPi][RQST_PORT] = int(self.__porttxt.text())
         
     def __do_set_pwm(self):
         self.__callback(CMD_SERVO_SET_PWM, (self.__sb_lower.value(), self.__sb_upper.value()))

@@ -28,6 +28,11 @@ import pickle
 
 from server_defs import *
 
+# Net interface
+RQST_IP = ''
+RQST_PORT = 10002
+EVNT_PORT = 10003
+
 """
 Interface to the Remote Auto-Tuner client application:
 """
@@ -70,7 +75,7 @@ class NetIF(threading.Thread):
         if self.__address != None:
             try:
                 pickledData = pickle.dumps(data)
-                self.__sock.sendto(pickledData, self.__address)
+                self.__sock.sendto(pickledData, (self.__address[0], EVNT_PORT))
                 
             except Exception as e:
                 print('Exception on socket send %s' % (str(e)))

@@ -43,7 +43,7 @@ class TunerClient(QMainWindow):
             
         # Create a datagram socket
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.__sock.bind(('', 10002))
+        self.__sock.bind(('', model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
         self.__sock.settimeout(3)
 
         # The application
@@ -243,7 +243,7 @@ class TunerClient(QMainWindow):
     #======================================================= 
     # Net send
     def __net_send(self, data):
-        self.__sock.sendto(pickle.dumps(data), (model.auto_tune_model[CONFIG][RPi][IP], model.auto_tune_model[CONFIG][RPi][PORT]))
+        self.__sock.sendto(pickle.dumps(data), (model.auto_tune_model[CONFIG][RPi][IP], model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
     
 #======================================================================================================================
 # Monitor thread
