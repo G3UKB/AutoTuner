@@ -33,13 +33,13 @@ class TunerClient(QMainWindow):
         super(TunerClient, self).__init__()
         
         # Manage configuration
-        config = persist.getSavedCfg(CONFIG_PATH)
-        if config == None:
+        app_config = persist.getSavedCfg(CONFIG_PATH)
+        if app_config == None:
             print ('Configuration not found, using defaults')
             persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
         else:
             # Use persisted version
-            model.auto_tune_model = config   
+            model.auto_tune_model = app_config   
         # Create a datagram socket
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__sock.bind(('', model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
@@ -63,6 +63,9 @@ class TunerClient(QMainWindow):
         # Start monitor thread
         self.__monitor = Monitor(self.__sock, self.__monitor_callback)
         self.__monitor.start()
+        
+        # Create the configuration window
+        self.__config_win = config.Config(self.__config_callback)
         
         # Start idle processing
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
@@ -181,6 +184,9 @@ class TunerClient(QMainWindow):
         self.__monitor.terminate()
         self.__monitor.join()
         
+        # Close config win
+        self.__config_win.close()
+        
         # Close socket
         self.__sock.close()
     
@@ -198,8 +204,9 @@ class TunerClient(QMainWindow):
 
     def __do_config(self):
         
-        # Create the configuration window
-        self.__config_win = config.Config(self.__config_callback)
+        # Show the configuration window
+        self.__config_win.show()
+        self.__config_win.repaint()
         
     def __do_exit(self):
         

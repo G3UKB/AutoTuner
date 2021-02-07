@@ -41,8 +41,6 @@ class Config(QMainWindow):
         
         # Initialise the GUI
         self.initUI()
-        self.show()
-        self.repaint()
     
     #========================================================================================    
     # UI initialisation and window event handlers
@@ -287,7 +285,7 @@ class Config(QMainWindow):
         print ("__do_save")
         
     def __do_close(self):
-        self.close()
+        self.hide()
         
 #======================================================================================================================
 # Test code

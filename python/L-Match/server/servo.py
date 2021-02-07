@@ -85,6 +85,7 @@ class Servo(threading.Thread):
         # Required range is set during init
         self.__servo_min = 500
         self.__servo_max = 1000
+        self.__last_angle = 0
         
         # Best for servos
         if not servo_test_mode:
@@ -115,9 +116,9 @@ class Servo(threading.Thread):
             self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
     
     def test_range(self):
-        self.__q.append(CMD_SERVO_TEST, 0)
+        self.__q.append((CMD_SERVO_MOVE, 0))
         sleep(2.0)
-        self.__q.append(CMD_SERVO_TEST, 180)
+        self.__q.append((CMD_SERVO_MOVE, 180))
         
     def post(self, cmd):
         
