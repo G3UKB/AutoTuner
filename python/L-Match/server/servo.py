@@ -110,7 +110,7 @@ class Servo(threading.Thread):
         self.__servo_max = high
         self.__servo = None
         if servo_test_mode:
-            print ("Setting nin,max to: %d, %d" % (low,high))
+            print ("Setting min,max to: %d, %d" % (low,high))
         else:
             self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
     
@@ -134,6 +134,7 @@ class Servo(threading.Thread):
                self.__home()
             if angle != None:
                 self.__move(angle)
+            sleep(0.1)
     
     def __rationalise(self):
         """

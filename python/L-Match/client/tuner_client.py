@@ -39,8 +39,7 @@ class TunerClient(QMainWindow):
             persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
         else:
             # Use persisted version
-            model.auto_tune_model = config
-            
+            model.auto_tune_model = config   
         # Create a datagram socket
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__sock.bind(('', model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))

@@ -100,12 +100,12 @@ class RemoteTuner:
                     print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
                     return
                 self.__servo.set_pwm_range(cmd[1][0], cmd[1][1])
-            if type == CMD_SERVO_TEST:
+            elif type == CMD_SERVO_TEST:
                 if len(cmd[1]) != 0:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
                     return
                 self.__servo.test_range()
-            if type == CMD_SERVO_HOME:
+            elif type == CMD_SERVO_HOME:
                 if len(cmd[1]) != 0:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
                     return
