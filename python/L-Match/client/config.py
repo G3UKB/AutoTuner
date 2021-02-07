@@ -84,6 +84,11 @@ class Config(QMainWindow):
         self.__pop_map(self.__map_grid)
         self.__pop_op(self.__op_grid)
         
+        # Close
+        self.__btn_close = QPushButton("Close")
+        self.__grid.addWidget(self.__btn_close, 3,0)
+        self.__btn_tst_band.clicked.connect(self.__do_close)
+        
     #-------------------------------------------------------------
     # Set the servo limits to achieve 0-180 degrees rotation
     def __pop_span(self, g):
@@ -169,52 +174,58 @@ class Config(QMainWindow):
         g.addWidget(band_lbl, 0,0)
         g.addWidget(self.__cb_band, 0,1,1,2)
         
+        # Slider labels
+        setpoint_tag = QLabel("Set")
+        g.addWidget(setpoint_tag, 1,3)
+        actual_tag = QLabel("Act")
+        g.addWidget(actual_tag, 1,4)
+        
         # Variable capacitor
         cap_lbl = QLabel("Var Cap")
-        g.addWidget(cap_lbl, 1,0)
+        g.addWidget(cap_lbl, 2,0)
         self.__sld_cap = QSlider(QtCore.Qt.Horizontal)
         self.__sld_cap.setMinimum(0)
         self.__sld_cap.setMaximum(180)
         self.__sld_cap.setValue(0)
-        g.addWidget(self.__sld_cap, 1,1,1,2)
+        g.addWidget(self.__sld_cap, 2,1,1,2)
         self.__sld_cap.valueChanged.connect(self.__cap_changed)
         self.__sld_cap_val = QLabel("0")
         self.__sld_cap_val.setMinimumWidth(30)
         self.__sld_cap_val.setStyleSheet("color: green; font: 14px")
-        g.addWidget(self.__sld_cap_val, 1,3)
+        g.addWidget(self.__sld_cap_val, 2,3)
         self.__sld_cap_actual = QLabel("0")
         self.__sld_cap_actual.setMinimumWidth(30)
         self.__sld_cap_actual.setStyleSheet("color: red; font: 14px")
-        g.addWidget(self.__sld_cap_actual, 1,4)
+        g.addWidget(self.__sld_cap_actual, 2,4)
         
         # Extra capacitance
         variable_cap_lbl = QLabel("Plus Cap")
-        g.addWidget(variable_cap_lbl, 2,0)
+        g.addWidget(variable_cap_lbl, 3,0)
         self.__cb_cap_extra = QComboBox()
         self.__cb_cap_extra.addItems(g_cap_extra_values)
-        g.addWidget(self.__cb_cap_extra, 2,1,1,2)
-        
+        g.addWidget(self.__cb_cap_extra, 3,1,1,2)
         
         # Inductor tap
         variable_ind_lbl = QLabel("Ind tap")
-        g.addWidget(variable_ind_lbl, 3,0)
+        g.addWidget(variable_ind_lbl, 4,0)
         self.__cb_ind_tap = QComboBox()
         self.__cb_ind_tap.addItems(g_ind_values)
-        g.addWidget(self.__cb_ind_tap, 3,1,1,2)
+        g.addWidget(self.__cb_ind_tap, 4,1,1,2)
     
         self.__btn_tst_band = QPushButton("Test")
-        g.addWidget(self.__btn_tst_band, 4,1)
+        g.addWidget(self.__btn_tst_band, 5,1)
         self.__btn_tst_band.clicked.connect(self.__do_band_test)
         
         self.__btn_save = QPushButton("Save")
-        g.addWidget(self.__btn_save, 4,2)
+        g.addWidget(self.__btn_save, 5,2)
         self.__btn_save.clicked.connect(self.__do_save)
-    
     
     #========================================================================================
     # Event procs
     def __do_set_pwm(self):
         self.__callback(CMD_SERVO_SET_PWM, (self.__sb_lower.value(), self.__sb_upper.value()))
+        model.auto_tune_model[CONFIG][LOW_PWM] = self.__sb_lower.value()
+        model.auto_tune_model[CONFIG][HIGH_PWM] = self.__sb_upper.value()
     
     def __do_test_range(self):
         self.__callback(CMD_SERVO_TEST, ())
@@ -236,6 +247,9 @@ class Config(QMainWindow):
     
     def __do_save(self):
         print ("__do_save")
+        
+    def __do_close(self):
+        self.close()
         
 #======================================================================================================================
 # Test code
