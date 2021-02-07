@@ -186,8 +186,8 @@ class TunerClient(QMainWindow):
         self.__sock.close()
     
     def __do_home(self):
-        
-        self.__sock.sendto(pickle.dumps([CMD_HOME, []]), (SERVER_IP, CMD_PORT))
+
+        self.__net_send([CMD_HOME, []])
         self.__tx.setValue(0)
         self.__tx_val.setText('0')
         self.__ant.setValue(0)
@@ -195,7 +195,7 @@ class TunerClient(QMainWindow):
         
     def __do_reset(self):
         
-        self.__sock.sendto(pickle.dumps([CMD_RESET, []]), (SERVER_IP, CMD_PORT))
+        self.__net_send([CMD_RESET, []])
 
     def __do_config(self):
         
@@ -213,7 +213,7 @@ class TunerClient(QMainWindow):
     
         # Value ranges 0 - 180
         val = self.__cap.value()
-        self.__sock.sendto(pickle.dumps([CMD_MOVE, [0, val]]), (SERVER_IP, CMD_PORT))
+        self.__net_send([CMD_MOVE, [0, val]])
         self.__cap_val.setText(str(val))
     
     #=======================================================
@@ -238,8 +238,13 @@ class TunerClient(QMainWindow):
     # Callbacks
     def __config_callback(self, cmd, params):
         
-        self.__sock.sendto(pickle.dumps([cmd, params]), (SERVER_IP, CMD_PORT))
+        self.__net_send([cmd, params])
 
+    #======================================================= 
+    # Net send
+    def __net_send(self, data):
+        self.__sock.sendto(pickle.dumps(data), (model.auto_tune_model[CONFIG][RPi][IP], model.auto_tune_model[CONFIG][RPi][PORT]))
+    
 #======================================================================================================================
 # Monitor thread
 class Monitor(threading.Thread):
