@@ -63,23 +63,29 @@ class Config(QMainWindow):
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
         
-        # Within this we need 3 sub-layouts
-        self.__span_grid = QGridLayout()
-        w1 = QGroupBox('Servo Config')
-        w1.setLayout(self.__span_grid)
+        # Within this we need 4 sub-layouts
+        self.__rpi_grid = QGridLayout()
+        w1 = QGroupBox('RPi Config')
+        w1.setLayout(self.__rpi_grid)
         self.__grid.addWidget(w1, 0,0)
         
+        self.__span_grid = QGridLayout()
+        w2 = QGroupBox('Servo Config')
+        ww21.setLayout(self.__span_grid)
+        self.__grid.addWidget(w2, 0,0)
+        
         self.__map_grid = QGridLayout()
-        w2 = QGroupBox('GPIO Config')
-        w2.setLayout(self.__map_grid)
-        self.__grid.addWidget(w2, 1,0)
+        w3 = QGroupBox('GPIO Config')
+        w3.setLayout(self.__map_grid)
+        self.__grid.addWidget(w3, 1,0)
         
         self.__op_grid = QGridLayout()
-        w3 = QGroupBox('Tuner Config')
-        w3.setLayout(self.__op_grid)
-        self.__grid.addWidget(w3, 2,0)
+        w4 = QGroupBox('Tuner Config')
+        w4.setLayout(self.__op_grid)
+        self.__grid.addWidget(w4, 2,0)
         
         # Populate grids
+        self.__rpi(self.__rpi_grid)
         self.__pop_span(self.__span_grid)
         self.__pop_map(self.__map_grid)
         self.__pop_op(self.__op_grid)
@@ -88,6 +94,29 @@ class Config(QMainWindow):
         self.__btn_close = QPushButton("Close")
         self.__grid.addWidget(self.__btn_close, 3,0)
         self.__btn_tst_band.clicked.connect(self.__do_close)
+    
+    #-------------------------------------------------------------
+    # Set the RPi network config
+    def __rpi(self, g):
+        
+        # We need the Ip and port
+        
+        ip_lbl = QLabel("RPi IP Address")
+        g.addWidget(ip_lbl, 0, 0)
+        port_lbl = QLabel("Listen on port")
+        g.addWidget(port_lbl, 1, 0)
+        
+        self.__iptxt = QLineEdit()
+        self.__iptxt.setInputMask('000.000.000.000;_')
+        self.__iptxt.setMaximumWidth(100)
+        g.addWidget(self.__iptxt, 0, 1)
+        self.__iptxt.editingFinished.connect(self.__ip_changed)
+        
+        self.__porttxt = QLineEdit()
+        self.__porttxt.setInputMask('00000;_')
+        self.__porttxt.setMaximumWidth(100)
+        grid.addWidget(self.__porttxt, 1, 1)
+        self.__porttxt.editingFinished.connect(self.__port_changed)
         
     #-------------------------------------------------------------
     # Set the servo limits to achieve 0-180 degrees rotation
@@ -222,6 +251,13 @@ class Config(QMainWindow):
     
     #========================================================================================
     # Event procs
+    
+    def __ip_changed(self):
+        model.auto_tune_model[CONFIG][RPi][IP] = self.__iptxt.text()
+        
+    def __port_changed(elf):
+        model.auto_tune_model[CONFIG][RPi][PORT] = self.__porttxt.text()
+        
     def __do_set_pwm(self):
         self.__callback(CMD_SERVO_SET_PWM, (self.__sb_lower.value(), self.__sb_upper.value()))
         model.auto_tune_model[CONFIG][LOW_PWM] = self.__sb_lower.value()

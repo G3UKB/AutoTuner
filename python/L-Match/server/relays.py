@@ -26,12 +26,12 @@ import os, sys
 from time import sleep
 
 # Library imports
-testing = False
+gpio_test_mode = False
 try:
     import RPi.GPIO as GPIO
 except ModuleNotFoundError:
-    print("Error importing RPi.GPIO! Using test mode.")
-    testing = True
+    print("GPIO - not running on RPi, using test mode!")
+    gpio_test_mode = True
 
 # Application imports
 
@@ -39,7 +39,7 @@ class Relays:
 
     #----------------------------------------------------
     def init(self):
-        if not testing:
+        if not gpio_test_mode:
             # Initialise relays
             GPIO.setmode(GPIO.BCM)
             self.__pinArray = []
@@ -47,7 +47,7 @@ class Relays:
     #----------------------------------------------------
     def init_pins(self, pin_array):
         self.__pinArray = pin_array
-        if not testing:
+        if not gpio_test_mode:
             # Initialise pins
             for pin in pin_array:
                 GPIO.setup(pin, GPIO.OUT)
@@ -55,21 +55,17 @@ class Relays:
     #----------------------------------------------------
     def set_pins(self, pin_array):
         # Energise all relys in the array
-        if not testing:
+        if not gpio_test_mode:
             self.__rlys_on(self.__pinArray, pin_array)
     
     #----------------------------------------------------
     def close(self):
         # Cleanup before exit
-        GPIO.cleanup()
+        if not gpio_test_mode:
+            GPIO.cleanup()
     
     # =================================================================================
     # PRIVATE
-    def __init_pins(self, all_pins):
-        for pin in all_pins:
-            GPIO.setup(pin, GPIO.OUT)
-        self.__all_off(all_pins)
-    
     def __rlys_on(self, all_pins, energise_pins):
         self.__all_off(all_pins)
         for pin in energise_pins:

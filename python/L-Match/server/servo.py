@@ -43,10 +43,15 @@ from time import sleep
 from server_defs import *
 
 # Import the Adafruit libs
-from board import SCL, SDA
-import busio
-from adafruit_pca9685 import PCA9685
-from adafruit_motor import servo
+servo_test_mode = False
+try:
+    from board import SCL, SDA
+    import busio
+    from adafruit_pca9685 import PCA9685
+    from adafruit_motor import servo
+except ModuleNotFoundError:
+    print("Servo - not running on RPi, using test mode!")
+    servo_test_mode = True
 
 """
 Device class implements low level servo interface
@@ -67,8 +72,9 @@ class Servo(threading.Thread):
         self.__callback = callback
         
         # Initialise the library
-        i2c_bus = busio.I2C(SCL, SDA)
-        self.__dev = PCA9685(i2c_bus)
+        if not servo_test_mode:
+            i2c_bus = busio.I2C(SCL, SDA)
+            self.__dev = PCA9685(i2c_bus)
         
         # Flags
         self.__terminate = False
@@ -81,14 +87,15 @@ class Servo(threading.Thread):
         self.__servo_max = 1000
         
         # Best for servos
-        self.__dev.frequency = 60
-        self.__dev.channels[0].duty_cycle = 0x7FFF
-        self.__dev.channels[1].duty_cycle = 0x7FFF
+        if not servo_test_mode:
+            self.__dev.frequency = 60
+            self.__dev.channels[0].duty_cycle = 0x7FFF
+            self.__dev.channels[1].duty_cycle = 0x7FFF
         
         # Create the servo instance.
-        #self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
         # Create with default min and max pulse
-        self.__servo = servo.Servo(self.__dev.channels[0])
+        if not servo_test_mode:
+            self.__servo = servo.Servo(self.__dev.channels[0])
     
     #------------------------------------------------------------------
     # PUBLIC
@@ -102,7 +109,10 @@ class Servo(threading.Thread):
         self.__servo_min = low
         self.__servo_max = high
         self.__servo = None
-        self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
+        if servo_test_mode:
+            print ("Setting nin,max to: %d, %d" % (low,high))
+        else:
+            self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
     
     def test_range(self):
         self.__q.append(CMD_SERVO_TEST, 0)
@@ -153,8 +163,11 @@ class Servo(threading.Thread):
         """
         
         # Send home
-        self.__servo.angle = 0
-        self.__last_angle = 0
+        if servo_test_mode:
+            print("Servo home")
+        else:
+            self.__servo.angle = 0
+            self.__last_angle = 0
         self.__callback(0)
         
     def __move(self, angle):
@@ -171,7 +184,8 @@ class Servo(threading.Thread):
         else:
             step = -1
         for next_angle in range(self.__last_angle, angle, step):
-            self.__servo.angle = next_angle
+            if not servo_test_mode:  
+                self.__servo.angle = next_angle
             self.__last_angle = next_angle
             self.__callback(next_angle)
             sleep(0.02)

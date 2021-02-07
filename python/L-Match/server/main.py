@@ -47,10 +47,10 @@ class RemoteTuner:
         
         # Create servo
         self.__servo = servo.Servo(self.__servoCallback)
-        self.__dev.start()
+        self.__servo.start()
         
         # Create relays
-        self.__relays = relay.Relay()
+        self.__relays = relays.Relays()
         
     #------------------------------------------------------------------    
     def mainLoop(self):
@@ -99,7 +99,7 @@ class RemoteTuner:
                 if len(cmd[1]) != 2:
                     print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
                     return
-                self.__servo.set_pwm_range(cmd[1][0], cmd[1][1]))
+                self.__servo.set_pwm_range(cmd[1][0], cmd[1][1])
             if type == CMD_SERVO_TEST:
                 if len(cmd[1]) != 0:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
