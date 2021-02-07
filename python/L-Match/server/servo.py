@@ -116,9 +116,7 @@ class Servo(threading.Thread):
             self.__servo = servo.Servo(self.__dev.channels[0],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
     
     def test_range(self):
-        self.__q.append((CMD_SERVO_MOVE, 0))
-        sleep(2.0)
-        self.__q.append((CMD_SERVO_MOVE, 180))
+        self.__q.append((CMD_SERVO_TEST, ()))
         
     def post(self, cmd):
         
@@ -130,11 +128,13 @@ class Servo(threading.Thread):
     def run(self):
         
         while not self.__terminate:
-            home, angle = self.__rationalise()
+            home, angle, test = self.__rationalise()
             if home != None:
                self.__home()
             if angle != None:
                 self.__move(angle)
+            if test != None:
+                self.__test()
             sleep(0.1)
     
     def __rationalise(self):
@@ -147,6 +147,7 @@ class Servo(threading.Thread):
         """
         home = None
         angle = None
+        test = None
         
         while len(self.__q) > 0:
             cmd, params = self.__q.popleft()
@@ -154,7 +155,9 @@ class Servo(threading.Thread):
                 home = params
             elif cmd == CMD_SERVO_MOVE:
                 angle = params
-        return home, angle
+            elif cmd == CMD_SERVO_TEST:
+                test = params
+        return home, angle, test
                
     def __home(self):
         """
@@ -195,3 +198,7 @@ class Servo(threading.Thread):
         self.__callback(angle)
 
     
+    def __test(self):
+        self.__move(0)
+        sleep(2)
+        self.__move(180)

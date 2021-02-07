@@ -33,6 +33,7 @@ class Config(QMainWindow):
         super(Config, self).__init__()
         
         self.__callback = callback
+        self.__progress = 0
         
         # Set the back colour
         palette = QtGui.QPalette()
@@ -42,6 +43,9 @@ class Config(QMainWindow):
         # Initialise the GUI
         self.initUI()
     
+        # Start idle processing
+        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        
     #========================================================================================    
     # UI initialisation and window event handlers
     def initUI(self):
@@ -251,7 +255,19 @@ class Config(QMainWindow):
     
     #========================================================================================
     # Event procs
+    def progress(self, progress):
+        self.__progress = progress
+        
+    #========================================================================================
+    # Event procs
     
+    #======================================================= 
+    def __idleProcessing   (self):
+        # Update UI with actual progress
+        self.__sld_cap_actual.setText(str(self.__progress))
+        # Set timer
+        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        
     def __ip_changed(self):
         model.auto_tune_model[CONFIG][RPi][IP] = self.__iptxt.text()
         

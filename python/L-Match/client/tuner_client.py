@@ -231,6 +231,7 @@ class TunerClient(QMainWindow):
     def __monitor_callback(self, data):
         
         self.__progress = data
+        self.__config_win.progress(data)
         
     #======================================================= 
     def __idleProcessing   (self):
