@@ -96,37 +96,37 @@ class RemoteTuner:
             # Command is an array of type followed by one or more parameters
             type = cmd[0]
             if type == CMD_SERVO_SET_PWM:
-                if len(cmd) != 2:
+                if len(cmd[1]) != 2:
                     print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
                     return
                 self.__servo.set_pwm_range(cmd[1][0], cmd[1][1]))
             if type == CMD_SERVO_TEST:
-                if len(cmd) != 1:
+                if len(cmd[1]) != 0:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
                     return
                 self.__servo.test_range()
             if type == CMD_SERVO_HOME:
-                if len(cmd) != 1:
+                if len(cmd[1]) != 0:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
                     return
                 self.__servo.post((CMD_SERVO_HOME, ()))
             elif type == CMD_SERVO_MOVE:
-                if len(cmd) != 2:
-                    print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
+                if len(cmd[1]) != 1:
+                    print('Command %s requires 1 parameters, received %d' % (type, len(request)-1))
                     return
-                self.__servo.post((CMD_SERVO_MOVE, (cmd[1])))
+                self.__servo.post((CMD_SERVO_MOVE, (cmd[1][0])))
             elif type == CMD_RELAYS_INIT:
-                if len(cmd) != 2:
-                    print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
+                if len(cmd[1]) != 1:
+                    print('Command %s requires 1 parameter, received %d' % (type, len(request)-1))
                     return
-                self.__relays.init_pins(cmd[1])
+                self.__relays.init_pins(cmd[1][0])
             elif type == CMD_RELAYS_SET:
-                if len(cmd) != 2:
-                    print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
+                if len(cmd[1]) != 1:
+                    print('Command %s requires 1 parameter, received %d' % (type, len(request)-1))
                     return
-                self.__relays.set_pins(cmd[1])
+                self.__relays.set_pins(cmd[1][0])
             elif type == CMD_RESET:
-                if len(cmd) != 1:
+                if len(cmd[1]) != 0:
                     print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
                     return
                 # Restart the net interface

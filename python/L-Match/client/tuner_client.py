@@ -187,7 +187,7 @@ class TunerClient(QMainWindow):
     
     def __do_home(self):
         
-        self.__sock.sendto(pickle.dumps([CMD_HOME]), (SERVER_IP, CMD_PORT))
+        self.__sock.sendto(pickle.dumps([CMD_HOME, []]), (SERVER_IP, CMD_PORT))
         self.__tx.setValue(0)
         self.__tx_val.setText('0')
         self.__ant.setValue(0)
@@ -195,7 +195,7 @@ class TunerClient(QMainWindow):
         
     def __do_reset(self):
         
-        self.__sock.sendto(pickle.dumps([CMD_RESET]), (SERVER_IP, CMD_PORT))
+        self.__sock.sendto(pickle.dumps([CMD_RESET, []]), (SERVER_IP, CMD_PORT))
 
     def __do_config(self):
         
@@ -213,7 +213,7 @@ class TunerClient(QMainWindow):
     
         # Value ranges 0 - 180
         val = self.__cap.value()
-        self.__sock.sendto(pickle.dumps([CMD_MOVE, 0, val]), (SERVER_IP, CMD_PORT))
+        self.__sock.sendto(pickle.dumps([CMD_MOVE, [0, val]]), (SERVER_IP, CMD_PORT))
         self.__cap_val.setText(str(val))
     
     #=======================================================
