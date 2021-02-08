@@ -94,40 +94,52 @@ class RemoteTuner:
         try:
             cmd = pickle.loads(data)
             # Command is an array of type followed by one or more parameters
-            type = cmd[0]
-            if type == CMD_SERVO_SET_PWM:
+            rqst = cmd[0]
+            if rqst == CMD_SERVO_SET_PWM:
                 if len(cmd[1]) != 2:
-                    print('Command %s requires 2 parameters, received %d' % (type, len(request)-1))
+                    print('Command %s requires 2 parameters, received %d' % (rqst, len(cmd[1])))
                     return
                 self.__servo.set_pwm_range(cmd[1][0], cmd[1][1])
-            elif type == CMD_SERVO_TEST:
+                
+            elif rqst == CMD_SERVO_TEST:
                 if len(cmd[1]) != 0:
-                    print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
+                    print('Command %s requires 0 parameters, received %d' % (rqst, len(cmd[1])))
                     return
                 self.__servo.test_range()
-            elif type == CMD_SERVO_HOME:
+                
+            elif rqst == CMD_SERVO_HOME:
                 if len(cmd[1]) != 0:
-                    print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
+                    print('Command %s requires 0 parameters, received %d' % (rqst, len(cmd[1])))
                     return
                 self.__servo.post((CMD_SERVO_HOME, ()))
-            elif type == CMD_SERVO_MOVE:
+                
+            elif rqst == CMD_SERVO_MOVE:
                 if len(cmd[1]) != 1:
-                    print('Command %s requires 1 parameters, received %d' % (type, len(request)-1))
+                    print('Command %s requires 1 parameters, received %d' % (rqst, len(cmd[1])))
                     return
                 self.__servo.post((CMD_SERVO_MOVE, (cmd[1][0])))
-            elif type == CMD_RELAYS_INIT:
-                if len(cmd[1]) != 1:
-                    print('Command %s requires 1 parameter, received %d' % (type, len(request)-1))
+                
+            elif rqst == CMD_RELAYS_INIT:
+                if len(cmd[1]) == 0:
+                    print('Command %s requires variable parameter list, received %d' % (rqst, len(cmd[1])))
                     return
-                self.__relays.init_pins(cmd[1][0])
-            elif type == CMD_RELAYS_SET:
-                if len(cmd[1]) != 1:
-                    print('Command %s requires 1 parameter, received %d' % (type, len(request)-1))
+                self.__relays.init_pins(cmd[1])
+            
+            elif rqst == CMD_RELAYS_SET:
+                if len(cmd[1]) == 0:
+                    print('Command %s requires variable parameter list, received %d' % (rqst, len(cmd[1])))
                     return
-                self.__relays.set_pins(cmd[1][0])
-            elif type == CMD_RESET:
+                self.__relays.set_pins(cmd[1])
+            
+            elif rqst == CMD_RELAYS_CYCLE:
+                if len(cmd[1]) == 0:
+                    print('Command %s requires variable parameter list, received %d' % (rqst, len(cmd[1])))
+                    return
+                self.__relays.cycle_pins(cmd[1])
+                
+            elif rqst == CMD_RESET:
                 if len(cmd[1]) != 0:
-                    print('Command %s requires 0 parameters, received %d' % (type, len(request)-1))
+                    print('Command %s requires 0 parameters, received %d' % (rqst, len(cmd[1])))
                     return
                 # Restart the net interface
                 self.__netif.terminate()

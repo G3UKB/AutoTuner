@@ -174,7 +174,7 @@ class Config(QMainWindow):
         g.addWidget(self.__btn_cap_test, 0,4)
         self.__cb_cap.currentIndexChanged.connect(self.__cap_changed)
         self.__btn_cap.clicked.connect(self.__do_set_cap)
-        self.__btn_cap.clicked.connect(self.__do_test_extra_cap)
+        self.__btn_cap_test.clicked.connect(self.__do_test_extra_cap)
         self.__cb_cap.setCurrentIndex(0)
         self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0])))
         
@@ -321,10 +321,11 @@ class Config(QMainWindow):
             model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = [pin_1000, int(pin)]
         elif cap == '3000':
             model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = [pin_1000, pin_2000, int(pin)]
+        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
             
     def __do_test_extra_cap(self):
-        pass
-    
+        self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
+                        
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
         self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)])))    
@@ -335,9 +336,10 @@ class Config(QMainWindow):
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
         model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = int(pin)
+        self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
         
     def __do_test_ind(self):
-        pass
+        self.__callback(CMD_RELAYS_CYCLE, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
     
     def __do_set_sep(self):
         "Set pinmap for the inductor separator"

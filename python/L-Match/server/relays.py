@@ -40,24 +40,43 @@ class Relays:
     #----------------------------------------------------
     def init(self):
         if not gpio_test_mode:
-            # Initialise relays
+            # Set mode
             GPIO.setmode(GPIO.BCM)
+            # Will hold current array of all configured pins
             self.__pinArray = []
     
     #----------------------------------------------------
     def init_pins(self, pin_array):
+        # Initialise all pins in the pin array
         self.__pinArray = pin_array
-        if not gpio_test_mode:
+        if gpio_test_mode:
+            print ('Initialise pins %s' % str(pin_array))
+        else:
             # Initialise pins
             for pin in pin_array:
                 GPIO.setup(pin, GPIO.OUT)
 
     #----------------------------------------------------
     def set_pins(self, pin_array):
-        # Energise all relys in the array
-        if not gpio_test_mode:
+        # Energise all relays in the array
+        if gpio_test_mode:
+            print ('Energise pins %s' % str(pin_array))
+        else:
+            self.__all_off(self.__pinArray)
             self.__rlys_on(self.__pinArray, pin_array)
     
+    #----------------------------------------------------
+    def cycle_pins(self, pin_array):
+        # Cycle relays in the map for a test
+        if gpio_test_mode:
+            print ('Cycle pins %s' % str(pin_array))
+        else:
+            self.__all_off(self.__pinArray)
+            for n in range(3):
+                self.__rlys_on(pin_array)
+                sleep(1.0)
+                self.__rlys_off(pin_array)
+                
     #----------------------------------------------------
     def close(self):
         # Cleanup before exit
@@ -66,11 +85,14 @@ class Relays:
     
     # =================================================================================
     # PRIVATE
-    def __rlys_on(self, all_pins, energise_pins):
-        self.__all_off(all_pins)
+    def __rlys_on(self, energise_pins):
         for pin in energise_pins:
             GPIO.output(pin, GPIO.HIGH)
-        
+    
+    def __rlys_off(self, deenergise_pins):
+        for pin in deenergise_pins:
+            GPIO.output(pin, GPIO.LOW)
+            
     def __all_off(self, all_pins):
         for pin in all_pins:
             GPIO.output(pin, GPIO.LOW)
