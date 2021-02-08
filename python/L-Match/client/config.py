@@ -232,9 +232,9 @@ class Config(QMainWindow):
         
         # Slider labels
         setpoint_tag = QLabel("Set")
-        g.addWidget(setpoint_tag, 1,3)
+        g.addWidget(setpoint_tag, 1,4)
         actual_tag = QLabel("Act")
-        g.addWidget(actual_tag, 1,4)
+        g.addWidget(actual_tag, 1,5)
         
         # Variable capacitor
         cap_lbl = QLabel("Var Cap")
@@ -244,15 +244,19 @@ class Config(QMainWindow):
         self.__sld_cap.setMaximum(180)
         self.__sld_cap.setValue(0)
         g.addWidget(self.__sld_cap, 2,1,1,2)
+        
+        self.__cb_cap = QCheckBox('Live')
+        g.addWidget(self.__cb_cap, 2,3)
+        
         self.__sld_cap.valueChanged.connect(self.__cap_var_changed)
         self.__sld_cap_val = QLabel("0")
-        self.__sld_cap_val.setMinimumWidth(30)
+        self.__sld_cap_val.setMinimumWidth(25)
         self.__sld_cap_val.setStyleSheet("color: green; font: 14px")
-        g.addWidget(self.__sld_cap_val, 2,3)
+        g.addWidget(self.__sld_cap_val, 2,4)
         self.__sld_cap_actual = QLabel("0")
-        self.__sld_cap_actual.setMinimumWidth(30)
+        self.__sld_cap_actual.setMinimumWidth(25)
         self.__sld_cap_actual.setStyleSheet("color: red; font: 14px")
-        g.addWidget(self.__sld_cap_actual, 2,4)
+        g.addWidget(self.__sld_cap_actual, 2,5)
         
         # Extra capacitance
         variable_cap_lbl = QLabel("Plus Cap")
@@ -358,7 +362,8 @@ class Config(QMainWindow):
     def __cap_var_changed(self):
         val = self.__sld_cap.value()
         self.__sld_cap_val.setText(str(val))
-        self.__callback(CMD_SERVO_MOVE, (int(val),)) 
+        if self.__cb_cap.isChecked():
+            self.__callback(CMD_SERVO_MOVE, (int(val),)) 
     
     def __band_changed(self):
         band = self.__cb_band.currentText()
