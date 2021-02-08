@@ -164,11 +164,18 @@ class Config(QMainWindow):
         self.__cb_capmap = QComboBox()
         self.__cb_capmap.addItems(g_pins)
         self.__btn_cap = QPushButton("Set")
+        self.__btn_cap.setMaximumWidth(60)
+        self.__btn_cap_test = QPushButton("Test")
+        self.__btn_cap_test.setMaximumWidth(60)
         g.addWidget(cap_lbl, 0,0)
         g.addWidget(self.__cb_cap, 0,1)
         g.addWidget(self.__cb_capmap, 0,2)
         g.addWidget(self.__btn_cap, 0,3)
+        g.addWidget(self.__btn_cap_test, 0,4)
         self.__btn_cap.clicked.connect(self.__do_set_cap)
+        self.__btn_cap.clicked.connect(self.__do_test_extra_cap)
+        self.__cb_cap.setCurrentIndex(0)
+        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0])))
         
         # Inductor
         ind_lbl = QLabel("Ind Pinmap")
@@ -177,21 +184,34 @@ class Config(QMainWindow):
         self.__cb_indmap = QComboBox()
         self.__cb_indmap.addItems(g_pins)
         self.__btn_ind = QPushButton("Set")
+        self.__btn_ind.setMaximumWidth(60)
+        self.__btn_ind_test = QPushButton("Test")
+        self.__btn_ind_test.setMaximumWidth(60)
         g.addWidget(ind_lbl, 1,0)
         g.addWidget(self.__cb_ind, 1,1)
         g.addWidget(self.__cb_indmap, 1,2)
         g.addWidget(self.__btn_ind, 1,3)
+        g.addWidget(self.__btn_ind_test, 1,4)
         self.__btn_ind.clicked.connect(self.__do_set_ind)
+        self.__btn_ind_test.clicked.connect(self.__do_test_ind)
+        self.__cb_ind.setCurrentIndex(0)
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][1])))
         
         # Inductor separator
         sep_lbl = QLabel("Ind Sep")
         self.__cb_indsep = QComboBox()
         self.__cb_indsep.addItems(g_pins)
         self.__btn_sep = QPushButton("Set")
+        self.__btn_sep.setMaximumWidth(60)
+        self.__btn___cb_indsep_test = QPushButton("Test")
+        self.__btn___cb_indsep_test.setMaximumWidth(60)
         g.addWidget(sep_lbl, 2,0)
-        g.addWidget(self.__cb_indsep, 2,1)
+        g.addWidget(self.__cb_indsep, 2,2)
         g.addWidget(self.__btn_sep, 2,3)
+        g.addWidget(self.__btn___cb_indsep_test, 2,4)
         self.__btn_ind.clicked.connect(self.__do_set_sep)
+        self.__btn_ind_test.clicked.connect(self.__do_test_indsep)
+        self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE])))
         
     #-------------------------------------------------------------
     # Set the inductor tap and capacitor value for each band
@@ -245,13 +265,13 @@ class Config(QMainWindow):
         self.__cb_ind_tap.addItems(g_ind_values)
         g.addWidget(self.__cb_ind_tap, 4,1,1,2)
     
-        self.__btn_tst_band = QPushButton("Test")
+        self.__btn_tst_band = QPushButton("Set")
         g.addWidget(self.__btn_tst_band, 5,1)
-        self.__btn_tst_band.clicked.connect(self.__do_band_test)
+        self.__btn_tst_band.clicked.connect(self.__do_band_set)
         
-        self.__btn_save = QPushButton("Save")
+        self.__btn_save = QPushButton("Test")
         g.addWidget(self.__btn_save, 5,2)
-        self.__btn_save.clicked.connect(self.__do_save)
+        self.__btn_save.clicked.connect(self.__do_band_test)
     
     #========================================================================================
     # Event procs
@@ -286,20 +306,47 @@ class Config(QMainWindow):
         print ("__do_test_range")    
     
     def __do_set_cap(self):
-        print ("__do_set_cap")
-    
+        "Set pinmap for this capacitor value"
+        
+        cap = self.__cb_cap.currentText()
+        pin = self.__cb_capmap.currentText()
+        pin_1000 = model.auto_tune_model[CONFIG][CAP_PINMAP][1000]
+        pin_2000 = model.auto_tune_model[CONFIG][CAP_PINMAP][2000]
+        if cap == '1000':
+            model.auto_tune_model[CONFIG][CAP_PINMAP][1000] = [int(pin),]
+        elif cap == '2000':
+            model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = [pin_1000, int(pin)]
+        elif cap == '3000':
+            model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = [pin_1000, pin_2000, int(pin)]
+            
+    def __do_test_extra_cap(self):
+        pass
+        
     def __do_set_ind(self):
-        print ("__do_set_ind")
+        "Set pinmap for this inductor tap"
+        
+        tap = self.__cb_ind.currentText()
+        pin = self.__cb_indmap.currentText()
+        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = int(pin)
+        
+    def __do_test_ind(self):
+        pass
     
     def __do_set_sep(self):
-        print ("__do_set_sep")
+        "Set pinmap for the inductor separator"
+        
+        pin = self.__cb_indsep.currentText()
+        model.auto_tune_model[CONFIG][IND_TOGGLE] = int(pin)
+    
+    def __do_test_indsep(self):
+        pass
+    
+    def __do_band_set(self):
+        print ("__do_band_set")
         
     def __do_band_test(self):
-        print ("__do_band_set")
+        print ("__do_band_test")
     
-    def __do_save(self):
-        print ("__do_save")
-        
     def __do_close(self):
         self.hide()
         
