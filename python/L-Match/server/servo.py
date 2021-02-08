@@ -184,6 +184,8 @@ class Servo(threading.Thread):
 
         """
         
+        if servo_test_mode:
+            print('Servo move to %d' % angle)
         if angle > self.__last_angle:
             step = 1
         else:

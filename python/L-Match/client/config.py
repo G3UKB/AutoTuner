@@ -270,6 +270,11 @@ class Config(QMainWindow):
         g.addWidget(self.__cb_ind_tap, 4,1,1,2)
         self.__cb_ind_tap.setCurrentIndex(0)
         
+        cap, extra, tap = model.auto_tune_model[CONFIG][BAND][160]
+        self.__sld_cap.setValue(cap)
+        self.__cb_cap_extra.setCurrentIndex(self.__cb_cap_extra.findText(str(extra)))
+        self.__cb_ind_tap.setCurrentIndex(self.__cb_ind_tap.findText(str(tap)))
+        
         self.__btn_tst_band = QPushButton("Set")
         g.addWidget(self.__btn_tst_band, 5,1)
         self.__btn_tst_band.clicked.connect(self.__do_band_set)
@@ -374,15 +379,15 @@ class Config(QMainWindow):
         # Do a complete relay init
         self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
         self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
-        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][IND_TOGGLE]))
+        self.__callback(CMD_RELAYS_INIT, [model.auto_tune_model[CONFIG][IND_TOGGLE],])
         # Get parameters
         band = self.__cb_band.currentText()
         cap = self.__sld_cap.value()
         extra = self.__cb_cap_extra.currentText()
         tap = self.__cb_ind_tap.currentText()
         # Set parameters
-        self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)]))
-        self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][IND_PINMAP][tap]))
+        self.__callback(CMD_RELAYS_SET, model.auto_tune_model[CONFIG][CAP_PINMAP][int(extra)])
+        self.__callback(CMD_RELAYS_SET, [model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)],])
         self.__callback(CMD_SERVO_MOVE, (cap,))
     
     def __do_close(self):
