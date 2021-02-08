@@ -228,6 +228,7 @@ class Config(QMainWindow):
         self.__cb_band.addItems(g_band_values)
         g.addWidget(band_lbl, 0,0)
         g.addWidget(self.__cb_band, 0,1,1,2)
+        self.__cb_band.currentIndexChanged.connect(self.__band_changed)
         
         # Slider labels
         setpoint_tag = QLabel("Set")
@@ -243,7 +244,7 @@ class Config(QMainWindow):
         self.__sld_cap.setMaximum(180)
         self.__sld_cap.setValue(0)
         g.addWidget(self.__sld_cap, 2,1,1,2)
-        self.__sld_cap.valueChanged.connect(self.__cap_changed)
+        self.__sld_cap.valueChanged.connect(self.__cap_var_changed)
         self.__sld_cap_val = QLabel("0")
         self.__sld_cap_val.setMinimumWidth(30)
         self.__sld_cap_val.setStyleSheet("color: green; font: 14px")
@@ -259,6 +260,7 @@ class Config(QMainWindow):
         self.__cb_cap_extra = QComboBox()
         self.__cb_cap_extra.addItems(g_cap_extra_values)
         g.addWidget(self.__cb_cap_extra, 3,1,1,2)
+        self.__cb_cap_extra.setCurrentIndex(0)
         
         # Inductor tap
         variable_ind_lbl = QLabel("Ind tap")
@@ -266,7 +268,8 @@ class Config(QMainWindow):
         self.__cb_ind_tap = QComboBox()
         self.__cb_ind_tap.addItems(g_ind_values)
         g.addWidget(self.__cb_ind_tap, 4,1,1,2)
-    
+        self.__cb_ind_tap.setCurrentIndex(0)
+        
         self.__btn_tst_band = QPushButton("Set")
         g.addWidget(self.__btn_tst_band, 5,1)
         self.__btn_tst_band.clicked.connect(self.__do_band_set)
@@ -309,8 +312,7 @@ class Config(QMainWindow):
         self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][-1])))    
     
     def __do_set_cap(self):
-        "Set pinmap for this capacitor value"
-        
+        # Set pinmap for this capacitor value
         cap = self.__cb_cap.currentText()
         pin = self.__cb_capmap.currentText()
         pin_1000 = model.auto_tune_model[CONFIG][CAP_PINMAP][1000]
@@ -331,8 +333,7 @@ class Config(QMainWindow):
         self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)])))    
     
     def __do_set_ind(self):
-        "Set pinmap for this inductor tap"
-        
+        # Set pinmap for this inductor tap
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
         model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = int(pin)
@@ -342,19 +343,47 @@ class Config(QMainWindow):
         self.__callback(CMD_RELAYS_CYCLE, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
     
     def __do_set_sep(self):
-        "Set pinmap for the inductor separator"
-        
+        # Set pinmap for the inductor separator
         pin = self.__cb_indsep.currentText()
         model.auto_tune_model[CONFIG][IND_TOGGLE] = int(pin)
     
     def __do_test_indsep(self):
-        pass
+        self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][IND_TOGGLE]))
     
+    def __cap_var_changed(self):
+        val = self.__sld_cap.value()
+        self.__sld_cap_val.setText(str(val))
+        self.__callback(CMD_SERVO_MOVE, (int(val),)) 
+    
+    def __band_changed(self):
+        band = self.__cb_band.currentText()
+        cap, extra, tap = model.auto_tune_model[CONFIG][BAND][int(band)]
+        self.__sld_cap.setValue(cap)
+        self.__cb_cap_extra.setCurrentIndex(self.__cb_cap_extra.findText(str(extra)))
+        self.__cb_ind_tap.setCurrentIndex(self.__cb_ind_tap.findText(str(tap)))
+        
     def __do_band_set(self):
-        print ("__do_band_set")
+        band = self.__cb_band.currentText()
+        cap = self.__sld_cap.value()
+        extra = self.__cb_cap_extra.currentText()
+        tap = self.__cb_ind_tap.currentText()
+        model.auto_tune_model[CONFIG][BAND][int(band)] = [int(cap),int(extra),int(tap)]
         
     def __do_band_test(self):
-        print ("__do_band_test")
+        # Test for the current band
+        # Do a complete relay init
+        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
+        self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
+        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][IND_TOGGLE]))
+        # Get parameters
+        band = self.__cb_band.currentText()
+        cap = self.__sld_cap.value()
+        extra = self.__cb_cap_extra.currentText()
+        tap = self.__cb_ind_tap.currentText()
+        # Set parameters
+        self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)]))
+        self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][IND_PINMAP][tap]))
+        self.__callback(CMD_SERVO_MOVE, (cap,))
     
     def __do_close(self):
         self.hide()
