@@ -172,6 +172,7 @@ class Config(QMainWindow):
         g.addWidget(self.__cb_capmap, 0,2)
         g.addWidget(self.__btn_cap, 0,3)
         g.addWidget(self.__btn_cap_test, 0,4)
+        self.__cb_cap.currentIndexChanged.connect(self.__cap_changed)
         self.__btn_cap.clicked.connect(self.__do_set_cap)
         self.__btn_cap.clicked.connect(self.__do_test_extra_cap)
         self.__cb_cap.setCurrentIndex(0)
@@ -192,6 +193,7 @@ class Config(QMainWindow):
         g.addWidget(self.__cb_indmap, 1,2)
         g.addWidget(self.__btn_ind, 1,3)
         g.addWidget(self.__btn_ind_test, 1,4)
+        self.__cb_ind.currentIndexChanged.connect(self.__ind_changed)
         self.__btn_ind.clicked.connect(self.__do_set_ind)
         self.__btn_ind_test.clicked.connect(self.__do_test_ind)
         self.__cb_ind.setCurrentIndex(0)
@@ -303,7 +305,8 @@ class Config(QMainWindow):
         self.__callback(CMD_SERVO_TEST, ())
         
     def __cap_changed(self):
-        print ("__do_test_range")    
+        cap = self.__cb_cap.currentText()
+        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][-1])))    
     
     def __do_set_cap(self):
         "Set pinmap for this capacitor value"
@@ -321,7 +324,11 @@ class Config(QMainWindow):
             
     def __do_test_extra_cap(self):
         pass
-        
+    
+    def __ind_changed(self):
+        ind = self.__cb_ind.currentText()
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)])))    
+    
     def __do_set_ind(self):
         "Set pinmap for this inductor tap"
         
