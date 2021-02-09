@@ -33,10 +33,12 @@ class TunerClient(QMainWindow):
         super(TunerClient, self).__init__()
         
         # Manage configuration
+        self.__configured = True
         app_config = persist.getSavedCfg(CONFIG_PATH)
         if app_config == None:
             print ('Configuration not found, using defaults')
             persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
+            self.__configured = False
         else:
             # Use persisted version
             model.auto_tune_model = app_config   
@@ -66,9 +68,6 @@ class TunerClient(QMainWindow):
         
         # Create the configuration window
         self.__config_win = config.Config(self.__config_callback)
-        
-        # Start idle processing
-        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
     
     #========================================================================================    
     # UI initialisation and window event handlers
@@ -159,13 +158,16 @@ class TunerClient(QMainWindow):
         """ Run the application """
         
         # Start idle processing
-        #QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
         
         # Returns when application exits
         # Show the GUI
         self.show()
         self.repaint()
         
+        if not self.__configured:
+            self.__config_win.show()
+            
         # Enter event loop
         return self.__qt_app.exec_()    
     
