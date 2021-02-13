@@ -54,7 +54,7 @@ class Relays:
         else:
             # Initialise pins
             for pin in pin_array:
-                GPIO.setup(pin, GPIO.OUT)
+                GPIO.setup(int(pin), GPIO.OUT)
 
     #----------------------------------------------------
     def set_pins(self, pin_array):
@@ -87,13 +87,13 @@ class Relays:
     # PRIVATE
     def __rlys_on(self, energise_pins):
         for pin in energise_pins:
-            GPIO.output(pin, GPIO.HIGH)
+            GPIO.output(int(pin), GPIO.HIGH)
     
     def __rlys_off(self, deenergise_pins):
         for pin in deenergise_pins:
-            GPIO.output(pin, GPIO.LOW)
+            GPIO.output(int(pin), GPIO.LOW)
             
     def __all_off(self, all_pins):
         for pin in all_pins:
-            GPIO.output(pin, GPIO.LOW)
+            GPIO.output(int(pin), GPIO.LOW)
         
