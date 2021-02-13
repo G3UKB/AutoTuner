@@ -205,14 +205,14 @@ class Config(QMainWindow):
         self.__cb_indsep.addItems(g_pins)
         self.__btn_sep = QPushButton("Set")
         self.__btn_sep.setMaximumWidth(60)
-        self.__btn___cb_indsep_test = QPushButton("Test")
-        self.__btn___cb_indsep_test.setMaximumWidth(60)
+        self.__btn_indsep_test = QPushButton("Test")
+        self.__btn_indsep_test.setMaximumWidth(60)
         g.addWidget(sep_lbl, 2,0)
         g.addWidget(self.__cb_indsep, 2,2)
         g.addWidget(self.__btn_sep, 2,3)
-        g.addWidget(self.__btn___cb_indsep_test, 2,4)
-        self.__btn_ind.clicked.connect(self.__do_set_sep)
-        self.__btn_ind_test.clicked.connect(self.__do_test_indsep)
+        g.addWidget(self.__btn_indsep_test, 2,4)
+        self.__btn_sep.clicked.connect(self.__do_set_sep)
+        self.__btn_indsep_test.clicked.connect(self.__do_test_indsep)
         self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE])))
         
     #-------------------------------------------------------------
@@ -334,8 +334,8 @@ class Config(QMainWindow):
             model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = pin_2000 + [int(pin),]
             
     def __do_test_extra_cap(self):
-        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][int(self.__cb_cap.currentText())]))
-        self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][int(self.__cb_cap.currentText())]))
+        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
+        self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
                         
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
@@ -350,6 +350,7 @@ class Config(QMainWindow):
     def __do_test_ind(self):
         self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
         self.__callback(CMD_RELAYS_CYCLE, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
+        print("Done test ind")
     
     def __do_set_sep(self):
         # Set pinmap for the inductor separator
@@ -357,7 +358,8 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][IND_TOGGLE] = int(pin)
     
     def __do_test_indsep(self):
-        self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][IND_TOGGLE]))
+        print("1")
+        self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][IND_TOGGLE],))
     
     def __cap_var_changed(self):
         val = self.__sld_cap.value()

@@ -72,10 +72,10 @@ class Relays:
             print ('Cycle pins %s' % str(pin_array))
         else:
             self.__all_off(self.__pinArray)
-            for n in range(3):
-                self.__rlys_on(pin_array)
-                sleep(1.0)
-                self.__rlys_off(pin_array)
+            for pin in pin_array:
+                self.__rlys_on(pin)
+                sleep(2.0)
+                self.__rlys_off(pin)
                 
     #----------------------------------------------------
     def close(self):
