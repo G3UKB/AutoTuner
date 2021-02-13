@@ -245,8 +245,8 @@ class Config(QMainWindow):
         self.__sld_cap.setValue(0)
         g.addWidget(self.__sld_cap, 2,1,1,2)
         
-        self.__cb_cap = QCheckBox('Live')
-        g.addWidget(self.__cb_cap, 2,3)
+        self.__chb_cap = QCheckBox('Live')
+        g.addWidget(self.__chb_cap, 2,3)
         
         self.__sld_cap.valueChanged.connect(self.__cap_var_changed)
         self.__sld_cap_val = QLabel("0")
@@ -332,9 +332,9 @@ class Config(QMainWindow):
             model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = [pin_1000, int(pin)]
         elif cap == '3000':
             model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = [pin_1000, pin_2000, int(pin)]
-        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
             
     def __do_test_extra_cap(self):
+        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
         self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
                         
     def __ind_changed(self):
@@ -346,9 +346,9 @@ class Config(QMainWindow):
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
         model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = int(pin)
-        self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
         
     def __do_test_ind(self):
+        self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
         self.__callback(CMD_RELAYS_CYCLE, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
     
     def __do_set_sep(self):
@@ -362,7 +362,7 @@ class Config(QMainWindow):
     def __cap_var_changed(self):
         val = self.__sld_cap.value()
         self.__sld_cap_val.setText(str(val))
-        if self.__cb_cap.isChecked():
+        if self.__chb_cap.isChecked():
             self.__callback(CMD_SERVO_MOVE, (int(val),)) 
     
     def __band_changed(self):
