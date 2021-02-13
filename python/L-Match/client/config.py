@@ -348,7 +348,6 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = int(pin)
         
     def __do_test_ind(self):
-        print(list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
         self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
         self.__callback(CMD_RELAYS_CYCLE, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
     
