@@ -72,10 +72,18 @@ class Relays:
             print ('Cycle pins %s' % str(pin_array))
         else:
             self.__all_off(self.__pinArray)
-            for pin in pin_array:
-                self.__rlys_on([pin])
-                sleep(2.0)
-                self.__rlys_off([pin])
+        for n in range(len(pin_array)):
+            if gpio_test_mode:
+                print('Pin %d on' % pin_array[n])
+            else:
+                self.__rlys_on([pin_array[n]])
+            sleep(2.0)
+        for n in range(len(list(reversed(pin_array)))):
+            if gpio_test_mode:
+                print('Pin %d off' % pin_array[n])
+            else:
+                self.__rlys_off([pin_array[n]])
+            sleep(2.0)
                 
     #----------------------------------------------------
     def close(self):
