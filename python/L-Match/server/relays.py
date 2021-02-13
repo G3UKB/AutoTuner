@@ -78,11 +78,12 @@ class Relays:
             else:
                 self.__rlys_on([pin_array[n]])
             sleep(2.0)
-        for n in range(len(list(reversed(pin_array)))):
+        pins_reversed = list(reversed(pin_array))
+        for n in range(len(pins_reversed)):
             if gpio_test_mode:
                 print('Pin %d off' % pin_array[n])
             else:
-                self.__rlys_off([pin_array[n]])
+                self.__rlys_off([pins_reversed[n]])
             sleep(2.0)
                 
     #----------------------------------------------------
