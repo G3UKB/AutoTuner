@@ -73,9 +73,9 @@ class Relays:
         else:
             self.__all_off(self.__pinArray)
             for pin in pin_array:
-                self.__rlys_on(pin)
+                self.__rlys_on([pin])
                 sleep(2.0)
-                self.__rlys_off(pin)
+                self.__rlys_off([pin])
                 
     #----------------------------------------------------
     def close(self):
