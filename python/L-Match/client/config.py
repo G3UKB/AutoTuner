@@ -329,9 +329,9 @@ class Config(QMainWindow):
         if cap == '1000':
             model.auto_tune_model[CONFIG][CAP_PINMAP][1000] = [int(pin),]
         elif cap == '2000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = [pin_1000, int(pin)]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = pin_1000 + [int(pin),]
         elif cap == '3000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = [pin_1000, pin_2000, int(pin)]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = pin_2000 + [int(pin),]
             
     def __do_test_extra_cap(self):
         self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))

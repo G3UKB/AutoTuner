@@ -46,7 +46,7 @@ class TunerClient(QMainWindow):
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__sock.bind(('', model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
         self.__sock.settimeout(3)
-
+        
         # The application
         self.__qt_app = qt_app
         
