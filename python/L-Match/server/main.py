@@ -51,6 +51,7 @@ class RemoteTuner:
         
         # Create relays
         self.__relays = relays.Relays()
+        self.__relays.init()
         
     #------------------------------------------------------------------    
     def mainLoop(self):
