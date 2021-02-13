@@ -334,8 +334,8 @@ class Config(QMainWindow):
             model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = pin_2000 + [int(pin),]
             
     def __do_test_extra_cap(self):
-        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][self.__cb_cap.currentText()]))
-        self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][self.__cb_cap.currentText()]))
+        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][int(self.__cb_cap.currentText())]))
+        self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][int(self.__cb_cap.currentText())]))
                         
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
