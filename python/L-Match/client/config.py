@@ -95,7 +95,7 @@ class Config(QMainWindow):
         # Control buttons
         self.__cntrl_grid = QGridLayout()
         w5 = QWidget()
-        w5.setLayout(self.__op___cntrl_gridgrid)
+        w5.setLayout(self.__cntrl_grid)
         self.__grid.addWidget(w5, 4,0)
         
         self.__btn_save = QPushButton("Save")
@@ -105,12 +105,14 @@ class Config(QMainWindow):
         self.__cntrl_grid.addWidget(self.__btn_cancel, 0,1)
         self.__btn_cancel.clicked.connect(self.__do_cancel)
     
+        # Populate everything
+        self.__init_fields()
+        
     #-------------------------------------------------------------
     # Set the RPi network config
     def __rpi(self, g):
         
         # We need the Ip and port
-        
         ip_lbl = QLabel("RPi IP Address")
         g.addWidget(ip_lbl, 0, 0)
         port_lbl = QLabel("Listen on port")
@@ -120,14 +122,14 @@ class Config(QMainWindow):
         self.__iptxt.setInputMask('000.000.000.000;_')
         self.__iptxt.setMaximumWidth(100)
         g.addWidget(self.__iptxt, 0, 1)
-        self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
+        #self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
         self.__iptxt.editingFinished.connect(self.__ip_changed)
         
         self.__porttxt = QLineEdit()
         self.__porttxt.setInputMask('00000;_')
         self.__porttxt.setMaximumWidth(100)
         g.addWidget(self.__porttxt, 1, 1)
-        self.__porttxt.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
+        #self.__porttxt.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
         self.__porttxt.editingFinished.connect(self.__port_changed)
         
     #-------------------------------------------------------------
@@ -142,10 +144,10 @@ class Config(QMainWindow):
         upper_lbl = QLabel("High PWM")
         self.__sb_lower = QSpinBox()
         self.__sb_lower.setRange(0, 3000)
-        self.__sb_lower.setValue(model.auto_tune_model[CONFIG][LOW_PWM])
+        #self.__sb_lower.setValue(model.auto_tune_model[CONFIG][LOW_PWM])
         self.__sb_upper = QSpinBox()
         self.__sb_upper.setRange(0, 3000)
-        self.__sb_upper.setValue(model.auto_tune_model[CONFIG][HIGH_PWM])
+        #self.__sb_upper.setValue(model.auto_tune_model[CONFIG][HIGH_PWM])
         g.addWidget(lower_lbl, 0,0)
         g.addWidget(self.__sb_lower, 0,1,1,2)
         g.addWidget(upper_lbl, 1,0)
@@ -185,9 +187,9 @@ class Config(QMainWindow):
         self.__cb_cap.currentIndexChanged.connect(self.__cap_changed)
         self.__btn_cap.clicked.connect(self.__do_set_cap)
         self.__btn_cap_test.clicked.connect(self.__do_test_extra_cap)
-        self.__cb_cap.setCurrentIndex(0)
-        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][0])))
-        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][1])
+        #self.__cb_cap.setCurrentIndex(0)
+        #self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][0])))
+        #self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][1])
         
         # Inductor
         ind_lbl = QLabel("Ind Pinmap")
@@ -210,9 +212,9 @@ class Config(QMainWindow):
         self.__cb_ind.currentIndexChanged.connect(self.__ind_changed)
         self.__btn_ind.clicked.connect(self.__do_set_ind)
         self.__btn_ind_test.clicked.connect(self.__do_test_ind)
-        self.__cb_ind.setCurrentIndex(0)
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][1][0])))
-        self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][1][1])
+        #self.__cb_ind.setCurrentIndex(0)
+        #self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][1][0])))
+        #self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][1][1])
         
         # Inductor separator
         sep_lbl = QLabel("Ind Sep")
@@ -232,9 +234,9 @@ class Config(QMainWindow):
         g.addWidget(self.__btn_indsep_test, 2,5)
         self.__btn_sep.clicked.connect(self.__do_set_sep)
         self.__btn_indsep_test.clicked.connect(self.__do_test_indsep)
-        self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][0])))
-        self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
-        self.__chb_indsep.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][2])
+        #self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][0])))
+        #self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
+        #self.__chb_indsep.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][2])
         
     #-------------------------------------------------------------
     # Set the inductor tap and capacitor value for each band
@@ -295,10 +297,10 @@ class Config(QMainWindow):
         g.addWidget(self.__cb_ind_tap, 4,1,1,2)
         self.__cb_ind_tap.setCurrentIndex(0)
         
-        cap, extra, tap = model.auto_tune_model[CONFIG][BAND][160]
-        self.__sld_cap.setValue(cap)
-        self.__cb_cap_extra.setCurrentIndex(self.__cb_cap_extra.findText(str(extra)))
-        self.__cb_ind_tap.setCurrentIndex(self.__cb_ind_tap.findText(str(tap)))
+        #cap, extra, tap = model.auto_tune_model[CONFIG][BAND][160]
+        #self.__sld_cap.setValue(cap)
+        #self.__cb_cap_extra.setCurrentIndex(self.__cb_cap_extra.findText(str(extra)))
+        #self.__cb_ind_tap.setCurrentIndex(self.__cb_ind_tap.findText(str(tap)))
         
         self.__btn_tst_band = QPushButton("Set")
         g.addWidget(self.__btn_tst_band, 5,1)
@@ -308,13 +310,43 @@ class Config(QMainWindow):
         g.addWidget(self.__btn_save, 5,2)
         self.__btn_save.clicked.connect(self.__do_band_test)
     
+    def __init_fields(self):
+        self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
+        self.__porttxt.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
+        self.__sb_lower.setValue(model.auto_tune_model[CONFIG][LOW_PWM])
+        self.__sb_upper.setValue(model.auto_tune_model[CONFIG][HIGH_PWM])
+        
+        self.__cb_cap.setCurrentIndex(0)
+        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][0])))
+        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][1])
+        
+        self.__cb_ind.setCurrentIndex(0)
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][1][0])))
+        self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][1][1])
+        
+        self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][0])))
+        self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
+        self.__chb_indsep.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][2])
+        
+        cap, extra, tap = model.auto_tune_model[CONFIG][BAND][160]
+        self.__sld_cap.setValue(cap)
+        self.__cb_cap_extra.setCurrentIndex(self.__cb_cap_extra.findText(str(extra)))
+        self.__cb_ind_tap.setCurrentIndex(self.__cb_ind_tap.findText(str(tap)))
+        
+    #========================================================================================
+    # PUBLIC procs
+    
     def show_window(self):
         
         # Make a copy of the current model
         model.copy_model()
+        
+        # (Re)populate everything
+        self.__init_fields()
+        
         # Show our window
-        self.__config_win.show()
-        self.__config_win.repaint()
+        self.show()
+        self.repaint()
         
     def progress(self, progress):
         self.__progress = progress
@@ -345,11 +377,11 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][RPi][RQST_PORT] = int(self.__porttxt.text())
         
     def __do_set_pwm(self):
-        self.__callback(CMD_SERVO_SET_PWM, (self.__sb_lower.value(), self.__sb_upper.value()))
         model.auto_tune_model[CONFIG][LOW_PWM] = self.__sb_lower.value()
         model.auto_tune_model[CONFIG][HIGH_PWM] = self.__sb_upper.value()
     
     def __do_test_range(self):
+        self.__callback(CMD_SERVO_SET_PWM, (self.__sb_lower.value(), self.__sb_upper.value()))
         self.__callback(CMD_SERVO_TEST, ())
         
     def __cap_changed(self):
