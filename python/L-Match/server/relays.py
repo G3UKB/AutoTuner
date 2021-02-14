@@ -39,11 +39,12 @@ class Relays:
 
     #----------------------------------------------------
     def init(self):
+        # Will hold current array of all configured pins
+        self.__pinArray = []
+        
         if not gpio_test_mode:
             # Set mode
             GPIO.setmode(GPIO.BCM)
-            # Will hold current array of all configured pins
-            self.__pinArray = []
     
     #----------------------------------------------------
     def init_pins(self, pin_array):
@@ -72,7 +73,7 @@ class Relays:
             self.__rlys_on(self.__pinArray, pin_array)
     
     #----------------------------------------------------
-    def cycle_pins(self, pin_array):
+    def cycle_pins(self, pin_array, mode):
         # Cycle relays in the map for a test
         #           pin,invert
         # Form is: [[4, False], [17, False], [18, False]]
@@ -80,19 +81,32 @@ class Relays:
             print ('Cycle pins %s' % str(pin_array))
         else:
             self.__all_off(self.__pinArray)
-        for n in range(len(pin_array)):
-            if gpio_test_mode:
-                print('Pin %d on' % pin_array[n])
-            else:
-                self.__rlys_on([pin_array[n]])
-            sleep(2.0)
-        pins_reversed = list(reversed(pin_array))
-        for n in range(len(pins_reversed)):
-            if gpio_test_mode:
-                print('Pin %d off' % pin_array[n])
-            else:
-                self.__rlys_off([pins_reversed[n]])
-            sleep(2.0)
+        if mode == 'inclusive':
+            for n in range(len(pin_array)):
+                if gpio_test_mode:
+                    print('Pin %d on' % pin_array[n][0])
+                else:
+                    self.__rlys_on([pin_array[n]])
+                sleep(2.0)
+            pins_reversed = list(reversed(pin_array))
+            for n in range(len(pins_reversed)):
+                if gpio_test_mode:
+                    print('Pin %d off' % pin_array[n][0])
+                else:
+                    self.__rlys_off([pins_reversed[n]])
+                sleep(2.0)
+        else:
+            # Exclusive
+            for n in range(len(pin_array)):
+                if gpio_test_mode:
+                    print('Pin %d on' % pin_array[n][0])
+                else:
+                    self.__rlys_on([pin_array[n]])
+                sleep(2.0)
+                if gpio_test_mode:
+                    print('Pin %d off' % pin_array[n][0])
+                else:
+                    self.__rlys_off([pin_array[n]])
                 
     #----------------------------------------------------
     def close(self):

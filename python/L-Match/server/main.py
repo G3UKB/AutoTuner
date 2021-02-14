@@ -136,7 +136,7 @@ class RemoteTuner:
                 if len(cmd[1]) == 0:
                     print('Command %s requires variable parameter list, received %d' % (rqst, len(cmd[1])))
                     return
-                self.__relays.cycle_pins(cmd[1])
+                self.__relays.cycle_pins(cmd[1][0], cmd[1][1])
                 
             elif rqst == CMD_RESET:
                 if len(cmd[1]) != 0:

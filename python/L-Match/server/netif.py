@@ -85,7 +85,7 @@ class NetIF(threading.Thread):
         
         while not self.__terminate:
             try:
-                data, self.__address = self.__sock.recvfrom(100)
+                data, self.__address = self.__sock.recvfrom(512)
                 self.__callback(data)
             except socket.timeout:
                 continue

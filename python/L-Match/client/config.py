@@ -67,7 +67,7 @@ class Config(QMainWindow):
         
         # Within this we need 4 sub-layouts
         self.__rpi_grid = QGridLayout()
-        w1 = QGroupBox('RPi Config')
+        w1 = QGroupBox('RPi Network Config')
         w1.setLayout(self.__rpi_grid)
         self.__grid.addWidget(w1, 0,0)
         
@@ -77,7 +77,7 @@ class Config(QMainWindow):
         self.__grid.addWidget(w2, 1,0)
         
         self.__map_grid = QGridLayout()
-        w3 = QGroupBox('GPIO Config')
+        w3 = QGroupBox('RPi GPIO Config')
         w3.setLayout(self.__map_grid)
         self.__grid.addWidget(w3, 2,0)
         
@@ -351,7 +351,7 @@ class Config(QMainWindow):
             
     def __do_test_extra_cap(self):
         self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
-        self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
+        self.__callback(CMD_RELAYS_CYCLE, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000], 'inclusive'))
                         
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
@@ -368,7 +368,7 @@ class Config(QMainWindow):
         
     def __do_test_ind(self):
         self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
-        self.__callback(CMD_RELAYS_CYCLE, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
+        self.__callback(CMD_RELAYS_CYCLE, (list((model.auto_tune_model[CONFIG][IND_PINMAP].values())), 'exclusive'))
     
     def __do_set_sep(self):
         # Set pinmap for the inductor separator
