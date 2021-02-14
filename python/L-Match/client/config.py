@@ -179,7 +179,7 @@ class Config(QMainWindow):
         self.__btn_cap_test.clicked.connect(self.__do_test_extra_cap)
         self.__cb_cap.setCurrentIndex(0)
         self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][0])))
-        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][1])
+        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][1])
         
         # Inductor
         ind_lbl = QLabel("Ind Pinmap")
@@ -331,8 +331,9 @@ class Config(QMainWindow):
         
     def __cap_changed(self):
         cap = self.__cb_cap.currentText()
-        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][0][-1])))    
-        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][1])
+        index = {'1000':0,'2000':1,'3000':2}
+        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][index[cap]][0])))    
+        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][index[cap]][1])
         
     def __do_set_cap(self):
         # Set pinmap for this capacitor value
@@ -342,14 +343,11 @@ class Config(QMainWindow):
         pin_1000 = model.auto_tune_model[CONFIG][CAP_PINMAP][1000]
         pin_2000 = model.auto_tune_model[CONFIG][CAP_PINMAP][2000]
         if cap == '1000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][1000] = [[int(pin),], inv]
-            model.auto_tune_model[CONFIG][CAP_PINMAP][1000][1] = self.__chb_capmap.isChecked()
+            model.auto_tune_model[CONFIG][CAP_PINMAP][1000] = [[int(pin), inv],]
         elif cap == '2000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = [pin_1000 + [int(pin),], inv]
-            model.auto_tune_model[CONFIG][CAP_PINMAP][2000][1] = self.__chb_capmap.isChecked()
+            model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = [pin_1000, [int(pin), inv]]
         elif cap == '3000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = [pin_2000 + [int(pin),], inv]
-            model.auto_tune_model[CONFIG][CAP_PINMAP][3000][1] = self.__chb_capmap.isChecked()
+            model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = [pin_1000, pin_2000, [int(pin), inv]]
             
     def __do_test_extra_cap(self):
         self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
