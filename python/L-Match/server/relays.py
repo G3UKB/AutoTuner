@@ -48,17 +48,23 @@ class Relays:
     #----------------------------------------------------
     def init_pins(self, pin_array):
         # Initialise all pins in the pin array
-        self.__pinArray = pin_array
+        #           pin,invert
+        # Form is: [[4, False], [17, False], [18, False]]
+        for pin in pin_array:
+            if pin not in self.__pinArray:
+                self.__pinArray.append(pin)
         if gpio_test_mode:
             print ('Initialise pins %s' % str(pin_array))
         else:
             # Initialise pins
             for pin in pin_array:
-                GPIO.setup(int(pin), GPIO.OUT)
+                GPIO.setup(int(pin[0]), GPIO.OUT)
 
     #----------------------------------------------------
     def set_pins(self, pin_array):
         # Energise all relays in the array
+        #           pin,invert
+        # Form is: [[4, False], [17, False], [18, False]]
         if gpio_test_mode:
             print ('Energise pins %s' % str(pin_array))
         else:
@@ -68,6 +74,8 @@ class Relays:
     #----------------------------------------------------
     def cycle_pins(self, pin_array):
         # Cycle relays in the map for a test
+        #           pin,invert
+        # Form is: [[4, False], [17, False], [18, False]]
         if gpio_test_mode:
             print ('Cycle pins %s' % str(pin_array))
         else:
@@ -95,14 +103,26 @@ class Relays:
     # =================================================================================
     # PRIVATE
     def __rlys_on(self, energise_pins):
+        #           pin,invert
+        # Form is: [[4, False], [17, False], [18, False]]
         for pin in energise_pins:
-            GPIO.output(int(pin), GPIO.HIGH)
+            if pin[1] : level = GPIO.LOW
+            else: level = GPIO.HIGH
+            GPIO.output(int(pin[0]), level)
     
-    def __rlys_off(self, deenergise_pins):
+    def __rlys_off(self, deenergise_pins): 
+        #           pin,invert
+        # Form is: [[4, False], [17, False], [18, False]]
         for pin in deenergise_pins:
-            GPIO.output(int(pin), GPIO.LOW)
+            if pin[1] : level = GPIO.HIGH
+            else: level = GPIO.LOW
+            GPIO.output(int(pin[0]), level)
             
     def __all_off(self, all_pins):
+        #           pin,invert
+        # Form is: [[4, False], [17, False], [18, False]]
         for pin in all_pins:
-            GPIO.output(int(pin), GPIO.LOW)
+            if pin[1] : level = GPIO.HIGH
+            else: level = GPIO.LOW
+            GPIO.output(int(pin[0]), level)
         

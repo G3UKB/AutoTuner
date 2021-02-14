@@ -340,8 +340,8 @@ class Config(QMainWindow):
         cap = self.__cb_cap.currentText()
         pin = self.__cb_capmap.currentText()
         inv = self.__chb_capmap.isChecked()
-        pin_1000 = model.auto_tune_model[CONFIG][CAP_PINMAP][1000]
-        pin_2000 = model.auto_tune_model[CONFIG][CAP_PINMAP][2000]
+        pin_1000 = model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0]
+        pin_2000 = model.auto_tune_model[CONFIG][CAP_PINMAP][2000][1]
         if cap == '1000':
             model.auto_tune_model[CONFIG][CAP_PINMAP][1000] = [[int(pin), inv],]
         elif cap == '2000':
