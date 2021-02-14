@@ -46,9 +46,9 @@ auto_tune_model = {
         RPi: {IP: get_ip(), RQST_PORT: 10002, EVNT_PORT: 10003},
         LOW_PWM: 500,
         HIGH_PWM: 1000,
-        CAP_PINMAP: {1000: [4,], 2000: [4,17], 3000: [4,17,18]},
-        IND_PINMAP: {1: 22, 2: 5, 3: 6, 4: 13, 5: 26, 6: 23, 7: 24, 8: 25, 9: 12, 10: 16},
-        IND_TOGGLE: 20,
+        CAP_PINMAP: {1000: [[4,], False], 2000: [[4,17], False], 3000: [[4,17,18], False]},
+        IND_PINMAP: {1: [22, False], 2: [5, False], 3: [6, False], 4: [13, False], 5: [26, False], 6: [23, False], 7: [24, False], 8: [25, False], 9: [12, False], 10: [16, False]},
+        IND_TOGGLE: [20, False, False],
         BAND: {
             160: [0, 0, 1],
             80: [0, 0, 1],

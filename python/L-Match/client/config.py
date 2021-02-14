@@ -163,10 +163,7 @@ class Config(QMainWindow):
         self.__cb_cap.addItems(g_cap_values)
         self.__cb_capmap = QComboBox()
         self.__cb_capmap.addItems(g_pins)
-        
         self.__chb_capmap = QCheckBox('Inv')
-        
-        
         self.__btn_cap = QPushButton("Set")
         self.__btn_cap.setMaximumWidth(60)
         self.__btn_cap_test = QPushButton("Test")
@@ -181,7 +178,8 @@ class Config(QMainWindow):
         self.__btn_cap.clicked.connect(self.__do_set_cap)
         self.__btn_cap_test.clicked.connect(self.__do_test_extra_cap)
         self.__cb_cap.setCurrentIndex(0)
-        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0])))
+        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][0])))
+        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][1])
         
         # Inductor
         ind_lbl = QLabel("Ind Pinmap")
@@ -205,25 +203,30 @@ class Config(QMainWindow):
         self.__btn_ind.clicked.connect(self.__do_set_ind)
         self.__btn_ind_test.clicked.connect(self.__do_test_ind)
         self.__cb_ind.setCurrentIndex(0)
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][1])))
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][1][0])))
+        self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][1][1])
         
         # Inductor separator
         sep_lbl = QLabel("Ind Sep")
         self.__cb_indsep = QComboBox()
         self.__cb_indsep.addItems(g_pins)
+        self.__chb_inden = QCheckBox('Enable')
         self.__chb_indsep = QCheckBox('Inv')
         self.__btn_sep = QPushButton("Set")
         self.__btn_sep.setMaximumWidth(60)
         self.__btn_indsep_test = QPushButton("Test")
         self.__btn_indsep_test.setMaximumWidth(60)
         g.addWidget(sep_lbl, 2,0)
+        g.addWidget(self.__chb_inden, 2,1)
         g.addWidget(self.__cb_indsep, 2,2)
         g.addWidget(self.__chb_indsep, 2,3)
         g.addWidget(self.__btn_sep, 2,4)
         g.addWidget(self.__btn_indsep_test, 2,5)
         self.__btn_sep.clicked.connect(self.__do_set_sep)
         self.__btn_indsep_test.clicked.connect(self.__do_test_indsep)
-        self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE])))
+        self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][0])))
+        self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
+        self.__chb_indsep.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][2])
         
     #-------------------------------------------------------------
     # Set the inductor tap and capacitor value for each band
@@ -328,20 +331,25 @@ class Config(QMainWindow):
         
     def __cap_changed(self):
         cap = self.__cb_cap.currentText()
-        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][-1])))    
-    
+        self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][0][-1])))    
+        self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][int(cap)][1])
+        
     def __do_set_cap(self):
         # Set pinmap for this capacitor value
         cap = self.__cb_cap.currentText()
         pin = self.__cb_capmap.currentText()
+        inv = self.__chb_capmap.isChecked()
         pin_1000 = model.auto_tune_model[CONFIG][CAP_PINMAP][1000]
         pin_2000 = model.auto_tune_model[CONFIG][CAP_PINMAP][2000]
         if cap == '1000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][1000] = [int(pin),]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][1000] = [[int(pin),], inv]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][1000][1] = self.__chb_capmap.isChecked()
         elif cap == '2000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = pin_1000 + [int(pin),]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][2000] = [pin_1000 + [int(pin),], inv]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][2000][1] = self.__chb_capmap.isChecked()
         elif cap == '3000':
-            model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = pin_2000 + [int(pin),]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][3000] = [pin_2000 + [int(pin),], inv]
+            model.auto_tune_model[CONFIG][CAP_PINMAP][3000][1] = self.__chb_capmap.isChecked()
             
     def __do_test_extra_cap(self):
         self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000]))
@@ -349,13 +357,16 @@ class Config(QMainWindow):
                         
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)])))    
-    
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)][0])))    
+        self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)][1])
+        
     def __do_set_ind(self):
         # Set pinmap for this inductor tap
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
-        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = int(pin)
+        inv = self.__chb_indmap.isChecked()
+        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = [[int(pin),], inv]
+        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)][1] = self.__chb_indmap.isChecked()
         
     def __do_test_ind(self):
         self.__callback(CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values())))
@@ -364,7 +375,9 @@ class Config(QMainWindow):
     def __do_set_sep(self):
         # Set pinmap for the inductor separator
         pin = self.__cb_indsep.currentText()
-        model.auto_tune_model[CONFIG][IND_TOGGLE] = int(pin)
+        en = self.__chb_inden.isChecked()
+        inv = self.__chb_indsep.isChecked()
+        model.auto_tune_model[CONFIG][IND_TOGGLE] = [[int(pin),], en, inv]
     
     def __do_test_indsep(self):
         self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][IND_TOGGLE],))
