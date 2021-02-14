@@ -92,10 +92,18 @@ class Config(QMainWindow):
         self.__pop_map(self.__map_grid)
         self.__pop_op(self.__op_grid)
         
-        # Close
-        self.__btn_close = QPushButton("Close")
-        self.__grid.addWidget(self.__btn_close, 4,0)
-        self.__btn_close.clicked.connect(self.__do_close)
+        # Control buttons
+        self.__cntrl_grid = QGridLayout()
+        w5 = QWidget()
+        w5.setLayout(self.__op___cntrl_gridgrid)
+        self.__grid.addWidget(w5, 4,0)
+        
+        self.__btn_save = QPushButton("Save")
+        self.__cntrl_grid.addWidget(self.__btn_save, 0,0)
+        self.__btn_save.clicked.connect(self.__do_save)
+        self.__btn_cancel = QPushButton("Cancel")
+        self.__cntrl_grid.addWidget(self.__btn_cancel, 0,1)
+        self.__btn_cancel.clicked.connect(self.__do_cancel)
     
     #-------------------------------------------------------------
     # Set the RPi network config
@@ -300,14 +308,29 @@ class Config(QMainWindow):
         g.addWidget(self.__btn_save, 5,2)
         self.__btn_save.clicked.connect(self.__do_band_test)
     
-    #========================================================================================
-    # Event procs
+    def show_window(self):
+        
+        # Make a copy of the current model
+        model.copy_model()
+        # Show our window
+        self.__config_win.show()
+        self.__config_win.repaint()
+        
     def progress(self, progress):
         self.__progress = progress
         
     #========================================================================================
     # Event procs
     
+    def __do_save(self):
+        # Save the model
+        persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
+        self.hide()
+        
+    def __do_cancel(self):
+        model.restore_model()
+        self.hide()
+        
     #======================================================= 
     def __idleProcessing   (self):
         # Update UI with actual progress
@@ -415,9 +438,6 @@ class Config(QMainWindow):
         self.__callback(CMD_RELAYS_SET, model.auto_tune_model[CONFIG][CAP_PINMAP][int(extra)])
         self.__callback(CMD_RELAYS_SET, [model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)],])
         self.__callback(CMD_SERVO_MOVE, (cap,))
-    
-    def __do_close(self):
-        self.hide()
         
 #======================================================================================================================
 # Test code

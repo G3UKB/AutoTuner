@@ -178,9 +178,6 @@ class TunerClient(QMainWindow):
         self.__close()
     
     def __close(self):
-        
-        # Save the model
-        persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
 
         # Stop monitor
         self.__monitor.terminate()
@@ -207,8 +204,7 @@ class TunerClient(QMainWindow):
     def __do_config(self):
         
         # Show the configuration window
-        self.__config_win.show()
-        self.__config_win.repaint()
+        self.__config_win.show_window()
         
     def __do_exit(self):
         

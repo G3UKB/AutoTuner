@@ -30,6 +30,7 @@ import platform
 import subprocess
 import traceback
 from time import sleep
+import copy
 
 # PyQt5 imports
 from PyQt5.QtWidgets import QMainWindow, QApplication

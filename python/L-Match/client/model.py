@@ -60,6 +60,15 @@ auto_tune_model = {
             12: [0, 0, 1],
             10: [0, 0, 1]
         }
-    },
-        STATE: {}
+    }
 }
+
+# Manage model
+auto_tune_model_clone = None
+
+def copy_model():
+    auto_tune_model_clone = copy.deepcopy(auto_tune_model)
+    
+def restore_model():
+    if auto_tune_model_clone != None:
+        auto_tune_model = copy.deepcopy(auto_tune_model_clone)
