@@ -40,6 +40,14 @@ class Config(QMainWindow):
         palette.setColor(QtGui.QPalette.Background,QtGui.QColor(195,195,195,255))
         self.setPalette(palette)
         
+        # Set the tooltip font
+        QToolTip.setFont(QFont('SansSerif', 10))
+        self.setStyleSheet('''QToolTip { 
+                           background-color: darkgray; 
+                           color: black; 
+                           border: #8ad4ff solid 1px
+                           }''')
+        
         # Initialise the GUI
         self.initUI()
     
@@ -100,8 +108,10 @@ class Config(QMainWindow):
         
         self.__btn_save = QPushButton("Save")
         self.__cntrl_grid.addWidget(self.__btn_save, 0,0)
+        self.__btn_save.setToolTip('Save configuration and close window')
         self.__btn_save.clicked.connect(self.__do_save)
         self.__btn_cancel = QPushButton("Cancel")
+        self.__btn_cancel.setToolTip('Cancel changes and close window')
         self.__cntrl_grid.addWidget(self.__btn_cancel, 0,1)
         self.__btn_cancel.clicked.connect(self.__do_cancel)
     
@@ -116,20 +126,20 @@ class Config(QMainWindow):
         ip_lbl = QLabel("RPi IP Address")
         g.addWidget(ip_lbl, 0, 0)
         port_lbl = QLabel("Listen on port")
-        g.addWidget(port_lbl, 1, 0)
+        g.addWidget(port_lbl, 0, 2)
         
         self.__iptxt = QLineEdit()
         self.__iptxt.setInputMask('000.000.000.000;_')
         self.__iptxt.setMaximumWidth(100)
+        self.__iptxt.setToolTip('IP Address of RPi')
         g.addWidget(self.__iptxt, 0, 1)
-        #self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
         self.__iptxt.editingFinished.connect(self.__ip_changed)
         
         self.__porttxt = QLineEdit()
         self.__porttxt.setInputMask('00000;_')
         self.__porttxt.setMaximumWidth(100)
-        g.addWidget(self.__porttxt, 1, 1)
-        #self.__porttxt.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
+        self.__porttxt.setToolTip('Port RPi listens on')
+        g.addWidget(self.__porttxt, 0, 3)
         self.__porttxt.editingFinished.connect(self.__port_changed)
         
     #-------------------------------------------------------------
@@ -144,20 +154,24 @@ class Config(QMainWindow):
         upper_lbl = QLabel("High PWM")
         self.__sb_lower = QSpinBox()
         self.__sb_lower.setRange(0, 3000)
-        #self.__sb_lower.setValue(model.auto_tune_model[CONFIG][LOW_PWM])
+        self.__sb_lower.setToolTip('Lower bound of PWM range')
         self.__sb_upper = QSpinBox()
         self.__sb_upper.setRange(0, 3000)
-        #self.__sb_upper.setValue(model.auto_tune_model[CONFIG][HIGH_PWM])
+        self.__sb_upper.setToolTip('Upper bound of PWM range')
         g.addWidget(lower_lbl, 0,0)
-        g.addWidget(self.__sb_lower, 0,1,1,2)
-        g.addWidget(upper_lbl, 1,0)
-        g.addWidget(self.__sb_upper, 1,1,1,2)
+        g.addWidget(self.__sb_lower, 0,1)
+        g.addWidget(upper_lbl, 0,2)
+        g.addWidget(self.__sb_upper, 0,3)
         # Activation buttons
         self.__btn_set_pwm = QPushButton("Set")
-        g.addWidget(self.__btn_set_pwm, 2,1)
+        self.__btn_set_pwm.setMaximumWidth(60)
+        self.__btn_set_pwm.setToolTip('Set range')
+        g.addWidget(self.__btn_set_pwm, 0,4)
         self.__btn_set_pwm.clicked.connect(self.__do_set_pwm)
         self.__btn_tst_pwm = QPushButton("Test")
-        g.addWidget(self.__btn_tst_pwm, 2,2)
+        self.__btn_tst_pwm.setToolTip('Test range, moves 0-180-0')
+        self.__btn_tst_pwm.setMaximumWidth(60)
+        g.addWidget(self.__btn_tst_pwm, 0,5)
         self.__btn_tst_pwm.clicked.connect(self.__do_test_range)
         
     #-------------------------------------------------------------
@@ -171,12 +185,17 @@ class Config(QMainWindow):
         cap_lbl = QLabel("Cap pinmap")
         self.__cb_cap = QComboBox()
         self.__cb_cap.addItems(g_cap_values)
+        self.__cb_cap.setToolTip('Select fixed capacitor')
         self.__cb_capmap = QComboBox()
         self.__cb_capmap.addItems(g_pins)
+        self.__cb_capmap.setToolTip('Select pin for additional 1000pf')
         self.__chb_capmap = QCheckBox('Inv')
+        self.__chb_capmap.setToolTip('Check box for active low')
         self.__btn_cap = QPushButton("Set")
+        self.__btn_cap.setToolTip('Set fixed capacitance pin')
         self.__btn_cap.setMaximumWidth(60)
         self.__btn_cap_test = QPushButton("Test")
+        self.__btn_cap_test.setToolTip('Cycle all fixed caps - accumulative')
         self.__btn_cap_test.setMaximumWidth(60)
         g.addWidget(cap_lbl, 0,0)
         g.addWidget(self.__cb_cap, 0,1)
@@ -187,20 +206,22 @@ class Config(QMainWindow):
         self.__cb_cap.currentIndexChanged.connect(self.__cap_changed)
         self.__btn_cap.clicked.connect(self.__do_set_cap)
         self.__btn_cap_test.clicked.connect(self.__do_test_extra_cap)
-        #self.__cb_cap.setCurrentIndex(0)
-        #self.__cb_capmap.setCurrentIndex(self.__cb_capmap.findText(str(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][0])))
-        #self.__chb_capmap.setChecked(model.auto_tune_model[CONFIG][CAP_PINMAP][1000][0][1])
         
         # Inductor
         ind_lbl = QLabel("Ind Pinmap")
         self.__cb_ind = QComboBox()
         self.__cb_ind.addItems(g_ind_values)
+        self.__cb_ind.setToolTip('Select inductor tap')
         self.__cb_indmap = QComboBox()
         self.__cb_indmap.addItems(g_pins)
+        self.__cb_indmap.setToolTip('Select pin for tap')
         self.__chb_indmap = QCheckBox('Inv')
+        self.__chb_indmap.setToolTip('Check box for active low')
         self.__btn_ind = QPushButton("Set")
+        self.__btn_ind.setToolTip('Set tap pin')
         self.__btn_ind.setMaximumWidth(60)
         self.__btn_ind_test = QPushButton("Test")
+        self.__btn_ind_test.setToolTip('Cycle all inductor taps - separately')
         self.__btn_ind_test.setMaximumWidth(60)
         g.addWidget(ind_lbl, 1,0)
         g.addWidget(self.__cb_ind, 1,1)
@@ -212,19 +233,23 @@ class Config(QMainWindow):
         self.__cb_ind.currentIndexChanged.connect(self.__ind_changed)
         self.__btn_ind.clicked.connect(self.__do_set_ind)
         self.__btn_ind_test.clicked.connect(self.__do_test_ind)
-        #self.__cb_ind.setCurrentIndex(0)
-        #self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][1][0])))
-        #self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][1][1])
         
         # Inductor separator
         sep_lbl = QLabel("Ind Sep")
+        self.__chb_inden = QComboBox()
+        self.__chb_inden.addItem('0')
+        self.__chb_inden.addItems(g_ind_values)
+        self.__chb_inden.setToolTip('Select tap where common is split: 0 = disable')
         self.__cb_indsep = QComboBox()
         self.__cb_indsep.addItems(g_pins)
-        self.__chb_inden = QCheckBox('Enable')
+        self.__cb_indsep.setToolTip('Select pin for split')
         self.__chb_indsep = QCheckBox('Inv')
+        self.__chb_indsep.setToolTip('Check box for active low')
         self.__btn_sep = QPushButton("Set")
+        self.__btn_sep.setToolTip('Set split pin')
         self.__btn_sep.setMaximumWidth(60)
         self.__btn_indsep_test = QPushButton("Test")
+        self.__btn_indsep_test.setToolTip('Energise split')
         self.__btn_indsep_test.setMaximumWidth(60)
         g.addWidget(sep_lbl, 2,0)
         g.addWidget(self.__chb_inden, 2,1)
@@ -234,9 +259,6 @@ class Config(QMainWindow):
         g.addWidget(self.__btn_indsep_test, 2,5)
         self.__btn_sep.clicked.connect(self.__do_set_sep)
         self.__btn_indsep_test.clicked.connect(self.__do_test_indsep)
-        #self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][0])))
-        #self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
-        #self.__chb_indsep.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][2])
         
     #-------------------------------------------------------------
     # Set the inductor tap and capacitor value for each band
@@ -247,10 +269,12 @@ class Config(QMainWindow):
         
         # Bands
         band_lbl = QLabel("Band")
+        band_lbl.setMaximumWidth(40)
         self.__cb_band = QComboBox()
         self.__cb_band.addItems(g_band_values)
+        self.__cb_band.setToolTip('Select band to configure')
         g.addWidget(band_lbl, 0,0)
-        g.addWidget(self.__cb_band, 0,1,1,2)
+        g.addWidget(self.__cb_band, 0,1)
         self.__cb_band.currentIndexChanged.connect(self.__band_changed)
         
         # Slider labels
@@ -261,54 +285,67 @@ class Config(QMainWindow):
         
         # Variable capacitor
         cap_lbl = QLabel("Var Cap")
+        cap_lbl.setMaximumWidth(40)
         g.addWidget(cap_lbl, 2,0)
         self.__sld_cap = QSlider(QtCore.Qt.Horizontal)
+        self.__sld_cap.setToolTip('Adjust variable capacitor')
         self.__sld_cap.setMinimum(0)
         self.__sld_cap.setMaximum(180)
         self.__sld_cap.setValue(0)
         g.addWidget(self.__sld_cap, 2,1,1,2)
         
         self.__chb_cap = QCheckBox('Live')
+        self.__chb_cap.setToolTip('Check box for live adjustment')
+        self.__chb_cap.setMaximumWidth(40)
         g.addWidget(self.__chb_cap, 2,3)
         
         self.__sld_cap.valueChanged.connect(self.__cap_var_changed)
         self.__sld_cap_val = QLabel("0")
-        self.__sld_cap_val.setMinimumWidth(25)
+        self.__sld_cap_val.setMaximumWidth(30)
+        self.__sld_cap_val.setToolTip('Requested setting')
+        
         self.__sld_cap_val.setStyleSheet("color: green; font: 14px")
         g.addWidget(self.__sld_cap_val, 2,4)
         self.__sld_cap_actual = QLabel("0")
-        self.__sld_cap_actual.setMinimumWidth(25)
+        self.__sld_cap_actual.setMaximumWidth(30)
+        self.__sld_cap_actual.setToolTip('Actual setting - may lag requested')
         self.__sld_cap_actual.setStyleSheet("color: red; font: 14px")
         g.addWidget(self.__sld_cap_actual, 2,5)
         
+        extra_grid = QGridLayout()
+        w1 = QWidget()
+        w1.setLayout(extra_grid)
+        g.addWidget(w1, 3,0,1,6)
+        
         # Extra capacitance
         variable_cap_lbl = QLabel("Plus Cap")
-        g.addWidget(variable_cap_lbl, 3,0)
+        extra_grid.addWidget(variable_cap_lbl, 3,0)
         self.__cb_cap_extra = QComboBox()
         self.__cb_cap_extra.addItems(g_cap_extra_values)
-        g.addWidget(self.__cb_cap_extra, 3,1,1,2)
+        self.__cb_cap_extra.setToolTip('Select fixed capacitance for band')
+        extra_grid.addWidget(self.__cb_cap_extra, 3,1)
         self.__cb_cap_extra.setCurrentIndex(0)
         
         # Inductor tap
         variable_ind_lbl = QLabel("Ind tap")
-        g.addWidget(variable_ind_lbl, 4,0)
+        extra_grid.addWidget(variable_ind_lbl, 3,2)
         self.__cb_ind_tap = QComboBox()
         self.__cb_ind_tap.addItems(g_ind_values)
-        g.addWidget(self.__cb_ind_tap, 4,1,1,2)
+        self.__cb_ind_tap.setToolTip('Select inductance tap for band')
+        extra_grid.addWidget(self.__cb_ind_tap, 3,3)
         self.__cb_ind_tap.setCurrentIndex(0)
         
-        #cap, extra, tap = model.auto_tune_model[CONFIG][BAND][160]
-        #self.__sld_cap.setValue(cap)
-        #self.__cb_cap_extra.setCurrentIndex(self.__cb_cap_extra.findText(str(extra)))
-        #self.__cb_ind_tap.setCurrentIndex(self.__cb_ind_tap.findText(str(tap)))
+        self.__btn_set_band = QPushButton("Set")
+        self.__btn_set_band.setMaximumWidth(60)
+        self.__btn_set_band.setToolTip('Set values for band')
+        extra_grid.addWidget(self.__btn_set_band, 3,4)
+        self.__btn_set_band.clicked.connect(self.__do_band_set)
         
-        self.__btn_tst_band = QPushButton("Set")
-        g.addWidget(self.__btn_tst_band, 5,1)
-        self.__btn_tst_band.clicked.connect(self.__do_band_set)
-        
-        self.__btn_save = QPushButton("Test")
-        g.addWidget(self.__btn_save, 5,2)
-        self.__btn_save.clicked.connect(self.__do_band_test)
+        self.__btn_tst_band = QPushButton("Test")
+        self.__btn_tst_band.setMaximumWidth(60)
+        self.__btn_tst_band.setToolTip('Run band settings')
+        extra_grid.addWidget(self.__btn_tst_band, 3,5)
+        self.__btn_tst_band.clicked.connect(self.__do_band_test)
     
     def __init_fields(self):
         self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
@@ -325,7 +362,8 @@ class Config(QMainWindow):
         self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][1][1])
         
         self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][0])))
-        self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
+        self.__chb_inden.setCurrentIndex(self.__chb_inden.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][1])))
+        #self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
         self.__chb_indsep.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][2])
         
         cap, extra, tap = model.auto_tune_model[CONFIG][BAND][160]
@@ -428,7 +466,7 @@ class Config(QMainWindow):
     def __do_set_sep(self):
         # Set pinmap for the inductor separator
         pin = self.__cb_indsep.currentText()
-        en = self.__chb_inden.isChecked()
+        en = self.__chb_inden.currentText()
         inv = self.__chb_indsep.isChecked()
         model.auto_tune_model[CONFIG][IND_TOGGLE] = [[int(pin),], en, inv]
     

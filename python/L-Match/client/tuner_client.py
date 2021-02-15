@@ -59,6 +59,14 @@ class TunerClient(QMainWindow):
         palette.setColor(QtGui.QPalette.Background,QtGui.QColor(195,195,195,255))
         self.setPalette(palette)
 
+        # Set the tooltip style
+        QToolTip.setFont(QFont('SansSerif', 10))
+        self.setStyleSheet('''QToolTip { 
+                           background-color: darkgray; 
+                           color: black; 
+                           border: #8ad4ff solid 1px
+                           }''')
+        
         # Initialise the GUI
         self.initUI()
         
@@ -96,11 +104,16 @@ class TunerClient(QMainWindow):
         
         # Band
         band_lbl = QLabel("Band")
+        band_lbl.setMaximumWidth(40)
         self.__cb_band = QComboBox()
+        self.__cb_band.setMaximumWidth(60)
         self.__cb_band.addItems(g_band_values)
+        self.__cb_band.setToolTip('Select band')
         self.__bandgrid.addWidget(band_lbl, 0,0)
         self.__bandgrid.addWidget(self.__cb_band, 0,1)
         self.__set_band = QPushButton("Set")
+        self.__set_band.setMaximumWidth(60)
+        self.__set_band.setToolTip('Set band values')
         self.__bandgrid.addWidget(self.__set_band, 0,2)
         self.__set_band.clicked.connect(self.__do_set_band)
         
@@ -120,16 +133,19 @@ class TunerClient(QMainWindow):
         cap_lbl = QLabel("Variable Cap")
         self.__capgrid.addWidget(cap_lbl, 1,0)
         self.__cap = QSlider(QtCore.Qt.Horizontal)
+        self.__cap.setToolTip('Adjust value')
         self.__cap.setMinimum(0)
         self.__cap.setMaximum(180)
         self.__cap.setValue(0)
         self.__capgrid.addWidget(self.__cap, 1,1)
         self.__cap.valueChanged.connect(self.__cap_changed)
         self.__cap_val = QLabel("0")
+        self.__cap_val.setToolTip('Requested value')
         self.__cap_val.setMinimumWidth(30)
         self.__cap_val.setStyleSheet("color: green; font: 14px")
         self.__capgrid.addWidget(self.__cap_val, 1,2)
         self.__cap_actual = QLabel("0")
+        self.__cap_actual.setToolTip('Actual value - may lag requested')
         self.__cap_actual.setMinimumWidth(30)
         self.__cap_actual.setStyleSheet("color: red; font: 14px")
         self.__capgrid.addWidget(self.__cap_actual, 1,3)
@@ -139,17 +155,13 @@ class TunerClient(QMainWindow):
         w3 = QWidget()
         w3.setLayout(self.__btngrid)
         self.__grid.addWidget(w3, 2,0)
-        self.__home = QPushButton("Home")
-        self.__btngrid.addWidget(self.__home, 0,0)
-        self.__home.clicked.connect(self.__do_home)
-        self.__reset = QPushButton("Reset")
-        self.__btngrid.addWidget(self.__reset, 0,1)
-        self.__reset.clicked.connect(self.__do_reset)
         self.__config = QPushButton("Config")
-        self.__btngrid.addWidget(self.__config, 0,2)
+        self.__config.setToolTip('Show configuration window...')
+        self.__btngrid.addWidget(self.__config, 0,0)
         self.__config.clicked.connect(self.__do_config)
         self.__exit = QPushButton("Exit")
-        self.__btngrid.addWidget(self.__exit, 0,3)
+        self.__exit.setToolTip('Exit application...')
+        self.__btngrid.addWidget(self.__exit, 0,1)
         self.__exit.clicked.connect(self.__do_exit)
         
     #========================================================================================
@@ -188,18 +200,6 @@ class TunerClient(QMainWindow):
         
         # Close socket
         self.__sock.close()
-    
-    def __do_home(self):
-
-        self.__net_send([CMD_HOME, []])
-        self.__tx.setValue(0)
-        self.__tx_val.setText('0')
-        self.__ant.setValue(0)
-        self.__ant_val.setText('0')
-        
-    def __do_reset(self):
-        
-        self.__net_send([CMD_RESET, []])
 
     def __do_config(self):
         
