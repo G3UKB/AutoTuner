@@ -485,6 +485,7 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][IND_TOGGLE] = [[int(pin),], en, inv]
     
     def __do_test_indsep(self):
+        self.__callback(CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][IND_TOGGLE][0]))
         self.__callback(CMD_RELAYS_SET, (model.auto_tune_model[CONFIG][IND_TOGGLE],))
     
     def __cap_var_changed(self):
@@ -519,7 +520,8 @@ class Config(QMainWindow):
         extra = self.__cb_cap_extra.currentText()
         tap = self.__cb_ind_tap.currentText()
         # Set parameters
-        self.__callback(CMD_RELAYS_SET, model.auto_tune_model[CONFIG][CAP_PINMAP][int(extra)])
+        if int(extra) != 0:
+            self.__callback(CMD_RELAYS_SET, model.auto_tune_model[CONFIG][CAP_PINMAP][int(extra)])
         self.__callback(CMD_RELAYS_SET, [model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)],])
         self.__callback(CMD_SERVO_MOVE, (cap,))
         

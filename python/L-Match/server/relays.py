@@ -70,7 +70,7 @@ class Relays:
             print ('Energise pins %s' % str(pin_array))
         else:
             self.__all_off(self.__pinArray)
-            self.__rlys_on(self.__pinArray, pin_array)
+            self.__rlys_on(pin_array)
     
     #----------------------------------------------------
     def cycle_pins(self, pin_array, mode):
