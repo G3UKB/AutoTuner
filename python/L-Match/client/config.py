@@ -123,24 +123,35 @@ class Config(QMainWindow):
     def __rpi(self, g):
         
         # We need the Ip and port
-        ip_lbl = QLabel("RPi IP Address")
+        ip_lbl = QLabel("IP")
         g.addWidget(ip_lbl, 0, 0)
-        port_lbl = QLabel("Listen on port")
-        g.addWidget(port_lbl, 0, 2)
+        rqst_port_lbl = QLabel("Rqst port")
+        g.addWidget(rqst_port_lbl, 0, 2)
+        evnt_port_lbl = QLabel("Envt port")
+        g.addWidget(evnt_port_lbl, 0, 4)
         
         self.__iptxt = QLineEdit()
+        self.__iptxt.setMinimumWidth(70)
         self.__iptxt.setInputMask('000.000.000.000;_')
-        self.__iptxt.setMaximumWidth(100)
         self.__iptxt.setToolTip('IP Address of RPi')
         g.addWidget(self.__iptxt, 0, 1)
         self.__iptxt.editingFinished.connect(self.__ip_changed)
         
-        self.__porttxt = QLineEdit()
-        self.__porttxt.setInputMask('00000;_')
-        self.__porttxt.setMaximumWidth(100)
-        self.__porttxt.setToolTip('Port RPi listens on')
-        g.addWidget(self.__porttxt, 0, 3)
-        self.__porttxt.editingFinished.connect(self.__port_changed)
+        self.__txt_rqst_port = QLineEdit()
+        self.__txt_rqst_port.setMaximumWidth(30)
+        self.__txt_rqst_port.setInputMask('00000;_')
+        self.__txt_rqst_port.setMaximumWidth(100)
+        self.__txt_rqst_port.setToolTip('Port RPi listens on')
+        g.addWidget(self.__txt_rqst_port, 0, 3)
+        self.__txt_rqst_port.editingFinished.connect(self.__rqst_port_changed)
+        
+        self.__txt_evnt_port = QLineEdit()
+        self.__txt_evnt_port.setMaximumWidth(30)
+        self.__txt_evnt_port.setInputMask('00000;_')
+        self.__txt_evnt_port.setMaximumWidth(100)
+        self.__txt_evnt_port.setToolTip('Port RPi sends events on')
+        g.addWidget(self.__txt_evnt_port, 0, 5)
+        self.__txt_evnt_port.editingFinished.connect(self.__evnt_port_changed)
         
     #-------------------------------------------------------------
     # Set the servo limits to achieve 0-180 degrees rotation
@@ -349,7 +360,8 @@ class Config(QMainWindow):
     
     def __init_fields(self):
         self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
-        self.__porttxt.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
+        self.__txt_rqst_port.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
+        self.__txt_evnt_port.setText(str(model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
         self.__sb_lower.setValue(model.auto_tune_model[CONFIG][LOW_PWM])
         self.__sb_upper.setValue(model.auto_tune_model[CONFIG][HIGH_PWM])
         
@@ -363,7 +375,6 @@ class Config(QMainWindow):
         
         self.__cb_indsep.setCurrentIndex(self.__cb_indsep.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][0])))
         self.__chb_inden.setCurrentIndex(self.__chb_inden.findText(str(model.auto_tune_model[CONFIG][IND_TOGGLE][1])))
-        #self.__chb_inden.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][1])
         self.__chb_indsep.setChecked(model.auto_tune_model[CONFIG][IND_TOGGLE][2])
         
         cap, extra, tap = model.auto_tune_model[CONFIG][BAND][160]
@@ -411,8 +422,11 @@ class Config(QMainWindow):
     def __ip_changed(self):
         model.auto_tune_model[CONFIG][RPi][IP] = self.__iptxt.text()
         
-    def __port_changed(self):
-        model.auto_tune_model[CONFIG][RPi][RQST_PORT] = int(self.__porttxt.text())
+    def __rqst_port_changed(self):
+        model.auto_tune_model[CONFIG][RPi][RQST_PORT] = int(self.__txt_rqst_port.text())
+    
+    def __evnt_port_changed(self):
+        model.auto_tune_model[CONFIG][RPi][EVNT_PORT] = int(self.__txt_evnt_port.text())
         
     def __do_set_pwm(self):
         model.auto_tune_model[CONFIG][LOW_PWM] = self.__sb_lower.value()
