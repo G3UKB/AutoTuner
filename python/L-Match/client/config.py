@@ -456,7 +456,7 @@ class Config(QMainWindow):
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
         inv = self.__chb_indmap.isChecked()
-        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = [[int(pin),], inv]
+        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = [int(pin), inv]
         model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)][1] = self.__chb_indmap.isChecked()
         
     def __do_test_ind(self):
