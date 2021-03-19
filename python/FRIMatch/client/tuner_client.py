@@ -51,8 +51,10 @@ class TunerClient(QMainWindow):
         self.__qt_app = qt_app
         
         # Track progress
-        self.__progress = 0
-        self.__actual = 0
+        self.__tx_progress = 0
+        self.__tx_actual = 0
+        self.__ant_progress = 0
+        self.__ant_actual = 0
         
         # Set the back colour
         palette = QtGui.QPalette()
@@ -95,73 +97,85 @@ class TunerClient(QMainWindow):
         self.setCentralWidget(w)
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
-            
-        # Band area
-        self.__bandgrid = QGridLayout()
-        w1 = QWidget()
-        w1.setLayout(self.__bandgrid)
-        self.__grid.addWidget(w1, 0,0)
-        
-        # Band
-        band_lbl = QLabel("Band")
-        band_lbl.setMaximumWidth(40)
-        self.__cb_band = QComboBox()
-        self.__cb_band.setMaximumWidth(60)
-        self.__cb_band.addItems(g_band_values)
-        self.__cb_band.setToolTip('Select band')
-        self.__bandgrid.addWidget(band_lbl, 0,0)
-        self.__bandgrid.addWidget(self.__cb_band, 0,1)
-        self.__set_band = QPushButton("Set")
-        self.__set_band.setMaximumWidth(60)
-        self.__set_band.setToolTip('Set band values')
-        self.__bandgrid.addWidget(self.__set_band, 0,2)
-        self.__set_band.clicked.connect(self.__do_set_band)
         
         # Capacitor area
         self.__capgrid = QGridLayout()
         w1 = QWidget()
         w1.setLayout(self.__capgrid)
-        self.__grid.addWidget(w1, 1,0)
+        self.__grid.addWidget(w1, 0,0)
         
         # Slider labels
-        setpoint_tag = QLabel("Set")
-        self.__capgrid.addWidget(setpoint_tag, 0,2)
-        actual_tag = QLabel("Act")
-        self.__capgrid.addWidget(actual_tag, 0,3)
+        tx_setpoint_tag = QLabel("Set")
+        self.__capgrid.addWidget(tx_setpoint_tag, 0,2)
+        tx_actual_tag = QLabel("Act")
+        self.__capgrid.addWidget(tx_actual_tag, 0,3)
         
+        # -------------------------------------------
+        # TX Capacitor
         # Add sliders
-        cap_lbl = QLabel("Variable Cap")
-        self.__capgrid.addWidget(cap_lbl, 1,0)
-        self.__cap = QSlider(QtCore.Qt.Horizontal)
-        self.__cap.setToolTip('Adjust value')
-        self.__cap.setMinimum(0)
-        self.__cap.setMaximum(180)
-        self.__cap.setValue(0)
-        self.__capgrid.addWidget(self.__cap, 1,1)
-        self.__cap.valueChanged.connect(self.__cap_changed)
-        self.__cap_val = QLabel("0")
-        self.__cap_val.setToolTip('Requested value')
-        self.__cap_val.setMinimumWidth(30)
-        self.__cap_val.setStyleSheet("color: green; font: 14px")
-        self.__capgrid.addWidget(self.__cap_val, 1,2)
-        self.__cap_actual = QLabel("0")
-        self.__cap_actual.setToolTip('Actual value - may lag requested')
-        self.__cap_actual.setMinimumWidth(30)
-        self.__cap_actual.setStyleSheet("color: red; font: 14px")
-        self.__capgrid.addWidget(self.__cap_actual, 1,3)
+        tx_cap_lbl = QLabel("TX Tune")
+        self.__capgrid.addWidget(tx_cap_lbl, 1,0)
+        self.__tx_cap = QSlider(QtCore.Qt.Horizontal)
+        self.__tx_cap.setToolTip('Adjust value')
+        self.__tx_cap.setMinimum(0)
+        self.__tx_cap.setMaximum(180)
+        self.__tx_cap.setValue(0)
+        self.__capgrid.addWidget(self.__tx_cap, 1,1)
+        self.__tx_cap.valueChanged.connect(self.__tx_cap_changed)
+        self.__tx_cap_val = QLabel("0")
+        self.__tx_cap_val.setToolTip('Requested value')
+        self.__tx_cap_val.setMinimumWidth(30)
+        self.__tx_cap_val.setStyleSheet("color: green; font: 14px")
+        self.__capgrid.addWidget(self.__tx_cap_val, 1,2)
+        self.__tx_cap_actual = QLabel("0")
+        self.__tx_cap_actual.setToolTip('Actual value - may lag requested')
+        self.__tx_cap_actual.setMinimumWidth(30)
+        self.__tx_cap_actual.setStyleSheet("color: red; font: 14px")
+        self.__capgrid.addWidget(self.__tx_cap_actual, 1,3)
         
+        # -------------------------------------------
+        # Ant Capacitor
+        # Add sliders
+        ant_cap_lbl = QLabel("Ant Tune")
+        self.__capgrid.addWidget(ant_cap_lbl, 2,0)
+        self.__ant_cap = QSlider(QtCore.Qt.Horizontal)
+        self.__ant_cap.setToolTip('Adjust value')
+        self.__ant_cap.setMinimum(0)
+        self.__ant_cap.setMaximum(180)
+        self.__ant_cap.setValue(0)
+        self.__capgrid.addWidget(self.__ant_cap, 2,1)
+        self.__ant_cap.valueChanged.connect(self.__ant_cap_changed)
+        self.__ant_cap_val = QLabel("0")
+        self.__ant_cap_val.setToolTip('Requested value')
+        self.__ant_cap_val.setMinimumWidth(30)
+        self.__ant_cap_val.setStyleSheet("color: green; font: 14px")
+        self.__capgrid.addWidget(self.__ant_cap_val, 2,2)
+        self.__ant_cap_actual = QLabel("0")
+        self.__ant_cap_actual.setToolTip('Actual value - may lag requested')
+        self.__ant_cap_actual.setMinimumWidth(30)
+        self.__ant_cap_actual.setStyleSheet("color: red; font: 14px")
+        self.__capgrid.addWidget(self.__ant_cap_actual, 2,3)
+        
+        # -------------------------------------------
         # Add buttons
         self.__btngrid = QGridLayout()
         w3 = QWidget()
         w3.setLayout(self.__btngrid)
-        self.__grid.addWidget(w3, 2,0)
+        self.__grid.addWidget(w3, 1,0)
+        
+        self.__mem = QPushButton("Memories")
+        self.__mem.setToolTip('Show memory window...')
+        self.__btngrid.addWidget(self.__mem, 0,0)
+        self.__mem.clicked.connect(self.__do_mem)
+        
         self.__config = QPushButton("Config")
         self.__config.setToolTip('Show configuration window...')
-        self.__btngrid.addWidget(self.__config, 0,0)
+        self.__btngrid.addWidget(self.__config, 0,1)
         self.__config.clicked.connect(self.__do_config)
+        
         self.__exit = QPushButton("Exit")
         self.__exit.setToolTip('Exit application...')
-        self.__btngrid.addWidget(self.__exit, 0,1)
+        self.__btngrid.addWidget(self.__exit, 0,2)
         self.__exit.clicked.connect(self.__do_exit)
         
     #========================================================================================
@@ -205,7 +219,13 @@ class TunerClient(QMainWindow):
         
         # Show the configuration window
         self.__config_win.show_window()
+    
+    def __do_mem(self):
         
+        # Show the memory window
+        #self.__mem_win.show_window()
+        pass
+
     def __do_exit(self):
         
         self.__close()
@@ -213,13 +233,20 @@ class TunerClient(QMainWindow):
         
     #=======================================================
     # Set server to new capacitor degrees
-    def __cap_changed(self):
+    def __tx_cap_changed(self):
     
         # Value ranges 0 - 180
-        val = self.__cap.value()
+        val = self.__tx_cap.value()
         self.__net_send([CMD_MOVE, [0, val]])
-        self.__cap_val.setText(str(val))
+        self.__tx_cap_val.setText(str(val))
     
+    def __ant_cap_changed(self):
+    
+        # Value ranges 0 - 180
+        val = self.__ant_cap.value()
+        self.__net_send([CMD_MOVE, [1, val]])
+        self.__ant_cap_val.setText(str(val))
+
     #=======================================================
     # Set server to band paramters
     def __do_set_band(self):
@@ -242,10 +269,11 @@ class TunerClient(QMainWindow):
         self.__config_win.progress(data)
         
     #======================================================= 
-    def __idleProcessing   (self):
+    def __idleProcessing(self):
         
         # Update UI with actual progress
-        self.__cap_actual.setText(str(self.__progress))
+        self.__tx_cap_actual.setText(str(self.__tx_progress))
+        self.__ant_cap_actual.setText(str(self.__ant_progress))
         # Set timer
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
 
