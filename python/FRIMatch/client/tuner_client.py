@@ -77,7 +77,7 @@ class TunerClient(QMainWindow):
         self.__monitor.start()
         
         # Create the configuration window
-        self.__config_win = config.Config(self.__config_callback)
+        #self.__config_win = config.Config(self.__config_callback)
     
     #========================================================================================    
     # UI initialisation and window event handlers
@@ -98,11 +98,52 @@ class TunerClient(QMainWindow):
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
         
+        # -------------------------------------------
+        # Button area
+        self.__btngrid = QGridLayout()
+        w1 = QGroupBox('Function')
+        w1.setLayout(self.__btngrid)
+        self.__grid.addWidget(w1, 0,0)
+        
+        self.__mem = QPushButton("Memories")
+        self.__mem.setToolTip('Show memory window...')
+        self.__btngrid.addWidget(self.__mem, 0,0)
+        self.__mem.clicked.connect(self.__do_mem)
+        
+        self.__config = QPushButton("Config")
+        self.__config.setToolTip('Show configuration window...')
+        self.__btngrid.addWidget(self.__config, 0,1)
+        self.__config.clicked.connect(self.__do_config)
+        
+        self.__exit = QPushButton("Exit")
+        self.__exit.setToolTip('Exit application...')
+        self.__btngrid.addWidget(self.__exit, 0,2)
+        self.__exit.clicked.connect(self.__do_exit)
+        
+        #=======================================================
+        # Range selection area
+        self.__rangegrid = QGridLayout()
+        w2 = QGroupBox('Inductor')
+        w2.setLayout(self.__rangegrid)
+        self.__grid.addWidget(w2, 1,0)
+        
+        # Check boxes
+        range_lbl = QLabel("Select Range")
+        self.__rangegrid.addWidget(range_lbl, 0,0)
+        
+        self.__chb_low_range = QRadioButton(model.auto_tune_model[CONFIG][LOW_RANGE][LABEL])
+        self.__chb_low_range.setToolTip('Check box to select low frequency range')
+        self.__rangegrid.addWidget(self.__chb_low_range, 0,1)
+        self.__chb_high_range = QRadioButton(model.auto_tune_model[CONFIG][HIGH_RANGE][LABEL])
+        self.__chb_high_range.setToolTip('Check box to select high frequency range')
+        self.__rangegrid.addWidget(self.__chb_high_range, 0,2)
+        
+        #=======================================================
         # Capacitor area
         self.__capgrid = QGridLayout()
-        w1 = QWidget()
-        w1.setLayout(self.__capgrid)
-        self.__grid.addWidget(w1, 0,0)
+        w3 = QGroupBox('Capacitors')
+        w3.setLayout(self.__capgrid)
+        self.__grid.addWidget(w3, 2,0)
         
         # Slider labels
         tx_setpoint_tag = QLabel("Set")
@@ -156,28 +197,6 @@ class TunerClient(QMainWindow):
         self.__ant_cap_actual.setStyleSheet("color: red; font: 14px")
         self.__capgrid.addWidget(self.__ant_cap_actual, 2,3)
         
-        # -------------------------------------------
-        # Add buttons
-        self.__btngrid = QGridLayout()
-        w3 = QWidget()
-        w3.setLayout(self.__btngrid)
-        self.__grid.addWidget(w3, 1,0)
-        
-        self.__mem = QPushButton("Memories")
-        self.__mem.setToolTip('Show memory window...')
-        self.__btngrid.addWidget(self.__mem, 0,0)
-        self.__mem.clicked.connect(self.__do_mem)
-        
-        self.__config = QPushButton("Config")
-        self.__config.setToolTip('Show configuration window...')
-        self.__btngrid.addWidget(self.__config, 0,1)
-        self.__config.clicked.connect(self.__do_config)
-        
-        self.__exit = QPushButton("Exit")
-        self.__exit.setToolTip('Exit application...')
-        self.__btngrid.addWidget(self.__exit, 0,2)
-        self.__exit.clicked.connect(self.__do_exit)
-        
     #========================================================================================
     # Run application
     def run(self, ):
@@ -191,8 +210,8 @@ class TunerClient(QMainWindow):
         self.show()
         self.repaint()
         
-        if not self.__configured:
-            self.__config_win.show()
+        #if not self.__configured:
+        #    self.__config_win.show()
             
         # Enter event loop
         return self.__qt_app.exec_()    
@@ -210,7 +229,7 @@ class TunerClient(QMainWindow):
         self.__monitor.join()
         
         # Close config win
-        self.__config_win.close()
+        #self.__config_win.close()
         
         # Close socket
         self.__sock.close()

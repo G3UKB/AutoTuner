@@ -46,19 +46,16 @@ auto_tune_model = {
         RPi: {IP: get_ip(), RQST_PORT: 10002, EVNT_PORT: 10003},
         LOW_PWM: 1000,
         HIGH_PWM: 1000,
-        CAP_PINMAP: {1000: [[4, False],], 2000: [[4, False], [17, False]], 3000: [[4, False], [17, False], [18, False]]},
-        IND_PINMAP: {1: [22, False], 2: [5, False], 3: [6, False], 4: [13, False], 5: [26, False], 6: [23, False], 7: [24, False], 8: [25, False], 9: [12, False], 10: [16, False]},
-        IND_TOGGLE: [20, 0, False],
-        BAND: {
-            160: [0, 0, 1],
-            80: [0, 0, 1],
-            60: [0, 0, 1],
-            40: [0, 0, 1],
-            30: [0, 0, 1],
-            20: [0, 0, 1],
-            17: [0, 0, 1],
-            12: [0, 0, 1],
-            10: [0, 0, 1]
+        INDUCTOR_PINMAP: (16, 19, 20, 21),
+        LOW_RANGE: {
+            FREQ: (1.8, 10.15),
+            LABEL: '160m - 30m',
+            ENERGISE: False,
+        },
+        HIGH_RANGE: {
+            FREQ: (14.0, 30),
+            LABEL: '20m - 10m',
+            ENERGISE: True,
         }
     }
 }
