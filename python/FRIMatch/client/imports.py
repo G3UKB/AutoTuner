@@ -44,6 +44,6 @@ sys.path.append('../server')
 from server_defs import *
 import model
 import persist
-#import config
+import config
 
 

@@ -77,7 +77,7 @@ class TunerClient(QMainWindow):
         self.__monitor.start()
         
         # Create the configuration window
-        #self.__config_win = config.Config(self.__config_callback)
+        self.__config_win = config.Config(self.__config_callback)
     
     #========================================================================================    
     # UI initialisation and window event handlers
@@ -210,8 +210,8 @@ class TunerClient(QMainWindow):
         self.show()
         self.repaint()
         
-        #if not self.__configured:
-        #    self.__config_win.show()
+        if not self.__configured:
+            self.__config_win.show()
             
         # Enter event loop
         return self.__qt_app.exec_()    
@@ -229,7 +229,7 @@ class TunerClient(QMainWindow):
         self.__monitor.join()
         
         # Close config win
-        #self.__config_win.close()
+        self.__config_win.close()
         
         # Close socket
         self.__sock.close()
