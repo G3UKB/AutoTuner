@@ -227,6 +227,8 @@ class Config(QMainWindow):
         self.__cb_ind.setCurrentIndex(0)
         self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][0])))
         
+        self.__cb_inv.setChecked(model.auto_tune_model[CONFIG][RELAY_INVERSE])
+        
     #========================================================================================
     # PUBLIC procs
     
@@ -290,9 +292,9 @@ class Config(QMainWindow):
         # Set pinmap for this inductor tap
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
-        inv = self.__chb_indmap.isChecked()
-        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)] = [int(pin), inv]
-        model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)][1] = self.__chb_indmap.isChecked()
+        inv = self.__cb_inv.isChecked()
+        model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][int(tap)] = int(pin)
+        model.auto_tune_model[CONFIG][RELAY_INVERSE] = inv
     
     def __do_test_ind(self):
         pass

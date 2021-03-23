@@ -46,7 +46,8 @@ auto_tune_model = {
         RPi: {IP: get_ip(), RQST_PORT: 10002, EVNT_PORT: 10003},
         LOW_PWM: 1000,
         HIGH_PWM: 1000,
-        INDUCTOR_PINMAP: (16, 19, 20, 21),
+        INDUCTOR_PINMAP: [16, 19, 20, 21],
+        RELAY_INVERSE: False,
         LOW_RANGE: {
             FREQ: (1.8, 10.15),
             LABEL: '160m - 30m',
