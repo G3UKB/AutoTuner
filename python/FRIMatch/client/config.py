@@ -200,6 +200,14 @@ class Config(QMainWindow):
         g.addWidget(ind_lbl, 1,0)
         g.addWidget(self.__cb_ind, 1,1)
         
+        # Set the inverse flag
+        inv_lbl = QLabel("Active low")
+        self.__cb_inv = QCheckBox()
+        self.__cb_inv.setToolTip('Check for relays active low')
+        g.addWidget(inv_lbl, 2,0)
+        g.addWidget(self.__cb_inv, 2,1)
+        
+        # Add buttons
         g.addWidget(self.__cb_indmap, 1,2)
         g.addWidget(self.__btn_ind, 1,4)
         g.addWidget(self.__btn_ind_test, 1,5)
