@@ -293,7 +293,7 @@ class Config(QMainWindow):
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
         inv = self.__cb_inv.isChecked()
-        model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][int(tap)] = int(pin)
+        model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][int(tap)] =  int(pin)
         model.auto_tune_model[CONFIG][RELAY_INVERSE] = inv
     
     def __do_test_ind(self):
