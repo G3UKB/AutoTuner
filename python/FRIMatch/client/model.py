@@ -44,8 +44,10 @@ def get_ip():
 auto_tune_model = {
     CONFIG: {
         RPi: {IP: get_ip(), RQST_PORT: 10002, EVNT_PORT: 10003},
-        LOW_PWM: 1000,
-        HIGH_PWM: 1000,
+        TX_LOW_PWM: 1000,
+        TX_HIGH_PWM: 1000,
+        ANT_LOW_PWM: 1000,
+        ANT_HIGH_PWM: 1000,
         INDUCTOR_PINMAP: [16, 19, 20, 21],
         RELAY_INVERSE: False,
         LOW_RANGE: {

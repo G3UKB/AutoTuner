@@ -154,30 +154,57 @@ class Config(QMainWindow):
         # We need two fields for PWM values
         # and two buttons for execution
         
+        # TX
         # Values for PWM upper and lower
-        lower_lbl = QLabel("Low PWM")
-        upper_lbl = QLabel("High PWM")
-        self.__sb_lower = QSpinBox()
-        self.__sb_lower.setRange(0, 3000)
-        self.__sb_lower.setToolTip('Lower bound of PWM range')
-        self.__sb_upper = QSpinBox()
-        self.__sb_upper.setRange(0, 3000)
-        self.__sb_upper.setToolTip('Upper bound of PWM range')
-        g.addWidget(lower_lbl, 0,0)
-        g.addWidget(self.__sb_lower, 0,1)
-        g.addWidget(upper_lbl, 0,2)
-        g.addWidget(self.__sb_upper, 0,3)
+        lower_tx_lbl = QLabel("TX Low PWM")
+        upper_tx_lbl = QLabel("TX High PWM")
+        self.__sb_tx_lower = QSpinBox()
+        self.__sb_tx_lower.setRange(0, 3000)
+        self.__sb_tx_lower.setToolTip('Lower bound of TX PWM range')
+        self.__sb_tx_upper = QSpinBox()
+        self.__sb_tx_upper.setRange(0, 3000)
+        self.__sb_tx_upper.setToolTip('Upper bound of TX PWM range')
+        g.addWidget(lower_tx_lbl, 0,0)
+        g.addWidget(self.__sb_tx_lower, 0,1)
+        g.addWidget(upper_tx_lbl, 0,2)
+        g.addWidget(self.__sb_tx_upper, 0,3)
         # Activation buttons
-        self.__btn_set_pwm = QPushButton("Set")
-        self.__btn_set_pwm.setMaximumWidth(60)
-        self.__btn_set_pwm.setToolTip('Set range')
-        g.addWidget(self.__btn_set_pwm, 0,4)
-        self.__btn_set_pwm.clicked.connect(self.__do_set_pwm)
-        self.__btn_tst_pwm = QPushButton("Test")
-        self.__btn_tst_pwm.setToolTip('Test range, moves 0-180-0')
-        self.__btn_tst_pwm.setMaximumWidth(60)
-        g.addWidget(self.__btn_tst_pwm, 0,5)
-        self.__btn_tst_pwm.clicked.connect(self.__do_test_range)
+        self.__btn_tx_set_pwm = QPushButton("Set")
+        self.__btn_tx_set_pwm.setMaximumWidth(60)
+        self.__btn_tx_set_pwm.setToolTip('Set TX range')
+        g.addWidget(self.__btn_tx_set_pwm, 0,4)
+        self.__btn_tx_set_pwm.clicked.connect(self.__do_tx_set_pwm)
+        self.__btn_tx_tst_pwm = QPushButton("Test")
+        self.__btn_tx_tst_pwm.setToolTip('Test TX range, moves 0-180-0')
+        self.__btn_tx_tst_pwm.setMaximumWidth(60)
+        g.addWidget(self.__btn_tx_tst_pwm, 0,5)
+        self.__btn_tx_tst_pwm.clicked.connect(self.__do_tx_test_range)
+        
+        # Antenna
+        # Values for PWM upper and lower
+        lower_ant_lbl = QLabel("Ant Low PWM")
+        upper_ant_lbl = QLabel("Ant High PWM")
+        self.__sb_ant_lower = QSpinBox()
+        self.__sb_ant_lower.setRange(0, 3000)
+        self.__sb_ant_lower.setToolTip('Lower bound of Ant PWM range')
+        self.__sb_ant_upper = QSpinBox()
+        self.__sb_ant_upper.setRange(0, 3000)
+        self.__sb_ant_upper.setToolTip('Upper bound of Ant PWM range')
+        g.addWidget(lower_ant_lbl, 1,0)
+        g.addWidget(self.__sb_ant_lower, 1,1)
+        g.addWidget(upper_ant_lbl, 1,2)
+        g.addWidget(self.__sb_ant_upper, 1,3)
+        # Activation buttons
+        self.__btn_ant_set_pwm = QPushButton("Set")
+        self.__btn_ant_set_pwm.setMaximumWidth(60)
+        self.__btn_ant_set_pwm.setToolTip('Set range')
+        g.addWidget(self.__btn_ant_set_pwm, 1,4)
+        self.__btn_ant_set_pwm.clicked.connect(self.__do_ant_set_pwm)
+        self.__btn_ant_tst_pwm = QPushButton("Test")
+        self.__btn_ant_tst_pwm.setToolTip('Test range, moves 0-180-0')
+        self.__btn_ant_tst_pwm.setMaximumWidth(60)
+        g.addWidget(self.__btn_ant_tst_pwm, 1,5)
+        self.__btn_ant_tst_pwm.clicked.connect(self.__do_ant_test_range)
         
     #-------------------------------------------------------------
     # Set the pin maps for capacitor values and inductor taps
@@ -221,8 +248,10 @@ class Config(QMainWindow):
         self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
         self.__txt_rqst_port.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
         self.__txt_evnt_port.setText(str(model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
-        self.__sb_lower.setValue(model.auto_tune_model[CONFIG][LOW_PWM])
-        self.__sb_upper.setValue(model.auto_tune_model[CONFIG][HIGH_PWM])
+        self.__sb_tx_lower.setValue(model.auto_tune_model[CONFIG][TX_LOW_PWM])
+        self.__sb_tx_upper.setValue(model.auto_tune_model[CONFIG][TX_HIGH_PWM])
+        self.__sb_ant_lower.setValue(model.auto_tune_model[CONFIG][ANT_LOW_PWM])
+        self.__sb_ant_upper.setValue(model.auto_tune_model[CONFIG][ANT_HIGH_PWM])
         
         self.__cb_ind.setCurrentIndex(0)
         self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][0])))
@@ -275,14 +304,22 @@ class Config(QMainWindow):
     def __evnt_port_changed(self):
         model.auto_tune_model[CONFIG][RPi][EVNT_PORT] = int(self.__txt_evnt_port.text())
         
-    def __do_set_pwm(self):
-        model.auto_tune_model[CONFIG][LOW_PWM] = self.__sb_lower.value()
-        model.auto_tune_model[CONFIG][HIGH_PWM] = self.__sb_upper.value()
+    def __do_tx_set_pwm(self):
+        model.auto_tune_model[CONFIG][TX_LOW_PWM] = self.__sb_tx_lower.value()
+        model.auto_tune_model[CONFIG][TX_HIGH_PWM] = self.__sb_tx_upper.value()
     
-    def __do_test_range(self):
-        self.__callback(CMD_SERVO_SET_PWM, (self.__sb_lower.value(), self.__sb_upper.value()))
-        self.__callback(CMD_SERVO_TEST, ())
-                            
+    def __do_ant_test_range(self):
+        self.__callback(CMD_TX_SERVO_SET_PWM, (self.__sb_tx_lower.value(), self.__sb_tx_upper.value()))
+        self.__callback(CMD_TX_SERVO_TEST, ())
+    
+    def __do_ant_set_pwm(self):
+        model.auto_tune_model[CONFIG][ANT_LOW_PWM] = self.__sb_ant_lower.value()
+        model.auto_tune_model[CONFIG][ANT_HIGH_PWM] = self.__sb_ant_upper.value()
+    
+    def __do_tx_test_range(self):
+        self.__callback(CMD_ANT_SERVO_SET_PWM, (self.__sb_ant_lower.value(), self.__sb_ant_upper.value()))
+        self.__callback(CMD_ANT_SERVO_TEST, ())
+        
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
         self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)][0])))    
