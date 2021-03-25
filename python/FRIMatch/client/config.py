@@ -308,7 +308,7 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][TX_LOW_PWM] = self.__sb_tx_lower.value()
         model.auto_tune_model[CONFIG][TX_HIGH_PWM] = self.__sb_tx_upper.value()
     
-    def __do_ant_test_range(self):
+    def __do_tx_test_range(self):
         self.__callback(CMD_TX_SERVO_SET_PWM, (self.__sb_tx_lower.value(), self.__sb_tx_upper.value()))
         self.__callback(CMD_TX_SERVO_TEST, ())
     
@@ -316,10 +316,10 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][ANT_LOW_PWM] = self.__sb_ant_lower.value()
         model.auto_tune_model[CONFIG][ANT_HIGH_PWM] = self.__sb_ant_upper.value()
     
-    def __do_tx_test_range(self):
+    def __do_ant_test_range(self):
         self.__callback(CMD_ANT_SERVO_SET_PWM, (self.__sb_ant_lower.value(), self.__sb_ant_upper.value()))
         self.__callback(CMD_ANT_SERVO_TEST, ())
-        
+            
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
         self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)][0])))    
