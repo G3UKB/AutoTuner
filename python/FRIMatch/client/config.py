@@ -322,8 +322,8 @@ class Config(QMainWindow):
             
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)][0])))    
-        self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][IND_PINMAP][int(ind)][1])
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][int(ind)][0])))    
+        self.__chb_indmap.setChecked(model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][int(ind)][1])
         
     def __do_set_ind(self):
         # Set pinmap for this inductor tap
@@ -334,7 +334,14 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][RELAY_INVERSE] = inv
     
     def __do_test_ind(self):
-        pass
+        # Test pinmap
+        params = []
+        inv = model.auto_tune_model[CONFIG][RELAY_INVERSE]
+        for pin in model.auto_tune_model[CONFIG][INDUCTOR_PINMAP]:
+            params.append((pin, inv))
+            
+        self.__callback(CMD_RELAYS_INIT, params)
+        self.__callback(CMD_RELAYS_CYCLE, (params, 'exclusive'))
     
 #======================================================================================================================
 # Test code

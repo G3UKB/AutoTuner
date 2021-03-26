@@ -127,7 +127,7 @@ class TunerClient(QMainWindow):
         w2.setLayout(self.__rangegrid)
         self.__grid.addWidget(w2, 1,0)
         
-        # Check boxes
+        # Radio buttons for inductor taps
         range_lbl = QLabel("Select Range")
         self.__rangegrid.addWidget(range_lbl, 0,0)
         
@@ -137,6 +137,8 @@ class TunerClient(QMainWindow):
         self.__chb_high_range = QRadioButton(model.auto_tune_model[CONFIG][HIGH_RANGE][LABEL])
         self.__chb_high_range.setToolTip('Check box to select high frequency range')
         self.__rangegrid.addWidget(self.__chb_high_range, 0,2)
+        self.__chb_low_range.toggled.connect(lambda:self.__do_range_changed(self.__chb_low_range))
+        self.__chb_high_range.toggled.connect(lambda:self.__do_range_changed(self.__chb_high_range))
         
         #=======================================================
         # Capacitor area
@@ -268,7 +270,7 @@ class TunerClient(QMainWindow):
 
     #=======================================================
     # Set server to band paramters
-    def __do_set_band(self):
+    def __do_range_changed(self):
         # Do a complete relay init
         self.__net_send([CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000])])
         self.__net_send([CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values()))])
