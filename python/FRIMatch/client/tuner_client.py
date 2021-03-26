@@ -270,18 +270,24 @@ class TunerClient(QMainWindow):
 
     #=======================================================
     # Set server to band paramters
-    def __do_range_changed(self):
+    def __do_range_changed(self, rb):
+        
+        # Collect parameters
+        params = []
+        inv = model.auto_tune_model[CONFIG][RELAY_INVERSE]
+        for pin in model.auto_tune_model[CONFIG][INDUCTOR_PINMAP]:
+            params.append((pin, inv))
+            
         # Do a complete relay init
-        self.__net_send([CMD_RELAYS_INIT, (model.auto_tune_model[CONFIG][CAP_PINMAP][3000])])
-        self.__net_send([CMD_RELAYS_INIT, list((model.auto_tune_model[CONFIG][IND_PINMAP].values()))])
-        self.__net_send([CMD_RELAYS_INIT, [model.auto_tune_model[CONFIG][IND_TOGGLE],]])
-        # Get parameters
-        band = self.__cb_band.currentText()
-        cap, extra, tap = model.auto_tune_model[CONFIG][BAND][int(band)]
-        # Set parameters
-        self.__net_send([CMD_RELAYS_SET, model.auto_tune_model[CONFIG][CAP_PINMAP][int(extra)]])
-        self.__net_send([CMD_RELAYS_SET, [model.auto_tune_model[CONFIG][IND_PINMAP][int(tap)],]])
-        self.__net_send([CMD_SERVO_MOVE, (cap,)])
+        self.__net_send([CMD_RELAYS_INIT, params])
+        
+        # Set relays for bands
+        if rb.text() == model.auto_tune_model[CONFIG][LOW_RANGE][LABEL]:
+            if rb.isChecked() == True:
+                self.__net_send([CMD_RELAYS_RESET, params])
+        if rb.text() == model.auto_tune_model[CONFIG][HIGH_RANGE][LABEL]:
+            if rb.isChecked() == True:
+                self.__net_send([CMD_RELAYS_SET, params])
        
     #======================================================= 
     def __monitor_callback(self, data):
