@@ -93,11 +93,6 @@ class Servo(threading.Thread):
             self.__dev.frequency = 60
             self.__dev.channels[0].duty_cycle = 0x7FFF
             self.__dev.channels[1].duty_cycle = 0x7FFF
-        
-        # Create the servo instance.
-        # Create with default min and max pulse
-        if not servo_test_mode:
-            self.__servo = servo.Servo(self.__dev.channels[id])
     
     #------------------------------------------------------------------
     # PUBLIC
@@ -114,6 +109,7 @@ class Servo(threading.Thread):
         if servo_test_mode:
             print ("Setting min,max to: %d, %d" % (low,high))
         else:
+            # Create instance
             self.__servo = servo.Servo(self.__dev.channels[self.__id],min_pulse=self.__servo_min, max_pulse=self.__servo_max)
     
     def test_range(self):
