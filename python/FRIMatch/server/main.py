@@ -160,6 +160,12 @@ class RemoteTuner:
                     return
                 self.__relays.set_pins(cmd[1])
             
+            elif rqst == CMD_RELAYS_RESET:
+                if len(cmd[1]) == 0:
+                    print('Command %s requires variable parameter list, received %d' % (rqst, len(cmd[1])))
+                    return
+                self.__relays.reset_pins(cmd[1])
+                
             elif rqst == CMD_RELAYS_CYCLE:
                 if len(cmd[1]) == 0:
                     print('Command %s requires variable parameter list, received %d' % (rqst, len(cmd[1])))
