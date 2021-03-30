@@ -33,7 +33,6 @@ class Config(QMainWindow):
         super(Config, self).__init__()
         
         self.__callback = callback
-        self.__progress = 0
         
         # Set the back colour
         palette = QtGui.QPalette()
@@ -272,9 +271,6 @@ class Config(QMainWindow):
         # Show our window
         self.show()
         self.repaint()
-        
-    def progress(self, progress):
-        self.__progress = progress
         
     #========================================================================================
     # Event procs

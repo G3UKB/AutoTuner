@@ -300,13 +300,13 @@ class TunerClient(QMainWindow):
        
     #======================================================= 
     def __monitor_callback(self, data):
-        
-        self.__progress = data
-        self.__config_win.progress(data)
+        if data[0] == 'tx':    
+            self.__tx_progress = data[1]
+        else:
+            self.__ant_progress = data[1]
         
     #======================================================= 
     def __idleProcessing(self):
-        
         # Update UI with actual progress
         self.__tx_cap_actual.setText(str(self.__tx_progress))
         self.__ant_cap_actual.setText(str(self.__ant_progress))
