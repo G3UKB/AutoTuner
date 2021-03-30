@@ -75,15 +75,9 @@ class Servo(threading.Thread):
         # Queue to post on
         self.__q = deque()
         
-        # Set the range from stored values
-        if id == 0:
-            self.__servo_min = model.auto_tune_model[CONFIG][ANT_LOW_PWM] = self.__sb_ant_lower.value()
-            self.__servo_max = model.auto_tune_model[CONFIG][ANT_HIGH_PWM] = self.__sb_ant_upper.value()
-            self.__callback(CMD_TX_SERVO_SET_PWM, (self.__servo_min, self.__servo_max))
-        else:
-            self.__servo_min = model.auto_tune_model[CONFIG][TX_LOW_PWM] = self.__sb_ant_lower.value()
-            self.__servo_max = model.auto_tune_model[CONFIG][TX_HIGH_PWM] = self.__sb_ant_upper.value()
-            self.__callback(CMD_ANT_SERVO_SET_PWM, (self.__servo_min, self.__servo_max))
+        # Set the default range
+        self.__servo_min = 600
+        self.__servo_max = 2000
         self.__last_angle = 0
         
         # Best for servos
