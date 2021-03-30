@@ -258,14 +258,14 @@ class TunerClient(QMainWindow):
     
         # Value ranges 0 - 180
         val = self.__tx_cap.value()
-        self.__net_send([CMD_TX_SERVO_MOVE, [0, val]])
+        self.__net_send([CMD_TX_SERVO_MOVE, [val]])
         self.__tx_cap_val.setText(str(val))
     
     def __ant_cap_changed(self):
     
         # Value ranges 0 - 180
         val = self.__ant_cap.value()
-        self.__net_send([CMD_ANT_SERVO_MOVE, [1, val]])
+        self.__net_send([CMD_ANT_SERVO_MOVE, [val]])
         self.__ant_cap_val.setText(str(val))
 
     #=======================================================
