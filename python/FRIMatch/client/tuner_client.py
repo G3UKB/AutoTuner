@@ -80,13 +80,13 @@ class TunerClient(QMainWindow):
         self.__config_win = config.Config(self.__config_callback)
         
         # Set default range
-        self.__servo_min = model.auto_tune_model[CONFIG][ANT_LOW_PWM] = self.__sb_ant_lower.value()
-        self.__servo_max = model.auto_tune_model[CONFIG][ANT_HIGH_PWM] = self.__sb_ant_upper.value()
-        self.__net_send(CMD_TX_SERVO_SET_PWM, (self.__servo_min, self.__servo_max))
+        self.__servo_min = model.auto_tune_model[CONFIG][ANT_LOW_PWM]
+        self.__servo_max = model.auto_tune_model[CONFIG][ANT_HIGH_PWM]
+        self.__net_send((CMD_TX_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
 
-        self.__servo_min = model.auto_tune_model[CONFIG][TX_LOW_PWM] = self.__sb_ant_lower.value()
-        self.__servo_max = model.auto_tune_model[CONFIG][TX_HIGH_PWM] = self.__sb_ant_upper.value()
-        self.__net_send(CMD_ANT_SERVO_SET_PWM, (self.__servo_min, self.__servo_max))
+        self.__servo_min = model.auto_tune_model[CONFIG][TX_LOW_PWM]
+        self.__servo_max = model.auto_tune_model[CONFIG][TX_HIGH_PWM]
+        self.__net_send((CMD_ANT_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
         
     #========================================================================================    
     # UI initialisation and window event handlers

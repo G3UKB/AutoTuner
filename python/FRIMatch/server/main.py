@@ -122,7 +122,7 @@ class RemoteTuner:
                 if len(cmd[1]) != 1:
                     print('Command %s requires 1 parameters, received %d' % (rqst, len(cmd[1])))
                     return
-                self.__ant_servo.post((CMD_SERVO_MOVE, (cmd[1][0])))
+                self.__tx_servo.post((CMD_SERVO_MOVE, (cmd[1][0])))
             
             elif rqst == CMD_ANT_SERVO_SET_PWM:
                 if len(cmd[1]) != 2:
