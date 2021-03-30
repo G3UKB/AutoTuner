@@ -124,7 +124,7 @@ class RemoteTuner:
                     return
                 self.__ant_servo.post((CMD_SERVO_MOVE, (cmd[1][0])))
             
-            if rqst == CMD_ANT_SERVO_SET_PWM:
+            elif rqst == CMD_ANT_SERVO_SET_PWM:
                 if len(cmd[1]) != 2:
                     print('Command %s requires 2 parameters, received %d' % (rqst, len(cmd[1])))
                     return
@@ -182,7 +182,7 @@ class RemoteTuner:
                 self.__relays.close()
                 self.__relays = relay.Relay()
             else:
-                print('Unknown request type %s!' % (type))
+                print('Unknown request type %s!' % (rqst))
             
         except pickle.UnpicklingError:
             print('Failed to unpickle request data!')
