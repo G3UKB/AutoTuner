@@ -50,6 +50,9 @@ class TunerClient(QMainWindow):
         # The application
         self.__qt_app = qt_app
         
+        # Size window
+        self.setMinimumWidth(400)
+        
         # Track progress
         self.__tx_progress = 0
         self.__tx_actual = 0
@@ -114,19 +117,24 @@ class TunerClient(QMainWindow):
         w1.setLayout(self.__btngrid)
         self.__grid.addWidget(w1, 0,0)
         
-        self.__mem = QPushButton("Memories")
+        self.__mem = QPushButton("Memories...")
         self.__mem.setToolTip('Show memory window...')
         self.__btngrid.addWidget(self.__mem, 0,0)
         self.__mem.clicked.connect(self.__do_mem)
         
-        self.__config = QPushButton("Config")
+        self.__mem_add = QPushButton("Add...")
+        self.__mem_add.setToolTip('Add a new memory')
+        self.__btngrid.addWidget(self.__mem_add, 0,1)
+        self.__mem_add.clicked.connect(self.__do_add_mem)
+
+        self.__config = QPushButton("Config...")
         self.__config.setToolTip('Show configuration window...')
-        self.__btngrid.addWidget(self.__config, 0,1)
+        self.__btngrid.addWidget(self.__config, 0,2)
         self.__config.clicked.connect(self.__do_config)
         
         self.__exit = QPushButton("Exit")
         self.__exit.setToolTip('Exit application...')
-        self.__btngrid.addWidget(self.__exit, 0,2)
+        self.__btngrid.addWidget(self.__exit, 0,3)
         self.__exit.clicked.connect(self.__do_exit)
         
         #=======================================================
@@ -158,9 +166,9 @@ class TunerClient(QMainWindow):
         
         # Slider labels
         tx_setpoint_tag = QLabel("Set")
-        self.__capgrid.addWidget(tx_setpoint_tag, 0,2)
+        self.__capgrid.addWidget(tx_setpoint_tag, 0,4)
         tx_actual_tag = QLabel("Act")
-        self.__capgrid.addWidget(tx_actual_tag, 0,3)
+        self.__capgrid.addWidget(tx_actual_tag, 0,5)
         
         # -------------------------------------------
         # TX Capacitor
@@ -173,18 +181,30 @@ class TunerClient(QMainWindow):
         self.__tx_cap.setMaximum(180)
         self.__tx_cap.setValue(0)
         self.__capgrid.addWidget(self.__tx_cap, 1,1)
+        
+        self.__tx_nudge_down = QPushButton("<")
+        self.__tx_nudge_down.setMaximumWidth(20)
+        self.__tx_nudge_down.setToolTip('Increase capacitance a tad')
+        self.__capgrid.addWidget(self.__tx_nudge_down, 1,2)
+        self.__tx_nudge_down.clicked.connect(self.__do_tx_nudge_down)
+        self.__tx_nudge_up = QPushButton(">")
+        self.__tx_nudge_up.setMaximumWidth(20)
+        self.__tx_nudge_up.setToolTip('Decrease capacitance a tad')
+        self.__capgrid.addWidget(self.__tx_nudge_up, 1,3)
+        self.__tx_nudge_up.clicked.connect(self.__do_tx_nudge_up)
+        
         self.__tx_cap.valueChanged.connect(self.__tx_cap_changed)
         self.__tx_cap_val = QLabel("0")
         self.__tx_cap_val.setToolTip('Requested value')
         self.__tx_cap_val.setMinimumWidth(30)
         self.__tx_cap_val.setStyleSheet("color: green; font: 14px")
-        self.__capgrid.addWidget(self.__tx_cap_val, 1,2)
+        self.__capgrid.addWidget(self.__tx_cap_val, 1,4)
         self.__tx_cap_actual = QLabel("0")
         self.__tx_cap_actual.setToolTip('Actual value - may lag requested')
         self.__tx_cap_actual.setMinimumWidth(30)
         self.__tx_cap_actual.setStyleSheet("color: red; font: 14px")
-        self.__capgrid.addWidget(self.__tx_cap_actual, 1,3)
-        
+        self.__capgrid.addWidget(self.__tx_cap_actual, 1,5)
+             
         # -------------------------------------------
         # Ant Capacitor
         # Add sliders
@@ -196,17 +216,29 @@ class TunerClient(QMainWindow):
         self.__ant_cap.setMaximum(180)
         self.__ant_cap.setValue(0)
         self.__capgrid.addWidget(self.__ant_cap, 2,1)
+        
+        self.__ant_nudge_down = QPushButton("<")
+        self.__ant_nudge_down.setMaximumWidth(20)
+        self.__ant_nudge_down.setToolTip('Increase capacitance a tad')
+        self.__capgrid.addWidget(self.__ant_nudge_down, 2,2)
+        self.__ant_nudge_down.clicked.connect(self.__do_ant_nudge_down)
+        self.__ant_nudge_up = QPushButton(">")
+        self.__ant_nudge_up.setMaximumWidth(20)
+        self.__ant_nudge_up.setToolTip('Decrease capacitance a tad')
+        self.__capgrid.addWidget(self.__ant_nudge_up, 2,3)
+        self.__ant_nudge_up.clicked.connect(self.__do_ant_nudge_up)
+        
         self.__ant_cap.valueChanged.connect(self.__ant_cap_changed)
         self.__ant_cap_val = QLabel("0")
         self.__ant_cap_val.setToolTip('Requested value')
         self.__ant_cap_val.setMinimumWidth(30)
         self.__ant_cap_val.setStyleSheet("color: green; font: 14px")
-        self.__capgrid.addWidget(self.__ant_cap_val, 2,2)
+        self.__capgrid.addWidget(self.__ant_cap_val, 2,4)
         self.__ant_cap_actual = QLabel("0")
         self.__ant_cap_actual.setToolTip('Actual value - may lag requested')
         self.__ant_cap_actual.setMinimumWidth(30)
         self.__ant_cap_actual.setStyleSheet("color: red; font: 14px")
-        self.__capgrid.addWidget(self.__ant_cap_actual, 2,3)
+        self.__capgrid.addWidget(self.__ant_cap_actual, 2,5)
         
     #========================================================================================
     # Run application
@@ -256,6 +288,11 @@ class TunerClient(QMainWindow):
         #self.__mem_win.show_window()
         pass
 
+    def __do_add_mem(self):
+        
+        # Add a new memory
+        pass
+    
     def __do_exit(self):
         
         self.__close()
@@ -277,6 +314,18 @@ class TunerClient(QMainWindow):
         self.__net_send([CMD_ANT_SERVO_MOVE, [val]])
         self.__ant_cap_val.setText(str(val))
 
+    def __do_tx_nudge_down(self):
+        pass
+    
+    def __do_tx_nudge_up(self):
+        pass
+    
+    def __do_ant_nudge_down(self):
+        pass
+    
+    def __do_ant_nudge_up(self):
+        pass
+    
     #=======================================================
     # Set server to band paramters
     def __do_range_changed(self, rb):
