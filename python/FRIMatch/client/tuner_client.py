@@ -435,22 +435,34 @@ class TunerClient(QMainWindow):
         self.__ant_cap_actual.setText(str(self.__ant_progress))
         
         # Check heartbeat
-        if self.__heartbeat:
-            self.__alive = True
-            if not self.__settings:
-                self.__send_settings()
-                self.__settings = True
-        else:
-            self.__heartbeat_timer -= 1
-            if self.__heartbeat_timer <= 0:
+        self.__heartbeat_timer -= 1
+        if self.__heartbeat_timer <= 0:
+            # Check now      
+            if self.__heartbeat:
+                self.__alive = True
+                self.__heartbeat = False
+                if not self.__settings:
+                    self.__send_settings()
+                    self.__settings = True
+            else:
                 # Alert
-                self.__heartbeat_timer = HEARTBEAT_TIMER
+                
                 self.__alive = False
                 self.__settings = False
+            self.__heartbeat_timer = HEARTBEAT_TIMER
         
         # Set timer
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
 
+    def __send_settings(self):
+        params = (
+            model.auto_tune_model[CONFIG][SERVO][TRACK_INC],
+            model.auto_tune_model[CONFIG][SERVO][TRACK_DELAY],
+            model.auto_tune_model[CONFIG][SERVO][SCAN_INC],
+            model.auto_tune_model[CONFIG][SERVO][SCAN_DELAY]
+        )
+        self.__net_send([CMD_SERVO_SETTINGS, params])
+        
     #======================================================= 
     # Callbacks
     def __config_callback(self, cmd, params):
