@@ -307,31 +307,40 @@ class TunerClient(QMainWindow):
     #=======================================================
     # Set server to new capacitor degrees
     def __tx_cap_changed(self):
-    
         # Value ranges 0 - 180
         val = self.__tx_cap.value()
         self.__net_send([CMD_TX_SERVO_MOVE, [val]])
         self.__tx_cap_val.setText(str(val))
     
     def __ant_cap_changed(self):
-    
         # Value ranges 0 - 180
         val = self.__ant_cap.value()
         self.__net_send([CMD_ANT_SERVO_MOVE, [val]])
         self.__ant_cap_val.setText(str(val))
 
+    # Do nudge up/down
     def __do_tx_nudge_down(self):
-        pass
+        val = self.__tx_cap.value() - inc
+        self.__do_nudge(self.__tx_cap, self.__tx_cap_val, CMD_ANT_SERVO_MOVE, val)
     
     def __do_tx_nudge_up(self):
-        pass
+        val = self.__tx_cap.value() + inc
+        self.__do_nudge(self.__tx_cap, self.__tx_cap_val, CMD_ANT_SERVO_MOVE, val)
     
     def __do_ant_nudge_down(self):
-        pass
+        val = self.__ant_cap.value() - inc
+        self.__do_nudge(self.__ant_cap, self.__ant_cap_val, CMD_ANT_SERVO_MOVE, val)
     
     def __do_ant_nudge_up(self):
-        pass
+        val = self.__ant_cap.value() + inc
+        self.__do_nudge(self.__ant_cap, self.__ant_cap_val, CMD_ANT_SERVO_MOVE, val)
     
+    def __do_nudge(w_slider, w_value, cmd, val):
+        inc = model.auto_tune_model[CONFIG][SERVO][NUDGE_INC]
+        self.__net_send([cmd, [val]])
+        self.w_value.setText(str(val))
+        self.w_slider.setValue(val)
+        
     #=======================================================
     # Set server to band paramters
     def __do_range_changed(self, rb):
