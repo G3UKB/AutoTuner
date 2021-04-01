@@ -43,22 +43,36 @@ def get_ip():
 
 auto_tune_model = {
     CONFIG: {
-        RPi: {IP: get_ip(), RQST_PORT: 10002, EVNT_PORT: 10003},
-        TX_LOW_PWM: 1000,
-        TX_HIGH_PWM: 1000,
-        ANT_LOW_PWM: 1000,
-        ANT_HIGH_PWM: 1000,
-        INDUCTOR_PINMAP: [16, 19, 20, 21],
-        RELAY_INVERSE: False,
-        LOW_RANGE: {
-            FREQ: (1.8, 10.15),
-            LABEL: '160m - 30m',
-            ENERGISE: False,
+        RPi: {
+            IP: get_ip(),
+            RQST_PORT: 10002,
+            EVNT_PORT: 10003,
         },
-        HIGH_RANGE: {
-            FREQ: (14.0, 30),
-            LABEL: '20m - 10m',
-            ENERGISE: True,
+        SERVO: {
+            TX_LOW_PWM: 1000,
+            TX_HIGH_PWM: 1000,
+            ANT_LOW_PWM: 1000,
+            ANT_HIGH_PWM: 1000,
+            MODE: MODE_TRACK,
+            NUDGE_INC: DEFAULT_NUDGE_INC,
+            TRACK_INC: DEFAULT_TRACK_INC,
+            TRACK_DELAY: DEFAULT_TRACK_DELAY,
+            SCAN_INC: DEFAULT_SCAN_INC,
+            SCAN_DELAY: DEFAULT_SCAN_DELAY,
+        },
+        RELAY: {
+            INDUCTOR_PINMAP: [16, 19, 20, 21],
+            RELAY_INVERSE: False,
+            LOW_RANGE: {
+                FREQ: (1.8, 10.15),
+                LABEL: '160m - 30m',
+                ENERGISE: False,
+            },
+            HIGH_RANGE: {
+                FREQ: (14.0, 30),
+                LABEL: '20m - 10m',
+                ENERGISE: True,
+            }
         }
     }
 }

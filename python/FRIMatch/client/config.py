@@ -247,15 +247,15 @@ class Config(QMainWindow):
         self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
         self.__txt_rqst_port.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
         self.__txt_evnt_port.setText(str(model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
-        self.__sb_tx_lower.setValue(model.auto_tune_model[CONFIG][TX_LOW_PWM])
-        self.__sb_tx_upper.setValue(model.auto_tune_model[CONFIG][TX_HIGH_PWM])
-        self.__sb_ant_lower.setValue(model.auto_tune_model[CONFIG][ANT_LOW_PWM])
-        self.__sb_ant_upper.setValue(model.auto_tune_model[CONFIG][ANT_HIGH_PWM])
+        self.__sb_tx_lower.setValue(model.auto_tune_model[CONFIG][SERVO][TX_LOW_PWM])
+        self.__sb_tx_upper.setValue(model.auto_tune_model[CONFIG][SERVO][TX_HIGH_PWM])
+        self.__sb_ant_lower.setValue(model.auto_tune_model[CONFIG][SERVO][ANT_LOW_PWM])
+        self.__sb_ant_upper.setValue(model.auto_tune_model[CONFIG][SERVO][ANT_HIGH_PWM])
         
         self.__cb_ind.setCurrentIndex(0)
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][0])))
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP][0])))
         
-        self.__cb_inv.setChecked(model.auto_tune_model[CONFIG][RELAY_INVERSE])
+        self.__cb_inv.setChecked(model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE])
         
     #========================================================================================
     # PUBLIC procs
@@ -301,8 +301,8 @@ class Config(QMainWindow):
         model.auto_tune_model[CONFIG][RPi][EVNT_PORT] = int(self.__txt_evnt_port.text())
         
     def __do_tx_set_pwm(self):
-        model.auto_tune_model[CONFIG][TX_LOW_PWM] = self.__sb_tx_lower.value()
-        model.auto_tune_model[CONFIG][TX_HIGH_PWM] = self.__sb_tx_upper.value()
+        model.auto_tune_model[CONFIG][SERVO][TX_LOW_PWM] = self.__sb_tx_lower.value()
+        model.auto_tune_model[CONFIG][SERVO][TX_HIGH_PWM] = self.__sb_tx_upper.value()
     
     def __do_tx_test_range(self):
         self.__callback(CMD_TX_SERVO_SET_PWM, (self.__sb_tx_lower.value(), self.__sb_tx_upper.value()))
@@ -318,21 +318,21 @@ class Config(QMainWindow):
             
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][int(ind)-1])))    
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP][int(ind)-1])))    
         
     def __do_set_ind(self):
         # Set pinmap for this inductor tap
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
         inv = self.__cb_inv.isChecked()
-        model.auto_tune_model[CONFIG][INDUCTOR_PINMAP][int(tap)-1] =  int(pin)
-        model.auto_tune_model[CONFIG][RELAY_INVERSE] = inv
+        model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP][int(tap)-1] =  int(pin)
+        model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE] = inv
     
     def __do_test_ind(self):
         # Test pinmap
         params = []
-        inv = model.auto_tune_model[CONFIG][RELAY_INVERSE]
-        for pin in model.auto_tune_model[CONFIG][INDUCTOR_PINMAP]:
+        inv = model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE]
+        for pin in model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP]:
             params.append((pin, inv))
             
         self.__callback(CMD_RELAYS_INIT, params)

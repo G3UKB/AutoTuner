@@ -21,16 +21,28 @@
 #     bob@bobcowdery.plus.com
 #
 
+#=======================================================================
 # Model defs
 CONFIG = 'CONFIG'
+# RPi section
 RPi = 'RPi'
 IP = 'IP'
 RQST_PORT = 'RQST-PORT'
 EVNT_PORT = 'EVNT-PORT'
+# Servo section
+SERVO = 'SERVO'
 TX_LOW_PWM = 'TX-LOW-PWM'
 TX_HIGH_PWM = 'TX-HIGH-PWM'
 ANT_LOW_PWM = 'ANT-LOW-PWM'
 ANT_HIGH_PWM = 'ANT-HIGH-PWM'
+MODE: 'MODE'
+NUDGE_INC = 'NUDGE_INC'
+TRACK_INC = 'TRACK_INC'
+TRACK_DELAY = 'TRACK_DELAY'
+SCAN_INC = 'SCAN_INC'
+SCAN_DELAY = 'SCAN_DELAY'
+# Relay section
+RELAY = 'RELAY'
 INDUCTOR_PINMAP = 'IND-PINMAP'
 RELAY_INVERSE = 'RELAY_INVERSE'
 LOW_RANGE = 'LOW-RANGE'
@@ -38,12 +50,22 @@ HIGH_RANGE = 'HIGH-RANGE'
 FREQ = 'FREQ'
 LABEL = 'LABEL'
 ENERGISE = 'ENERGISE'
-STATE = 'STATE'
+# Values and defaults
+MODE_TRACK = 'MODE_TRACK'
+MODE_SCAN = 'MODE_SCAN'
+DEFAULT_NUDGE_INC = 2
+DEFAULT_TRACK_INC = 1
+DEFAULT_TRACK_DELAY = 20    # ms
+DEFAULT_SCAN_INC = 1
+DEFAULT_SCAN_DELAY = 20     # ms
 
+#=======================================================================
 # UI
+CONFIG_PATH = '../config/auto_tuner.cfg'
 IDLE_TICKER = 100
 
-# Configuration
-CONFIG_PATH = '../config/auto_tuner.cfg'
+# To populate relay dropdowns
 g_pins = ['16','19','20','21']
 g_ind_values = ['1','2','3','4']
+
+

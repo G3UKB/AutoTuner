@@ -83,12 +83,12 @@ class TunerClient(QMainWindow):
         self.__config_win = config.Config(self.__config_callback)
         
         # Set default range
-        self.__servo_min = model.auto_tune_model[CONFIG][ANT_LOW_PWM]
-        self.__servo_max = model.auto_tune_model[CONFIG][ANT_HIGH_PWM]
+        self.__servo_min = model.auto_tune_model[CONFIG][SERVO][ANT_LOW_PWM]
+        self.__servo_max = model.auto_tune_model[CONFIG][SERVO][ANT_HIGH_PWM]
         self.__net_send((CMD_TX_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
 
-        self.__servo_min = model.auto_tune_model[CONFIG][TX_LOW_PWM]
-        self.__servo_max = model.auto_tune_model[CONFIG][TX_HIGH_PWM]
+        self.__servo_min = model.auto_tune_model[CONFIG][SERVO][TX_LOW_PWM]
+        self.__servo_max = model.auto_tune_model[CONFIG][SERVO][TX_HIGH_PWM]
         self.__net_send((CMD_ANT_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
         
     #========================================================================================    
@@ -148,10 +148,10 @@ class TunerClient(QMainWindow):
         range_lbl = QLabel("Select Range")
         self.__rangegrid.addWidget(range_lbl, 0,0)
         
-        self.__chb_low_range = QRadioButton(model.auto_tune_model[CONFIG][LOW_RANGE][LABEL])
+        self.__chb_low_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][LABEL])
         self.__chb_low_range.setToolTip('Check box to select low frequency range')
         self.__rangegrid.addWidget(self.__chb_low_range, 0,1)
-        self.__chb_high_range = QRadioButton(model.auto_tune_model[CONFIG][HIGH_RANGE][LABEL])
+        self.__chb_high_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][HIGH_RANGE][LABEL])
         self.__chb_high_range.setToolTip('Check box to select high frequency range')
         self.__rangegrid.addWidget(self.__chb_high_range, 0,2)
         self.__chb_low_range.toggled.connect(lambda:self.__do_range_changed(self.__chb_low_range))
@@ -181,7 +181,7 @@ class TunerClient(QMainWindow):
         self.__tx_cap.setMaximum(180)
         self.__tx_cap.setValue(0)
         self.__capgrid.addWidget(self.__tx_cap, 1,1)
-        
+        # Add nudge buttons
         self.__tx_nudge_down = QPushButton("<")
         self.__tx_nudge_down.setMaximumWidth(20)
         self.__tx_nudge_down.setToolTip('Increase capacitance a tad')
@@ -192,7 +192,7 @@ class TunerClient(QMainWindow):
         self.__tx_nudge_up.setToolTip('Decrease capacitance a tad')
         self.__capgrid.addWidget(self.__tx_nudge_up, 1,3)
         self.__tx_nudge_up.clicked.connect(self.__do_tx_nudge_up)
-        
+        # Add requested and actual values
         self.__tx_cap.valueChanged.connect(self.__tx_cap_changed)
         self.__tx_cap_val = QLabel("0")
         self.__tx_cap_val.setToolTip('Requested value')
@@ -216,7 +216,7 @@ class TunerClient(QMainWindow):
         self.__ant_cap.setMaximum(180)
         self.__ant_cap.setValue(0)
         self.__capgrid.addWidget(self.__ant_cap, 2,1)
-        
+        # Add nudge buttons
         self.__ant_nudge_down = QPushButton("<")
         self.__ant_nudge_down.setMaximumWidth(20)
         self.__ant_nudge_down.setToolTip('Increase capacitance a tad')
@@ -227,7 +227,7 @@ class TunerClient(QMainWindow):
         self.__ant_nudge_up.setToolTip('Decrease capacitance a tad')
         self.__capgrid.addWidget(self.__ant_nudge_up, 2,3)
         self.__ant_nudge_up.clicked.connect(self.__do_ant_nudge_up)
-        
+        # Add requested and actual values
         self.__ant_cap.valueChanged.connect(self.__ant_cap_changed)
         self.__ant_cap_val = QLabel("0")
         self.__ant_cap_val.setToolTip('Requested value')
@@ -274,9 +274,14 @@ class TunerClient(QMainWindow):
         # Close config win
         self.__config_win.close()
         
+        # Close memory win
+        #self.__mem_win.close()
+
         # Close socket
         self.__sock.close()
 
+    #=======================================================
+    # Button events
     def __do_config(self):
         
         # Show the configuration window
@@ -295,6 +300,7 @@ class TunerClient(QMainWindow):
     
     def __do_exit(self):
         
+        # Close application
         self.__close()
         sys.exit()
         
@@ -332,18 +338,18 @@ class TunerClient(QMainWindow):
         
         # Collect parameters
         params = []
-        inv = model.auto_tune_model[CONFIG][RELAY_INVERSE]
-        for pin in model.auto_tune_model[CONFIG][INDUCTOR_PINMAP]:
+        inv = model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE]
+        for pin in model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP]:
             params.append((pin, inv))
             
         # Do a complete relay init
         self.__net_send([CMD_RELAYS_INIT, params])
         
         # Set relays for bands
-        if rb.text() == model.auto_tune_model[CONFIG][LOW_RANGE][LABEL]:
+        if rb.text() == model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][LABEL]:
             if rb.isChecked() == True:
                 self.__net_send([CMD_RELAYS_RESET, params])
-        if rb.text() == model.auto_tune_model[CONFIG][HIGH_RANGE][LABEL]:
+        if rb.text() == model.auto_tune_model[CONFIG][RELAY][HIGH_RANGE][LABEL]:
             if rb.isChecked() == True:
                 self.__net_send([CMD_RELAYS_SET, params])
        
