@@ -199,6 +199,9 @@ class TunerClient(QMainWindow):
         self.__tx_cap.setMaximum(180)
         self.__tx_cap.setValue(0)
         self.__capgrid.addWidget(self.__tx_cap, 2,1)
+        self.__tx_cap.valueChanged.connect(self.__tx_cap_changed)
+        self.__tx_cap.sliderReleased.connect(self.__tx_cap_released)
+        
         # Add nudge buttons
         self.__tx_nudge_down = QPushButton("<")
         self.__tx_nudge_down.setMaximumWidth(20)
@@ -210,8 +213,8 @@ class TunerClient(QMainWindow):
         self.__tx_nudge_up.setToolTip('Decrease capacitance a tad')
         self.__capgrid.addWidget(self.__tx_nudge_up, 2,3)
         self.__tx_nudge_up.clicked.connect(self.__do_tx_nudge_up)
+        
         # Add requested and actual values
-        self.__tx_cap.valueChanged.connect(self.__tx_cap_changed)
         self.__tx_cap_val = QLabel("0")
         self.__tx_cap_val.setToolTip('Requested value')
         self.__tx_cap_val.setMinimumWidth(30)
@@ -234,6 +237,9 @@ class TunerClient(QMainWindow):
         self.__ant_cap.setMaximum(180)
         self.__ant_cap.setValue(0)
         self.__capgrid.addWidget(self.__ant_cap, 3,1)
+        self.__ant_cap.valueChanged.connect(self.__ant_cap_changed)
+        self.__ant_cap.sliderReleased.connect(self.__ant_cap_released)
+        
         # Add nudge buttons
         self.__ant_nudge_down = QPushButton("<")
         self.__ant_nudge_down.setMaximumWidth(20)
@@ -245,8 +251,8 @@ class TunerClient(QMainWindow):
         self.__ant_nudge_up.setToolTip('Decrease capacitance a tad')
         self.__capgrid.addWidget(self.__ant_nudge_up, 3,3)
         self.__ant_nudge_up.clicked.connect(self.__do_ant_nudge_up)
+        
         # Add requested and actual values
-        self.__ant_cap.valueChanged.connect(self.__ant_cap_changed)
         self.__ant_cap_val = QLabel("0")
         self.__ant_cap_val.setToolTip('Requested value')
         self.__ant_cap_val.setMinimumWidth(30)
@@ -315,23 +321,19 @@ class TunerClient(QMainWindow):
     #=======================================================
     # Button events
     def __do_config(self):
-        
         # Show the configuration window
         self.__config_win.show_window()
     
     def __do_mem(self):
-        
         # Show the memory window
         #self.__mem_win.show_window()
         pass
 
     def __do_add_mem(self):
-        
         # Add a new memory
         pass
     
     def __do_exit(self):
-        
         # Close application
         self.__close()
         sys.exit()
@@ -341,15 +343,31 @@ class TunerClient(QMainWindow):
     def __tx_cap_changed(self):
         # Value ranges 0 - 180
         val = self.__tx_cap.value()
-        self.__net_send([CMD_TX_SERVO_MOVE, [val]])
+        if self.__crb_track.isChecked():
+            self.__net_send([CMD_TX_SERVO_MOVE, [val]])
         self.__tx_cap_val.setText(str(val))
     
+    def __tx_cap_released(self):
+        # Value ranges 0 - 180
+        val = self.__tx_cap.value()
+        if self.__crb_wait.isChecked():
+            self.__net_send([CMD_TX_SERVO_MOVE, [val]])
+        self.__tx_cap_val.setText(str(val))
+
     def __ant_cap_changed(self):
         # Value ranges 0 - 180
         val = self.__ant_cap.value()
-        self.__net_send([CMD_ANT_SERVO_MOVE, [val]])
+        if self.__crb_track.isChecked():
+            self.__net_send([CMD_ANT_SERVO_MOVE, [val]])
         self.__ant_cap_val.setText(str(val))
 
+    def __ant_cap_released(self):
+        # Value ranges 0 - 180
+        val = self.__ant_cap.value()
+        if self.__crb_wait.isChecked():
+            self.__net_send([CMD_ANT_SERVO_MOVE, [val]])
+        self.__ant_cap_val.setText(str(val))
+        
     # Do nudge up/down
     def __do_tx_nudge_down(self):
         val = self.__tx_cap.value() - inc
@@ -376,7 +394,6 @@ class TunerClient(QMainWindow):
     #=======================================================
     # Set server to band paramters
     def __do_range_changed(self, rb):
-        
         # Collect parameters
         params = []
         inv = model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE]
@@ -412,7 +429,6 @@ class TunerClient(QMainWindow):
     #======================================================= 
     # Callbacks
     def __config_callback(self, cmd, params):
-        
         self.__net_send([cmd, params])
 
     #======================================================= 

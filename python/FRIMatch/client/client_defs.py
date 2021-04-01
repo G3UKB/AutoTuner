@@ -66,7 +66,7 @@ CONFIG_PATH = '../config/auto_tuner.cfg'
 IDLE_TICKER = 100
 
 # To populate relay dropdowns
-g_pins = ['16','19','20','21']
+g_pins = ['4','17','18','27','22','23','24','25','6','12','13','16','19','20','21']
 g_ind_values = ['1','2','3','4']
 
 
