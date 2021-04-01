@@ -92,6 +92,14 @@ class Servo(threading.Thread):
         self.__terminate = True
         self.__dev = None
     
+    def settings(self, track_inc, track_delay, scan_inc, scan_delay):
+        
+        self.__track_inc = int(track_inc)
+        self.__track_delay = int(track_delay)
+        self.__scan_inc = int(scan_inc)
+        self.__scan_delay = int(scan_delay)
+        
+        
     def set_pwm_range(self, low, high):
         self.__servo_min = low
         self.__servo_max = high
