@@ -64,6 +64,7 @@ DEFAULT_SCAN_DELAY = 20     # ms
 # UI
 CONFIG_PATH = '../config/auto_tuner.cfg'
 IDLE_TICKER = 100
+HEARTBEAT_TIMER = 10 # 10 * IDLE_TICKER = 1s ; heartbeats should be every 0.5s
 
 # To populate relay dropdowns
 g_pins = ['4','17','18','27','22','23','24','25','6','12','13','16','19','20','21']

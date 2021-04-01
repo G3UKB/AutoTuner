@@ -221,7 +221,34 @@ class RemoteTuner:
         """
         
         self.__netif.do_ant_progress(data)
+ 
+#======================================================================================================================
+# Monitor thread
+class Hearbeat(threading.Thread):
+    
+    def __init__(self, net_if):
+        """
+        Constructor
         
+        Arguments:
+            net_if        -- net interface instance
+        """
+        
+        super(Hearbeat, self).__init__()#
+        
+        self.__sock = sock
+        self.__terminate = False
+        
+    def terminate(self):
+        
+        self.__terminate = True
+        
+    def run(self):
+        
+        while not self.__terminate:
+            self.__netif.do_heartbeat()
+            sleep(0.5)
+                       
 # ===========================================================================                
 # Entry point            
 if __name__ == '__main__':

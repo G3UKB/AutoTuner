@@ -63,6 +63,22 @@ class NetIF(threading.Thread):
         
         self.__terminate = True
     
+    def do_heartbeat(self):
+        """
+        Send a heartbeat
+        
+        Arguments:
+           
+        """
+        
+        if self.__address != None:
+            try:
+                pickledData = pickle.dumps(('heartbeat', ()))
+                self.__sock.sendto(pickledData, (self.__address[0], EVNT_PORT))
+                
+            except Exception as e:
+                print('Exception on heartbeat send %s' % (str(e)))
+
     def do_tx_progress(self, data):
         """
         Send progress data
@@ -78,7 +94,7 @@ class NetIF(threading.Thread):
                 self.__sock.sendto(pickledData, (self.__address[0], EVNT_PORT))
                 
             except Exception as e:
-                print('Exception on socket send %s' % (str(e)))
+                print('Exception on tx progress send %s' % (str(e)))
     
     def do_ant_progress(self, data):
         """
@@ -95,7 +111,7 @@ class NetIF(threading.Thread):
                 self.__sock.sendto(pickledData, (self.__address[0], EVNT_PORT))
                 
             except Exception as e:
-                print('Exception on socket send %s' % (str(e)))
+                print('Exception on antenna progress send %s' % (str(e)))
 
     def run(self):
         """ Listen for requests """

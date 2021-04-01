@@ -53,6 +53,14 @@ class TunerClient(QMainWindow):
         # Size window
         self.setMinimumWidth(400)
         
+        # Heartbeat from server
+        self.__heartbeat = False
+        self.__heartbeat_timer = HEARTBEAT_TIMER
+        
+        # Server
+        self.__alive = False
+        self.__settings = False
+        
         # Track progress
         self.__tx_progress = 0
         self.__tx_actual = 0
@@ -413,9 +421,11 @@ class TunerClient(QMainWindow):
        
     #======================================================= 
     def __monitor_callback(self, data):
-        if data[0] == 'tx':    
+        if data[0] == 'heartbeat':
+            self.__heartbeat = True
+        elif data[0] == 'tx':    
             self.__tx_progress = data[1]
-        else:
+        elif data[0] == 'ant':
             self.__ant_progress = data[1]
         
     #======================================================= 
@@ -423,6 +433,21 @@ class TunerClient(QMainWindow):
         # Update UI with actual progress
         self.__tx_cap_actual.setText(str(self.__tx_progress))
         self.__ant_cap_actual.setText(str(self.__ant_progress))
+        
+        # Check heartbeat
+        if self.__heartbeat:
+            self.__alive = True
+            if not self.__settings:
+                self.__send_settings()
+                self.__settings = True
+        else:
+            self.__heartbeat_timer -= 1
+            if self.__heartbeat_timer <= 0:
+                # Alert
+                self.__heartbeat_timer = HEARTBEAT_TIMER
+                self.__alive = False
+                self.__settings = False
+        
         # Set timer
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
 
