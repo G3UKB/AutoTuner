@@ -66,12 +66,12 @@ auto_tune_model = {
             LOW_RANGE: {
                 FREQ: (1.8, 10.15),
                 LABEL: '160m - 30m',
-                ENERGISE: False,
+                ENERGISE: True,
             },
             HIGH_RANGE: {
                 FREQ: (14.0, 30),
                 LABEL: '20m - 10m',
-                ENERGISE: True,
+                ENERGISE: False,
             }
         }
     }

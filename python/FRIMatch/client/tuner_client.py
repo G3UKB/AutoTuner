@@ -73,7 +73,10 @@ class TunerClient(QMainWindow):
                            }''')
         
         # Initialise the GUI
-        self.initUI()
+        self.__initUI()
+        
+        # Populate
+        self.__populate()
         
         # Start monitor thread
         self.__monitor = Monitor(self.__sock, self.__monitor_callback)
@@ -93,7 +96,7 @@ class TunerClient(QMainWindow):
         
     #========================================================================================    
     # UI initialisation and window event handlers
-    def initUI(self):
+    def __initUI(self):
         """ Configure the GUI interface """
         
         self.setToolTip('Remote Auto-Tuner')
@@ -122,7 +125,7 @@ class TunerClient(QMainWindow):
         self.__btngrid.addWidget(self.__mem, 0,0)
         self.__mem.clicked.connect(self.__do_mem)
         
-        self.__mem_add = QPushButton("Add...")
+        self.__mem_add = QPushButton("Add Memory...")
         self.__mem_add.setToolTip('Add a new memory')
         self.__btngrid.addWidget(self.__mem_add, 0,1)
         self.__mem_add.clicked.connect(self.__do_add_mem)
@@ -148,14 +151,14 @@ class TunerClient(QMainWindow):
         range_lbl = QLabel("Select Range")
         self.__rangegrid.addWidget(range_lbl, 0,0)
         
-        self.__chb_low_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][LABEL])
-        self.__chb_low_range.setToolTip('Check box to select low frequency range')
-        self.__rangegrid.addWidget(self.__chb_low_range, 0,1)
-        self.__chb_high_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][HIGH_RANGE][LABEL])
-        self.__chb_high_range.setToolTip('Check box to select high frequency range')
-        self.__rangegrid.addWidget(self.__chb_high_range, 0,2)
-        self.__chb_low_range.toggled.connect(lambda:self.__do_range_changed(self.__chb_low_range))
-        self.__chb_high_range.toggled.connect(lambda:self.__do_range_changed(self.__chb_high_range))
+        self.__crb_low_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][LABEL])
+        self.__crb_low_range.setToolTip('Check box to select low frequency range')
+        self.__rangegrid.addWidget(self.__crb_low_range, 0,1)
+        self.__crb_high_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][HIGH_RANGE][LABEL])
+        self.__crb_high_range.setToolTip('Check box to select high frequency range')
+        self.__rangegrid.addWidget(self.__crb_high_range, 0,2)
+        self.__crb_low_range.toggled.connect(lambda:self.__do_range_changed(self.__crb_low_range))
+        self.__crb_high_range.toggled.connect(lambda:self.__do_range_changed(self.__crb_high_range))
         
         #=======================================================
         # Capacitor area
@@ -164,33 +167,48 @@ class TunerClient(QMainWindow):
         w3.setLayout(self.__capgrid)
         self.__grid.addWidget(w3, 2,0)
         
+        self.__captypegrid = QGridLayout()
+        w4 = QGroupBox('Servo')
+        w4.setLayout(self.__captypegrid)
+        self.__capgrid.addWidget(w4, 0,0,1,6)
+        
+        # Move type
+        move_type_tag = QLabel("Move Type")
+        self.__captypegrid.addWidget(move_type_tag, 0,0)
+        self.__crb_track = QRadioButton("Track movement")
+        self.__crb_track.setToolTip('Track movement of slider')
+        self.__captypegrid.addWidget(self.__crb_track, 0,1)
+        self.__crb_wait = QRadioButton("Wait movement")
+        self.__crb_wait.setToolTip('Wait for slider release')
+        self.__captypegrid.addWidget(self.__crb_wait, 0,2)
+        
         # Slider labels
         tx_setpoint_tag = QLabel("Set")
-        self.__capgrid.addWidget(tx_setpoint_tag, 0,4)
+        self.__capgrid.addWidget(tx_setpoint_tag, 1,4)
         tx_actual_tag = QLabel("Act")
-        self.__capgrid.addWidget(tx_actual_tag, 0,5)
+        self.__capgrid.addWidget(tx_actual_tag, 1,5)
         
         # -------------------------------------------
         # TX Capacitor
         # Add sliders
         tx_cap_lbl = QLabel("TX Tune")
-        self.__capgrid.addWidget(tx_cap_lbl, 1,0)
+        self.__capgrid.addWidget(tx_cap_lbl, 2,0)
         self.__tx_cap = QSlider(QtCore.Qt.Horizontal)
         self.__tx_cap.setToolTip('Adjust value')
         self.__tx_cap.setMinimum(0)
         self.__tx_cap.setMaximum(180)
         self.__tx_cap.setValue(0)
-        self.__capgrid.addWidget(self.__tx_cap, 1,1)
+        self.__capgrid.addWidget(self.__tx_cap, 2,1)
         # Add nudge buttons
         self.__tx_nudge_down = QPushButton("<")
         self.__tx_nudge_down.setMaximumWidth(20)
         self.__tx_nudge_down.setToolTip('Increase capacitance a tad')
-        self.__capgrid.addWidget(self.__tx_nudge_down, 1,2)
+        self.__capgrid.addWidget(self.__tx_nudge_down, 2,2)
         self.__tx_nudge_down.clicked.connect(self.__do_tx_nudge_down)
         self.__tx_nudge_up = QPushButton(">")
         self.__tx_nudge_up.setMaximumWidth(20)
         self.__tx_nudge_up.setToolTip('Decrease capacitance a tad')
-        self.__capgrid.addWidget(self.__tx_nudge_up, 1,3)
+        self.__capgrid.addWidget(self.__tx_nudge_up, 2,3)
         self.__tx_nudge_up.clicked.connect(self.__do_tx_nudge_up)
         # Add requested and actual values
         self.__tx_cap.valueChanged.connect(self.__tx_cap_changed)
@@ -198,34 +216,34 @@ class TunerClient(QMainWindow):
         self.__tx_cap_val.setToolTip('Requested value')
         self.__tx_cap_val.setMinimumWidth(30)
         self.__tx_cap_val.setStyleSheet("color: green; font: 14px")
-        self.__capgrid.addWidget(self.__tx_cap_val, 1,4)
+        self.__capgrid.addWidget(self.__tx_cap_val, 2,4)
         self.__tx_cap_actual = QLabel("0")
         self.__tx_cap_actual.setToolTip('Actual value - may lag requested')
         self.__tx_cap_actual.setMinimumWidth(30)
         self.__tx_cap_actual.setStyleSheet("color: red; font: 14px")
-        self.__capgrid.addWidget(self.__tx_cap_actual, 1,5)
+        self.__capgrid.addWidget(self.__tx_cap_actual, 2,5)
              
         # -------------------------------------------
         # Ant Capacitor
         # Add sliders
         ant_cap_lbl = QLabel("Ant Tune")
-        self.__capgrid.addWidget(ant_cap_lbl, 2,0)
+        self.__capgrid.addWidget(ant_cap_lbl, 3,0)
         self.__ant_cap = QSlider(QtCore.Qt.Horizontal)
         self.__ant_cap.setToolTip('Adjust value')
         self.__ant_cap.setMinimum(0)
         self.__ant_cap.setMaximum(180)
         self.__ant_cap.setValue(0)
-        self.__capgrid.addWidget(self.__ant_cap, 2,1)
+        self.__capgrid.addWidget(self.__ant_cap, 3,1)
         # Add nudge buttons
         self.__ant_nudge_down = QPushButton("<")
         self.__ant_nudge_down.setMaximumWidth(20)
         self.__ant_nudge_down.setToolTip('Increase capacitance a tad')
-        self.__capgrid.addWidget(self.__ant_nudge_down, 2,2)
+        self.__capgrid.addWidget(self.__ant_nudge_down, 3,2)
         self.__ant_nudge_down.clicked.connect(self.__do_ant_nudge_down)
         self.__ant_nudge_up = QPushButton(">")
         self.__ant_nudge_up.setMaximumWidth(20)
         self.__ant_nudge_up.setToolTip('Decrease capacitance a tad')
-        self.__capgrid.addWidget(self.__ant_nudge_up, 2,3)
+        self.__capgrid.addWidget(self.__ant_nudge_up, 3,3)
         self.__ant_nudge_up.clicked.connect(self.__do_ant_nudge_up)
         # Add requested and actual values
         self.__ant_cap.valueChanged.connect(self.__ant_cap_changed)
@@ -233,12 +251,26 @@ class TunerClient(QMainWindow):
         self.__ant_cap_val.setToolTip('Requested value')
         self.__ant_cap_val.setMinimumWidth(30)
         self.__ant_cap_val.setStyleSheet("color: green; font: 14px")
-        self.__capgrid.addWidget(self.__ant_cap_val, 2,4)
+        self.__capgrid.addWidget(self.__ant_cap_val, 3,4)
         self.__ant_cap_actual = QLabel("0")
         self.__ant_cap_actual.setToolTip('Actual value - may lag requested')
         self.__ant_cap_actual.setMinimumWidth(30)
         self.__ant_cap_actual.setStyleSheet("color: red; font: 14px")
-        self.__capgrid.addWidget(self.__ant_cap_actual, 2,5)
+        self.__capgrid.addWidget(self.__ant_cap_actual, 3,5)
+    
+    #========================================================================================
+    # Populate UI
+    def __populate(self, ):
+        
+        if model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][ENERGISE]:
+            self.__crb_low_range.setChecked(True)
+        else:
+            self.__crb_high_range.setChecked(True)
+            
+        if model.auto_tune_model[CONFIG][SERVO][MODE] == MODE_TRACK:
+            self.__crb_track.setChecked(True)
+        else:
+            self.__crb_wait.setChecked(True)
         
     #========================================================================================
     # Run application
@@ -419,7 +451,11 @@ class Monitor(threading.Thread):
                 self.__callback(pickle.loads(data))
             except socket.timeout:
                 continue
-            
+            except ConnectionResetError:
+                continue
+            except:
+                print("Unexpected error on socket.recvFrom():", sys.exc_info()[0])
+                
 #======================================================================================================================
 # Main code
 def main():
