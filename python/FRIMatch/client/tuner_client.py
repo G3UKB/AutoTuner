@@ -465,6 +465,8 @@ class TunerClient(QMainWindow):
                     self.__send_settings()
                     self.__settings = True
             else:
+                # Send wakeup
+                self.__net_send([CMD_WAKEUP, ()])
                 # Alert
                 self.__connect_status.setText("Tuner: offline")
                 self.__connect_status.setStyleSheet("color: red; font: 14px; font-family: Courier;")

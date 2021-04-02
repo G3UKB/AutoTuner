@@ -23,6 +23,7 @@
 
 # Command types
 # External servo specific commands
+CMD_WAKEUP = 'CMD_WAKEUP'
 CMD_TX_SERVO_SET_PWM = 'CMD_TX_SERVO_SET_PWM'
 CMD_TX_SERVO_TEST = 'CMD_TX_SERVO_TEST'
 CMD_TX_SERVO_HOME = 'CMD_TX_SERVO_HOME'
