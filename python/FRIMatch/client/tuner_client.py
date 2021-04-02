@@ -2,7 +2,7 @@
 #
 # tuner_client.py
 # 
-# Copyright (C) 2017 by G3UKB Bob Cowdery
+# Copyright (C) 2021 by G3UKB Bob Cowdery
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -80,6 +80,12 @@ class TunerClient(QMainWindow):
                            border: #8ad4ff solid 1px
                            }''')
         
+        self.statusBar = QStatusBar()
+        self.setStatusBar(self.statusBar)
+        self.__connect_status = QLabel("Tuner: offline")
+        self.statusBar.insertPermanentWidget(0, self.__connect_status)
+        self.__connect_status.setStyleSheet("color: red; font: 14px; font-family: Courier;")
+
         # Initialise the GUI
         self.__initUI()
         
@@ -126,34 +132,44 @@ class TunerClient(QMainWindow):
         self.__btngrid = QGridLayout()
         w1 = QGroupBox('Function')
         w1.setLayout(self.__btngrid)
-        self.__grid.addWidget(w1, 0,0)
+        self.__grid.addWidget(w1, 0,0,2,1)
         
         self.__mem = QPushButton("Memories...")
         self.__mem.setToolTip('Show memory window...')
         self.__btngrid.addWidget(self.__mem, 0,0)
         self.__mem.clicked.connect(self.__do_mem)
+        self.__mem.setMaximumHeight(20)
         
         self.__mem_add = QPushButton("Add Memory...")
         self.__mem_add.setToolTip('Add a new memory')
-        self.__btngrid.addWidget(self.__mem_add, 0,1)
+        self.__btngrid.addWidget(self.__mem_add, 1,0)
         self.__mem_add.clicked.connect(self.__do_add_mem)
 
         self.__config = QPushButton("Config...")
         self.__config.setToolTip('Show configuration window...')
-        self.__btngrid.addWidget(self.__config, 0,2)
+        self.__btngrid.addWidget(self.__config, 2,0)
         self.__config.clicked.connect(self.__do_config)
+        
+        self.__spacer = QWidget()
+        self.__btngrid.addWidget(self.__spacer, 3,0)
         
         self.__exit = QPushButton("Exit")
         self.__exit.setToolTip('Exit application...')
-        self.__btngrid.addWidget(self.__exit, 0,3)
+        self.__btngrid.addWidget(self.__exit, 4,0)
         self.__exit.clicked.connect(self.__do_exit)
+        
+        self.__btngrid.setColumnStretch(0,0)
+        self.__btngrid.setColumnStretch(1,0)
+        self.__btngrid.setColumnStretch(2,0)
+        self.__btngrid.setColumnStretch(3,1)
+        self.__btngrid.setColumnStretch(4,0)
         
         #=======================================================
         # Range selection area
         self.__rangegrid = QGridLayout()
-        w2 = QGroupBox('Inductor')
-        w2.setLayout(self.__rangegrid)
-        self.__grid.addWidget(w2, 1,0)
+        self.__w2 = QGroupBox('Inductor')
+        self.__w2.setLayout(self.__rangegrid)
+        self.__grid.addWidget(self.__w2, 0,1)
         
         # Radio buttons for inductor taps
         range_lbl = QLabel("Select Range")
@@ -171,9 +187,9 @@ class TunerClient(QMainWindow):
         #=======================================================
         # Capacitor area
         self.__capgrid = QGridLayout()
-        w3 = QGroupBox('Capacitors')
-        w3.setLayout(self.__capgrid)
-        self.__grid.addWidget(w3, 2,0)
+        self.__w3 = QGroupBox('Capacitors')
+        self.__w3.setLayout(self.__capgrid)
+        self.__grid.addWidget(self.__w3, 1,1)
         
         self.__captypegrid = QGridLayout()
         w4 = QGroupBox('Servo')
@@ -441,19 +457,38 @@ class TunerClient(QMainWindow):
             if self.__heartbeat:
                 self.__alive = True
                 self.__heartbeat = False
+                self.__connect_status.setText("Tuner: online")
+                self.__connect_status.setStyleSheet("color: green; font: 14px; font-family: Courier;")
+                self.__set_enabled(True)
+                self.__config_win.tuner_status(True)
                 if not self.__settings:
                     self.__send_settings()
                     self.__settings = True
             else:
                 # Alert
-                
+                self.__connect_status.setText("Tuner: offline")
+                self.__connect_status.setStyleSheet("color: red; font: 14px; font-family: Courier;")
                 self.__alive = False
                 self.__settings = False
+                self.__set_enabled(False)
+                self.__config_win.tuner_status(False)
             self.__heartbeat_timer = HEARTBEAT_TIMER
         
         # Set timer
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
 
+    def __set_enabled(self, online):
+        if online:
+            self.__w2.setEnabled(True)
+            self.__w3.setEnabled(True)
+            self.__mem.setEnabled(True)
+            self.__mem_add.setEnabled(True)
+        else:
+            self.__w2.setEnabled(False)
+            self.__w3.setEnabled(False)
+            self.__mem.setEnabled(False)
+            self.__mem_add.setEnabled(False)
+        
     def __send_settings(self):
         params = (
             model.auto_tune_model[CONFIG][SERVO][TRACK_INC],

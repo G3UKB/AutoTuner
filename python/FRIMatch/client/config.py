@@ -34,6 +34,9 @@ class Config(QMainWindow):
         
         self.__callback = callback
         
+        # Assume tuner off-line
+        self.__tuner_status = False
+        
         # Set the back colour
         palette = QtGui.QPalette()
         palette.setColor(QtGui.QPalette.Background,QtGui.QColor(195,195,195,255))
@@ -271,6 +274,9 @@ class Config(QMainWindow):
         # Show our window
         self.show()
         self.repaint()
+    
+    def tuner_status(self, status):
+        self.__tuner_status = status
         
     #========================================================================================
     # Event procs
@@ -287,7 +293,15 @@ class Config(QMainWindow):
     #======================================================= 
     def __idleProcessing   (self):
         # Update UI with actual progress
-        #self.__sld_cap_actual.setText(str(self.__progress))
+        if self.__tuner_status:
+            self.__btn_tx_tst_pwm.setEnabled(True)
+            self.__btn_ant_tst_pwm.setEnabled(True)
+            self.__btn_ind_test.setEnabled(True)
+        else:
+            self.__btn_tx_tst_pwm.setEnabled(False)
+            self.__btn_ant_tst_pwm.setEnabled(False)
+            self.__btn_ind_test.setEnabled(False)
+            
         # Set timer
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
         
