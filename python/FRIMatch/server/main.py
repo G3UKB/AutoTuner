@@ -56,6 +56,10 @@ class RemoteTuner:
         self.__relays = relays.Relays()
         self.__relays.init()
         
+        # Heartbeat
+        self.__heartbeat = Heartbeat()
+        self.__heartbeat.start()
+        
     #------------------------------------------------------------------    
     def mainLoop(self):
         """
@@ -83,6 +87,8 @@ class RemoteTuner:
             self.__tx_servo.join()
             self.__ant_servo.terminate()
             self.__ant_servo.join()
+            self.__heartbeat.terminate()
+            self.__heartbeat.join()
             
             print('Interrupt - exiting...')
     
@@ -228,7 +234,7 @@ class RemoteTuner:
  
 #======================================================================================================================
 # Monitor thread
-class Hearbeat(threading.Thread):
+class Heartbeat(threading.Thread):
     
     def __init__(self, net_if):
         """
