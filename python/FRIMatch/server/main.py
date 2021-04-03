@@ -246,6 +246,7 @@ class Heartbeat(threading.Thread):
         
         super(Heartbeat, self).__init__()#
         
+        self.__net_if = net_if
         self.__terminate = False
         
     def terminate(self):
