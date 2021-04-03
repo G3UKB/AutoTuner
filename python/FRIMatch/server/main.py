@@ -57,7 +57,7 @@ class RemoteTuner:
         self.__relays.init()
         
         # Heartbeat
-        self.__heartbeat = Heartbeat()
+        self.__heartbeat = Heartbeat(self.__netif)
         self.__heartbeat.start()
         
     #------------------------------------------------------------------    
