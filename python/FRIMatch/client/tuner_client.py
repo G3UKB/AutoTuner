@@ -126,6 +126,8 @@ class TunerClient(QMainWindow):
         self.setCentralWidget(w)
         self.__grid = QGridLayout()
         w.setLayout(self.__grid)
+        self.__grid.setColumnStretch(0,0)
+        self.__grid.setColumnStretch(1,1)
         
         # -------------------------------------------
         # Button area
@@ -199,10 +201,10 @@ class TunerClient(QMainWindow):
         # Move type
         move_type_tag = QLabel("Move Type")
         self.__captypegrid.addWidget(move_type_tag, 0,0)
-        self.__crb_track = QRadioButton("Track movement")
+        self.__crb_track = QRadioButton("Track")
         self.__crb_track.setToolTip('Track movement of slider')
         self.__captypegrid.addWidget(self.__crb_track, 0,1)
-        self.__crb_wait = QRadioButton("Wait movement")
+        self.__crb_wait = QRadioButton("Wait")
         self.__crb_wait.setToolTip('Wait for slider release')
         self.__captypegrid.addWidget(self.__crb_wait, 0,2)
         
@@ -394,26 +396,29 @@ class TunerClient(QMainWindow):
         
     # Do nudge up/down
     def __do_tx_nudge_down(self):
-        val = self.__tx_cap.value() - inc
-        self.__do_nudge(self.__tx_cap, self.__tx_cap_val, CMD_ANT_SERVO_MOVE, val)
+        val = self.__tx_cap.value() - self.__get_inc()
+        self.__do_nudge(self.__tx_cap, self.__tx_cap_val, CMD_TX_SERVO_MOVE, val)
     
     def __do_tx_nudge_up(self):
-        val = self.__tx_cap.value() + inc
-        self.__do_nudge(self.__tx_cap, self.__tx_cap_val, CMD_ANT_SERVO_MOVE, val)
+        val = self.__tx_cap.value() + self.__get_inc()
+        self.__do_nudge(self.__tx_cap, self.__tx_cap_val, CMD_TX_SERVO_MOVE, val)
     
     def __do_ant_nudge_down(self):
-        val = self.__ant_cap.value() - inc
+        val = self.__ant_cap.value() - self.__get_inc()
         self.__do_nudge(self.__ant_cap, self.__ant_cap_val, CMD_ANT_SERVO_MOVE, val)
     
     def __do_ant_nudge_up(self):
-        val = self.__ant_cap.value() + inc
+        val = self.__ant_cap.value() + self.__get_inc()
         self.__do_nudge(self.__ant_cap, self.__ant_cap_val, CMD_ANT_SERVO_MOVE, val)
     
-    def __do_nudge(w_slider, w_value, cmd, val):
-        inc = model.auto_tune_model[CONFIG][SERVO][NUDGE_INC]
-        self.__net_send([cmd, [val]])
-        self.w_value.setText(str(val))
-        self.w_slider.setValue(val)
+    def __get_inc(self):
+        return model.auto_tune_model[CONFIG][SERVO][NUDGE_INC]
+        
+    def __do_nudge(self, w_slider, w_value, cmd, val):
+        if val >= 0 and val <=180:
+            self.__net_send([cmd, [val]])
+            w_value.setText(str(val))
+            w_slider.setValue(val)
         
     #=======================================================
     # Set server to band paramters
