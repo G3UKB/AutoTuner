@@ -36,7 +36,7 @@ import copy
 from PyQt5.QtWidgets import QMainWindow, QApplication, QToolTip
 from PyQt5.QtGui import QPainter, QPainterPath, QColor, QPen, QFont
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QStatusBar, QInputDialog, QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLineEdit, QTextEdit, QComboBox, QPushButton, QCheckBox, QRadioButton, QSpinBox, QAction, QWidget, QGridLayout
+from PyQt5.QtWidgets import QStatusBar, QTableWidget, QInputDialog, QFrame, QGroupBox, QMessageBox, QLabel, QSlider, QLineEdit, QTextEdit, QComboBox, QPushButton, QCheckBox, QRadioButton, QSpinBox, QAction, QWidget, QGridLayout
 
 # Application imports
 from client_defs import *
