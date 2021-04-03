@@ -99,6 +99,9 @@ class TunerClient(QMainWindow):
         # Create the configuration window
         self.__config_win = config.Config(self.__config_callback)
         
+        # Create the memories window
+        self.__mem_win = memories.Memories(self.__mem_callback)
+        
         # Set default range
         self.__servo_min = model.auto_tune_model[CONFIG][SERVO][ANT_LOW_PWM]
         self.__servo_max = model.auto_tune_model[CONFIG][SERVO][ANT_HIGH_PWM]
@@ -339,7 +342,7 @@ class TunerClient(QMainWindow):
         self.__config_win.close()
         
         # Close memory win
-        #self.__mem_win.close()
+        self.__mem_win.close()
 
         # Close socket
         self.__sock.close()
@@ -352,8 +355,7 @@ class TunerClient(QMainWindow):
     
     def __do_mem(self):
         # Show the memory window
-        #self.__mem_win.show_window()
-        pass
+        self.__mem_win.show_window()
 
     def __do_add_mem(self):
         # Add a new memory
@@ -510,6 +512,9 @@ class TunerClient(QMainWindow):
     def __config_callback(self, cmd, params):
         self.__net_send([cmd, params])
 
+    def __mem_callback(self):
+        pass
+        
     #======================================================= 
     # Net send
     def __net_send(self, data):

@@ -77,4 +77,11 @@ class Memories(QMainWindow):
         self.__table.setColumnCount(5)
         self.__table.setHorizontalHeaderLabels(('Name','Freq','Inductor','TX Cap','Ant Cap'))
         
-        
+    
+    #========================================================================================
+    # PUBLIC procs
+    
+    def show_window(self):
+        # Show our window
+        self.show()
+        self.repaint()    
