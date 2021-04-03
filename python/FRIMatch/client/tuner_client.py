@@ -437,7 +437,6 @@ class TunerClient(QMainWindow):
        
     #======================================================= 
     def __monitor_callback(self, data):
-        print(data)
         if data[0] == 'heartbeat':
             self.__heartbeat = True
         elif data[0] == 'tx':    
