@@ -256,7 +256,7 @@ class Heartbeat(threading.Thread):
     def run(self):
         
         while not self.__terminate:
-            self.__netif.do_heartbeat()
+            self.__net_if.do_heartbeat()
             sleep(0.5)
                        
 # ===========================================================================                
