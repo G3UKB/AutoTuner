@@ -244,7 +244,7 @@ class Heartbeat(threading.Thread):
             net_if        -- net interface instance
         """
         
-        super(Hearbeat, self).__init__()#
+        super(Heartbeat, self).__init__()#
         
         self.__sock = sock
         self.__terminate = False
