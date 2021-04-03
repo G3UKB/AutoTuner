@@ -246,7 +246,6 @@ class Heartbeat(threading.Thread):
         
         super(Heartbeat, self).__init__()#
         
-        self.__sock = sock
         self.__terminate = False
         
     def terminate(self):
