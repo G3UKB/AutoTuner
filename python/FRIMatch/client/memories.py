@@ -75,7 +75,6 @@ class Memories(QMainWindow):
         # Table area
         self.__table = QTableWidget()
         self.__table.setColumnCount(5)
-        #self.__table.setRowCount(1)
         self.__table.setHorizontalHeaderLabels(('Name','Freq','Inductor','TX Cap','Ant Cap'))
         self.__grid.addWidget(self.__table,0,0)
     
@@ -85,30 +84,55 @@ class Memories(QMainWindow):
         w1.setLayout(self.__ctrlgrid)
         self.__grid.addWidget(w1, 1,0)
         
-        # Add with name and freq
-        name_tag = QLabel("Name")
-        self.__ctrlgrid.addWidget(name_tag, 0,0)
-        self.__nametxt = QLineEdit()
-        self.__nametxt.setMinimumWidth(70)
-        self.__ctrlgrid.addWidget(self.__nametxt, 0,1)
-        
-        freq_tag = QLabel("Freq")
-        self.__ctrlgrid.addWidget(freq_tag, 0,2)
-        self.__freqtxt = QLineEdit()
-        self.__freqtxt.setMinimumWidth(50)
-        self.__ctrlgrid.addWidget(self.__freqtxt, 0,3)
-        
-        self.__add = QPushButton("Add")
-        self.__add.setToolTip('Add new memory')
-        self.__ctrlgrid.addWidget(self.__add, 0,4)
-        self.__add.clicked.connect(self.__do_add_mem)
-        self.__add.setMaximumHeight(20)
+        # Run and remove
+        self.__auxgrid = QGridLayout()
+        w2 = QGroupBox()
+        w2.setLayout(self.__auxgrid)
+        self.__ctrlgrid.addWidget(w2, 0,0)
+
+        self.__run = QPushButton("Run")
+        self.__run.setToolTip('Execute memory')
+        self.__auxgrid.addWidget(self.__run, 0,0)
+        self.__run.clicked.connect(self.__do_run_mem)
+        self.__run.setMaximumHeight(20)
         
         self.__remove = QPushButton("Remove")
         self.__remove.setToolTip('Remove memory')
-        self.__ctrlgrid.addWidget(self.__remove, 1,4)
+        self.__auxgrid.addWidget(self.__remove, 0,1)
         self.__remove.clicked.connect(self.__do_remove_mem)
         self.__remove.setMaximumHeight(20)
+        
+        # Add with name and freq
+        self.__detgrid = QGridLayout()
+        w2 = QGroupBox()
+        w2.setLayout(self.__detgrid)
+        self.__ctrlgrid.addWidget(w2, 1,0)
+        
+        name_tag = QLabel("Name")
+        self.__detgrid.addWidget(name_tag, 0,0)
+        self.__nametxt = QLineEdit()
+        self.__nametxt.setMinimumWidth(70)
+        self.__detgrid.addWidget(self.__nametxt, 0,1)
+        
+        freq_tag = QLabel("Freq")
+        self.__detgrid.addWidget(freq_tag, 0,2)
+        self.__freqtxt = QLineEdit()
+        self.__freqtxt.setMinimumWidth(50)
+        self.__detgrid.addWidget(self.__freqtxt, 0,3)
+        
+        self.__add = QPushButton("Add")
+        self.__add.setToolTip('Add new memory')
+        self.__detgrid.addWidget(self.__add, 0,4)
+        self.__add.clicked.connect(self.__do_add_mem)
+        self.__add.setMaximumHeight(20)
+        
+        # Exit
+        self.__add = QPushButton("Exit")
+        self.__add.setToolTip('Exit memories')
+        self.__ctrlgrid.addWidget(self.__add, 2,0)
+        self.__add.clicked.connect(self.__do_exit)
+        self.__add.setMaximumHeight(20)
+        
         
     #========================================================================================
     # PUBLIC procs
@@ -117,12 +141,21 @@ class Memories(QMainWindow):
         # Show our window
         self.show()
         self.repaint()
-        
+    
+    def closeEvent(self, event):
+        self.hide()
+
     #========================================================================================
     # EVENT procs
     
     def __do_add_mem(self):
         pass
     
+    def __do_run_mem(self):
+        pass
+    
     def __do_remove_mem(self):
         pass
+    
+    def __do_exit(self):
+        self.hide()

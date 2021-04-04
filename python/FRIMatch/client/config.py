@@ -281,6 +281,10 @@ class Config(QMainWindow):
     #========================================================================================
     # Event procs
     
+    def closeEvent(self, event):
+        model.restore_model()
+        self.hide()
+        
     def __do_save(self):
         # Save the model
         persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
