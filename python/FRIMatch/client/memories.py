@@ -75,8 +75,9 @@ class Memories(QMainWindow):
         # Table area
         self.__table = QTableWidget()
         self.__table.setColumnCount(5)
+        #self.__table.setRowCount(1)
         self.__table.setHorizontalHeaderLabels(('Name','Freq','Inductor','TX Cap','Ant Cap'))
-        
+        self.__grid.addWidget(self.__table,0,0)
     
     #========================================================================================
     # PUBLIC procs
