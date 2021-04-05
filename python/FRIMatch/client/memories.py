@@ -85,7 +85,7 @@ class Memories(QMainWindow):
         self.__table.setColumnCount(5)
         self.__table.setHorizontalHeaderLabels(('Name','Freq','Inductor','TX Cap','Ant Cap'))
         self.__grid.addWidget(self.__table,0,0)
-        self.__table.clicked.connect(self.__row_click)
+        self.__table.currentItemChanged.connect(self.__row_click)
         self.__table.doubleClicked.connect(self.__row_double_click)
     
         # Control area
