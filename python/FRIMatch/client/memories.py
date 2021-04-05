@@ -85,6 +85,8 @@ class Memories(QMainWindow):
         self.__table.setColumnCount(5)
         self.__table.setHorizontalHeaderLabels(('Name','Freq','Inductor','TX Cap','Ant Cap'))
         self.__grid.addWidget(self.__table,0,0)
+        self.__table.clicked.connect(self.__row_click)
+        self.__table.doubleClicked.connect(self.__row_double_click)
     
         # Control area
         self.__ctrlgrid = QGridLayout()
@@ -125,7 +127,7 @@ class Memories(QMainWindow):
         freq_tag = QLabel("Freq")
         self.__detgrid.addWidget(freq_tag, 0,2)
         self.__freqtxt = QLineEdit()
-        self.__freqtxt.setMinimumWidth(50)
+        self.__freqtxt.setMaximumWidth(50)
         self.__detgrid.addWidget(self.__freqtxt, 0,3)
         
         self.__add = QPushButton("Add")
@@ -133,6 +135,12 @@ class Memories(QMainWindow):
         self.__detgrid.addWidget(self.__add, 0,4)
         self.__add.clicked.connect(self.__do_add_mem)
         self.__add.setMaximumHeight(20)
+        
+        self.__update = QPushButton("Update")
+        self.__update.setToolTip('Update memory')
+        self.__detgrid.addWidget(self.__update, 0,5)
+        self.__update.clicked.connect(self.__do_update_mem)
+        self.__update.setMaximumHeight(20)
         
         # Exit
         self.__add = QPushButton("Exit")
@@ -180,7 +188,24 @@ class Memories(QMainWindow):
         self.__table.setItem(rowPosition, 4, QTableWidgetItem(str(ant)))
         # Add to model
         self.__update_model()
-         
+    
+    def __do_update_mem(self):
+        # Get data
+        name = self.__nametxt.text()
+        freq = self.__freqtxt.text()
+        low,high,tx,ant = self.__settings()
+        if low: ind = 'low-range'
+        else: ind = 'high-range'
+        # Update row
+        rowPosition = self.__table.currentRow()
+        self.__table.setItem(rowPosition, 0, QTableWidgetItem(name))
+        self.__table.setItem(rowPosition, 1, QTableWidgetItem(freq))
+        self.__table.setItem(rowPosition, 2, QTableWidgetItem(ind))
+        self.__table.setItem(rowPosition, 3, QTableWidgetItem(str(tx)))
+        self.__table.setItem(rowPosition, 4, QTableWidgetItem(str(ant)))
+        # Update model
+        self.__update_model()
+        
     def __do_run_mem(self):
         r = self.__table.currentRow()
         ind = self.__table.item(r, 2).text()
@@ -194,6 +219,14 @@ class Memories(QMainWindow):
         self.__table.removeRow(r)
         # Remove from model
         self.__update_model()
+    
+    def __row_click(self):
+        r = self.__table.currentRow()
+        self.__nametxt.setText(self.__table.item(r, 0).text())
+        self.__freqtxt.setText(self.__table.item(r, 1).text())
+        
+    def __row_double_click(self):
+        self.__do_run_mem
         
     def __do_exit(self):
         self.hide()
