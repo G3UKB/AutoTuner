@@ -55,7 +55,9 @@ class Memories(QMainWindow):
         
         # Initialise the GUI
         self.initUI()
-    
+        # Init table
+        self.__restore_from_model()
+        
         # Start idle processing
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
         
@@ -157,6 +159,10 @@ class Memories(QMainWindow):
     def __idleProcessing(self):
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
         
+        if len(self.__nametxt.text()) > 0 and len(self.__freqtxt.text()) > 0:
+            self.__nametxt.setEnabled(True)
+            self.__freqtxt.setEnabled(True)
+            
     def __do_add_mem(self):
         # Get data
         name = self.__nametxt.text()
@@ -172,6 +178,8 @@ class Memories(QMainWindow):
         self.__table.setItem(rowPosition, 2, QTableWidgetItem(ind))
         self.__table.setItem(rowPosition, 3, QTableWidgetItem(str(tx)))
         self.__table.setItem(rowPosition, 4, QTableWidgetItem(str(ant)))
+        # Add to model
+        self.__update_model()
          
     def __do_run_mem(self):
         r = self.__table.currentRow()
@@ -183,6 +191,37 @@ class Memories(QMainWindow):
     def __do_remove_mem(self):
         r = self.__table.currentRow()
         self.__table.removeRow(r)
+        self.__update_model()
         
     def __do_exit(self):
         self.hide()
+        
+    #========================================================================================
+    # PRIVATE procs
+    
+    def __restore_from_model(self):
+        table_data = model.auto_tune_model[MEMORIES]
+        for item in table_data:
+            rowPosition = self.__table.rowCount()
+            self.__table.insertRow(rowPosition)
+            self.__table.setItem(rowPosition, 0, QTableWidgetItem(item[0]))
+            self.__table.setItem(rowPosition, 1, QTableWidgetItem(item[1]))
+            self.__table.setItem(rowPosition, 2, QTableWidgetItem(item[2]))
+            self.__table.setItem(rowPosition, 3, QTableWidgetItem(item[3]))
+            self.__table.setItem(rowPosition, 4, QTableWidgetItem(item[4]))
+        
+    def __update_model(self):
+        # Clear and re-populate
+        model.auto_tune_model[MEMORIES].clear()
+        entry = []
+        rowCount = self.__table.rowCount()
+        for row in range(rowCount):
+            entry = [
+                self.__table.item(row, 0).text(),
+                self.__table.item(row, 1).text(),
+                self.__table.item(row, 2).text(),
+                self.__table.item(row, 3).text(),
+                self.__table.item(row, 4).text(),
+            ]
+            model.auto_tune_model[MEMORIES].append(entry)
+        

@@ -356,6 +356,9 @@ class TunerClient(QMainWindow):
 
         # Close socket
         self.__sock.close()
+        
+        # Save model
+        persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
 
     #=======================================================
     # Button events

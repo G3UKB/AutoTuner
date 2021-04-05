@@ -74,7 +74,8 @@ auto_tune_model = {
                 ENERGISE: False,
             }
         }
-    }
+    },
+    MEMORIES: []
 }
 
 # Manage model

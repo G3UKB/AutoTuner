@@ -24,6 +24,7 @@
 #=======================================================================
 # Model defs
 CONFIG = 'CONFIG'
+MEMORIES = 'MEMORIES'
 # RPi section
 RPi = 'RPi'
 IP = 'IP'
