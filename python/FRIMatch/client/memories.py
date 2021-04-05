@@ -174,10 +174,15 @@ class Memories(QMainWindow):
         self.__table.setItem(rowPosition, 4, QTableWidgetItem(str(ant)))
          
     def __do_run_mem(self):
-        pass
-    
+        r = self.__table.currentRow()
+        ind = self.__table.item(r, 2).text()
+        tx = self.__table.item(r, 3).text()
+        ant = self.__table.item(r, 4).text()
+        self.__callback(ind, tx, ant)
+            
     def __do_remove_mem(self):
-        pass
-    
+        r = self.__table.currentRow()
+        self.__table.removeRow(r)
+        
     def __do_exit(self):
         self.hide()

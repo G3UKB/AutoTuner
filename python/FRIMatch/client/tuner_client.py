@@ -451,15 +451,6 @@ class TunerClient(QMainWindow):
         if rb.text() == model.auto_tune_model[CONFIG][RELAY][HIGH_RANGE][LABEL]:
             if rb.isChecked() == True:
                 self.__net_send([CMD_RELAYS_SET, params])
-       
-    #======================================================= 
-    def __monitor_callback(self, data):
-        if data[0] == 'heartbeat':
-            self.__heartbeat = True
-        elif data[0] == 'tx':    
-            self.__tx_progress = data[1]
-        elif data[0] == 'ant':
-            self.__ant_progress = data[1]
         
     #======================================================= 
     def __idleProcessing(self):
@@ -519,12 +510,43 @@ class TunerClient(QMainWindow):
         
     #======================================================= 
     # Callbacks
+    #======================================================= 
+    def __monitor_callback(self, data):
+        if data[0] == 'heartbeat':
+            self.__heartbeat = True
+        elif data[0] == 'tx':    
+            self.__tx_progress = data[1]
+        elif data[0] == 'ant':
+            self.__ant_progress = data[1]
+            
     def __config_callback(self, cmd, params):
         self.__net_send([cmd, params])
 
-    def __mem_callback(self):
-        pass
+    def __mem_callback(self, ind, tx, ant):
+        # Execute settings, set interface
         
+        # Collect parameters for relays
+        params = []
+        inv = model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE]
+        for pin in model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP]:
+            params.append((pin, inv))
+        # Set relays and adjust UI
+        if ind == 'low-range':
+            self.__crb_low_range.setChecked(True)
+            self.__net_send([CMD_RELAYS_RESET, params])
+        if ind == 'high-range':
+            self.__crb_high_range.setChecked(True)
+            self.__net_send([CMD_RELAYS_SET, params])
+        # Set caps and adjust UI    
+        if tx >= 0 and tx <=180:
+            self.__net_send([CMD_TX_SERVO_MOVE, [tx]])
+            self.__tx_cap.setText(str(val))
+            self.__tx_cap_val.setValue(val)
+        if ant >= 0 and ant <=180:
+            self.__net_send([CMD_ANT_SERVO_MOVE, [ant]])
+            self.__ant_cap.setText(str(val))
+            self.__ant_cap_val.setValue(val)
+            
     #======================================================= 
     # Net send
     def __net_send(self, data):
