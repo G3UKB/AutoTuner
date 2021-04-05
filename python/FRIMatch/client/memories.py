@@ -186,11 +186,13 @@ class Memories(QMainWindow):
         ind = self.__table.item(r, 2).text()
         tx = self.__table.item(r, 3).text()
         ant = self.__table.item(r, 4).text()
+        # Execute tuner commands
         self.__callback(ind, tx, ant)
             
     def __do_remove_mem(self):
         r = self.__table.currentRow()
         self.__table.removeRow(r)
+        # Remove from model
         self.__update_model()
         
     def __do_exit(self):
@@ -200,6 +202,7 @@ class Memories(QMainWindow):
     # PRIVATE procs
     
     def __restore_from_model(self):
+        # Populate table from model
         table_data = model.auto_tune_model[MEMORIES]
         for item in table_data:
             rowPosition = self.__table.rowCount()
@@ -211,7 +214,7 @@ class Memories(QMainWindow):
             self.__table.setItem(rowPosition, 4, QTableWidgetItem(item[4]))
         
     def __update_model(self):
-        # Clear and re-populate
+        # Clear and re-populate from table
         model.auto_tune_model[MEMORIES].clear()
         entry = []
         rowCount = self.__table.rowCount()
