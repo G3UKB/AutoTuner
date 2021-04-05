@@ -540,15 +540,17 @@ class TunerClient(QMainWindow):
         if ind == 'high-range':
             self.__crb_high_range.setChecked(True)
             self.__net_send([CMD_RELAYS_SET, params])
-        # Set caps and adjust UI    
+        # Set caps and adjust UI
+        tx = int(tx)
         if tx >= 0 and tx <=180:
             self.__net_send([CMD_TX_SERVO_MOVE, [tx]])
-            self.__tx_cap.setText(str(val))
-            self.__tx_cap_val.setValue(val)
+            self.__tx_cap.setValue(tx)
+            self.__tx_cap_val.setText(str(tx))
+        ant = int(ant)
         if ant >= 0 and ant <=180:
             self.__net_send([CMD_ANT_SERVO_MOVE, [ant]])
-            self.__ant_cap.setText(str(val))
-            self.__ant_cap_val.setValue(val)
+            self.__ant_cap.setValue(ant)
+            self.__ant_cap_val.setText(str(ant))
             
     #======================================================= 
     # Net send
