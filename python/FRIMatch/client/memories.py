@@ -28,11 +28,14 @@ from imports import *
 # Memories window
 class Memories(QMainWindow):
     
-    def __init__(self, callback):
+    def __init__(self, settings, callback):
         
         super(Memories, self).__init__()
         
+        # Callback here to run memory
         self.__callback = callback
+        # Call here to get current settings
+        self.__settings = settings
         
         # Assume tuner off-line
         self.__tuner_status = False
@@ -53,6 +56,9 @@ class Memories(QMainWindow):
         # Initialise the GUI
         self.initUI()
     
+        # Start idle processing
+        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        
     #========================================================================================    
     # UI initialisation and window event handlers
     def initUI(self):
@@ -148,9 +154,25 @@ class Memories(QMainWindow):
     #========================================================================================
     # EVENT procs
     
+    def __idleProcessing(self):
+        QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
+        
     def __do_add_mem(self):
-        pass
-    
+        # Get data
+        name = self.__nametxt.text()
+        freq = self.__freqtxt.text()
+        low,high,tx,ant = self.__settings()
+        if low: ind = 'low-range'
+        else: ind = 'high-range'
+        # Create new row
+        rowPosition = self.__table.rowCount()
+        self.__table.insertRow(rowPosition)
+        self.__table.setItem(rowPosition, 0, QTableWidgetItem(name))
+        self.__table.setItem(rowPosition, 1, QTableWidgetItem(freq))
+        self.__table.setItem(rowPosition, 2, QTableWidgetItem(ind))
+        self.__table.setItem(rowPosition, 3, QTableWidgetItem(str(tx)))
+        self.__table.setItem(rowPosition, 4, QTableWidgetItem(str(ant)))
+         
     def __do_run_mem(self):
         pass
     

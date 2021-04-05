@@ -100,7 +100,7 @@ class TunerClient(QMainWindow):
         self.__config_win = config.Config(self.__config_callback)
         
         # Create the memories window
-        self.__mem_win = memories.Memories(self.__mem_callback)
+        self.__mem_win = memories.Memories(self.settings, self.__mem_callback)
         
         # Set default range
         self.__servo_min = model.auto_tune_model[CONFIG][SERVO][ANT_LOW_PWM]
@@ -326,6 +326,16 @@ class TunerClient(QMainWindow):
         # Enter event loop
         return self.__qt_app.exec_()    
     
+    #========================================================================================
+    # Get settings
+    def settings(self, ):
+        low = self.__crb_low_range.isChecked()
+        high = self.__crb_low_range.isChecked()
+        tx = self.__tx_cap.value()
+        ant = self.__ant_cap.value()
+        
+        return (low, high, tx, ant)
+
     #=======================================================
     # Window events
     def closeEvent(self, event):
