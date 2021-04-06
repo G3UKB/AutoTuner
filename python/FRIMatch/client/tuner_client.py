@@ -352,6 +352,16 @@ class TunerClient(QMainWindow):
         # Save model
         persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
 
+    def resizeEvent(self, event):
+        # Update config
+        x,y,w,h = model.auto_tune_model[STATE][MAIN_WIN]
+        model.auto_tune_model[STATE][MAIN_WIN] = [x,y,event.size().width(),event.size().height()]
+        
+    def moveEvent(self, event):
+        # Update config
+        x,y,w,h = model.auto_tune_model[STATE][MAIN_WIN]
+        model.auto_tune_model[STATE][MAIN_WIN] = [event.pos().x(),event.pos().y(),w,h]
+        
     #=======================================================
     # Button events
     def __do_config(self):

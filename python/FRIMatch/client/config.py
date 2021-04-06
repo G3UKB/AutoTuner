@@ -285,6 +285,16 @@ class Config(QMainWindow):
     def closeEvent(self, event):
         model.restore_model()
         self.hide()
+    
+    def resizeEvent(self, event):
+        # Update config
+        x,y,w,h = model.auto_tune_model[STATE][CONFIG_WIN]
+        model.auto_tune_model[STATE][CONFIG_WIN] = [x,y,event.size().width(),event.size().height()]
+        
+    def moveEvent(self, event):
+        # Update config
+        x,y,w,h = model.auto_tune_model[STATE][CONFIG_WIN]
+        model.auto_tune_model[STATE][CONFIG_WIN] = [event.pos().x(),event.pos().y(),w,h]
         
     def __do_save(self):
         # Save the model

@@ -162,6 +162,17 @@ class Memories(QMainWindow):
     def closeEvent(self, event):
         self.hide()
 
+    def resizeEvent(self, event):
+        # Update config
+        x,y,w,h = model.auto_tune_model[STATE][MEM_WIN]
+        model.auto_tune_model[STATE][MEM_WIN] = [x,y,event.size().width(),event.size().height()]
+        
+    def moveEvent(self, event):
+        # Update config
+        x,y,w,h = model.auto_tune_model[STATE][MEM_WIN]
+        model.auto_tune_model[STATE][MEM_WIN] = [event.pos().x(),event.pos().y(),w,h]
+        
+        
     #========================================================================================
     # EVENT procs
     
