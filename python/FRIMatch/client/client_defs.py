@@ -25,6 +25,7 @@
 # Model defs
 CONFIG = 'CONFIG'
 MEMORIES = 'MEMORIES'
+STATE = 'STATE'
 # RPi section
 RPi = 'RPi'
 IP = 'IP'
@@ -52,6 +53,10 @@ HIGH_RANGE = 'HIGH-RANGE'
 FREQ = 'FREQ'
 LABEL = 'LABEL'
 ENERGISE = 'ENERGISE'
+# State section
+MAIN_WIN = 'MAIN_WIN'
+CONFIG_WIN = 'CONFIG_WIN'
+MEM_WIN = 'MEM_WIN'
 # Values and defaults
 MODE_TRACK = 'MODE_TRACK'
 MODE_SCAN = 'MODE_SCAN'

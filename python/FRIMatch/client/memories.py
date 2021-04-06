@@ -69,7 +69,8 @@ class Memories(QMainWindow):
         self.setToolTip('Memories')
         
         # Arrange window
-        self.setGeometry(300,300,520,300)
+        x,y,w,h = model.auto_tune_model[STATE][MEM_WIN]
+        self.setGeometry(x,y,w,h)
                          
         self.setWindowTitle('Memories')
         

@@ -75,7 +75,12 @@ auto_tune_model = {
             }
         }
     },
-    MEMORIES: []
+    MEMORIES: [],
+    STATE: {
+        MAIN_WIN: [300,300,300,200],
+        CONFIG_WIN: [300,300,300,300],
+        MEM_WIN: [300,300,520,300]
+    }
 }
 
 # Manage model

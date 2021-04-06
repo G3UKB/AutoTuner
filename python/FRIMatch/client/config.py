@@ -64,7 +64,8 @@ class Config(QMainWindow):
         self.setToolTip('Configuration')
         
         # Arrange window
-        self.setGeometry(300,300,300,300)
+        x,y,w,h = model.auto_tune_model[STATE][CONFIG_WIN]
+        self.setGeometry(x,y,w,h)
                          
         self.setWindowTitle('Configure Auto-Tuner')
         

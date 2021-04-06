@@ -50,9 +50,6 @@ class TunerClient(QMainWindow):
         # The application
         self.__qt_app = qt_app
         
-        # Size window
-        self.setMinimumWidth(400)
-        
         # Heartbeat from server
         self.__heartbeat = False
         self.__heartbeat_timer = HEARTBEAT_TIMER
@@ -119,7 +116,8 @@ class TunerClient(QMainWindow):
         self.setToolTip('Remote Auto-Tuner')
         
         # Arrange window
-        self.setGeometry(300,300,300,200)
+        x,y,w,h = model.auto_tune_model[STATE][MAIN_WIN]
+        self.setGeometry(x,y,w,h)
                          
         self.setWindowTitle('Remote Auto-Tuner')
         
@@ -144,30 +142,24 @@ class TunerClient(QMainWindow):
         self.__btngrid.addWidget(self.__mem, 0,0)
         self.__mem.clicked.connect(self.__do_mem)
         self.__mem.setMaximumHeight(20)
-        
-        self.__mem_add = QPushButton("Add Memory...")
-        self.__mem_add.setToolTip('Add a new memory')
-        self.__btngrid.addWidget(self.__mem_add, 1,0)
-        self.__mem_add.clicked.connect(self.__do_add_mem)
 
         self.__config = QPushButton("Config...")
         self.__config.setToolTip('Show configuration window...')
-        self.__btngrid.addWidget(self.__config, 2,0)
+        self.__btngrid.addWidget(self.__config, 1,0)
         self.__config.clicked.connect(self.__do_config)
         
         self.__spacer = QWidget()
-        self.__btngrid.addWidget(self.__spacer, 3,0)
+        self.__btngrid.addWidget(self.__spacer, 2,0)
         
         self.__exit = QPushButton("Exit")
         self.__exit.setToolTip('Exit application...')
-        self.__btngrid.addWidget(self.__exit, 4,0)
+        self.__btngrid.addWidget(self.__exit, 3,0)
         self.__exit.clicked.connect(self.__do_exit)
         
         self.__btngrid.setColumnStretch(0,0)
         self.__btngrid.setColumnStretch(1,0)
         self.__btngrid.setColumnStretch(2,0)
         self.__btngrid.setColumnStretch(3,1)
-        self.__btngrid.setColumnStretch(4,0)
         
         #=======================================================
         # Range selection area
@@ -321,7 +313,7 @@ class TunerClient(QMainWindow):
         self.repaint()
         
         if not self.__configured:
-            self.__config_win.show()
+            self.statusBar.showMessage('Please run configuration')
             
         # Enter event loop
         return self.__qt_app.exec_()    
@@ -365,14 +357,11 @@ class TunerClient(QMainWindow):
     def __do_config(self):
         # Show the configuration window
         self.__config_win.show_window()
+        self.statusBar.clearMessage()
     
     def __do_mem(self):
         # Show the memory window
         self.__mem_win.show_window()
-
-    def __do_add_mem(self):
-        # Add a new memory
-        pass
     
     def __do_exit(self):
         # Close application
@@ -491,16 +480,14 @@ class TunerClient(QMainWindow):
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
 
     def __set_enabled(self, online):
-        if online:
+        if online and self.__configured:
             self.__w2.setEnabled(True)
             self.__w3.setEnabled(True)
             self.__mem.setEnabled(True)
-            self.__mem_add.setEnabled(True)
         else:
             self.__w2.setEnabled(False)
             self.__w3.setEnabled(False)
             #self.__mem.setEnabled(False)
-            self.__mem_add.setEnabled(False)
         
     def __send_settings(self):
         params = (
