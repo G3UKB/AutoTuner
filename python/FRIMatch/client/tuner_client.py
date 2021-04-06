@@ -507,6 +507,9 @@ class TunerClient(QMainWindow):
             model.auto_tune_model[CONFIG][SERVO][SCAN_DELAY]
         )
         self.__net_send([CMD_SERVO_SETTINGS, params])
+        # Send the servos home
+        self.__net_send([CMD_TX_SERVO_HOME, []])
+        self.__net_send([CMD_ANT_SERVO_HOME, []])
         
     #======================================================= 
     # Callbacks
