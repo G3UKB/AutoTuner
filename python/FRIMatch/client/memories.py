@@ -222,8 +222,9 @@ class Memories(QMainWindow):
     
     def __row_click(self):
         r = self.__table.currentRow()
-        self.__nametxt.setText(self.__table.item(r, 0).text())
-        self.__freqtxt.setText(self.__table.item(r, 1).text())
+        if r != -1:
+            self.__nametxt.setText(self.__table.item(r, 0).text())
+            self.__freqtxt.setText(self.__table.item(r, 1).text())
         
     def __row_double_click(self):
         self.__do_run_mem
