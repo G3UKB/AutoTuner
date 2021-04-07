@@ -28,10 +28,12 @@ from imports import *
 # Memories window
 class Memories(QMainWindow):
     
-    def __init__(self, settings, callback):
+    def __init__(self, model, settings, callback):
         
         super(Memories, self).__init__()
         
+        # Current model
+        self.__model = model
         # Callback here to run memory
         self.__callback = callback
         # Call here to get current settings
@@ -69,7 +71,7 @@ class Memories(QMainWindow):
         self.setToolTip('Memories')
         
         # Arrange window
-        x,y,w,h = model.auto_tune_model[STATE][MEM_WIN]
+        x,y,w,h = self.__model[STATE][MEM_WIN]
         self.setGeometry(x,y,w,h)
                          
         self.setWindowTitle('Memories')
@@ -164,13 +166,13 @@ class Memories(QMainWindow):
 
     def resizeEvent(self, event):
         # Update config
-        x,y,w,h = model.auto_tune_model[STATE][MEM_WIN]
-        model.auto_tune_model[STATE][MEM_WIN] = [x,y,event.size().width(),event.size().height()]
+        x,y,w,h = self.__model[STATE][MEM_WIN]
+        self.__model[STATE][MEM_WIN] = [x,y,event.size().width(),event.size().height()]
         
     def moveEvent(self, event):
         # Update config
-        x,y,w,h = model.auto_tune_model[STATE][MEM_WIN]
-        model.auto_tune_model[STATE][MEM_WIN] = [event.pos().x(),event.pos().y(),w,h]
+        x,y,w,h = self.__model[STATE][MEM_WIN]
+        self.__model[STATE][MEM_WIN] = [event.pos().x(),event.pos().y(),w,h]
         
         
     #========================================================================================
@@ -249,7 +251,7 @@ class Memories(QMainWindow):
     
     def __restore_from_model(self):
         # Populate table from model
-        table_data = model.auto_tune_model[MEMORIES]
+        table_data = self.__model[MEMORIES]
         for item in table_data:
             rowPosition = self.__table.rowCount()
             self.__table.insertRow(rowPosition)
@@ -261,7 +263,7 @@ class Memories(QMainWindow):
         
     def __update_model(self):
         # Clear and re-populate from table
-        model.auto_tune_model[MEMORIES].clear()
+        self.__model[MEMORIES].clear()
         entry = []
         rowCount = self.__table.rowCount()
         for row in range(rowCount):
@@ -272,5 +274,5 @@ class Memories(QMainWindow):
                 self.__table.item(row, 3).text(),
                 self.__table.item(row, 4).text(),
             ]
-            model.auto_tune_model[MEMORIES].append(entry)
+            self.__model[MEMORIES].append(entry)
         

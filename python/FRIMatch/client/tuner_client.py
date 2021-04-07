@@ -34,14 +34,11 @@ class TunerClient(QMainWindow):
         
         # Manage configuration
         self.__configured = True
-        app_config = persist.getSavedCfg(CONFIG_PATH)
-        if app_config == None:
+        self.__model = persist.getSavedCfg(CONFIG_PATH)
+        if self.__model == None:
             print ('Configuration not found, using defaults')
-            persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
+            self.__model = model.auto_tune_model
             self.__configured = False
-        else:
-            # Use persisted version
-            model.auto_tune_model = app_config   
         # Create a datagram socket
         self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__sock.bind(('', model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
@@ -94,18 +91,18 @@ class TunerClient(QMainWindow):
         self.__monitor.start()
         
         # Create the configuration window
-        self.__config_win = config.Config(self.__config_callback)
+        self.__config_win = config.Config(self.__model, self.__config_callback)
         
         # Create the memories window
-        self.__mem_win = memories.Memories(self.settings, self.__mem_callback)
+        self.__mem_win = memories.Memories(self.__model, self.settings, self.__mem_callback)
         
         # Set default range
-        self.__servo_min = model.auto_tune_model[CONFIG][SERVO][ANT_LOW_PWM]
-        self.__servo_max = model.auto_tune_model[CONFIG][SERVO][ANT_HIGH_PWM]
+        self.__servo_min = self.__model[CONFIG][SERVO][ANT_LOW_PWM]
+        self.__servo_max = self.__model[CONFIG][SERVO][ANT_HIGH_PWM]
         self.__net_send((CMD_TX_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
 
-        self.__servo_min = model.auto_tune_model[CONFIG][SERVO][TX_LOW_PWM]
-        self.__servo_max = model.auto_tune_model[CONFIG][SERVO][TX_HIGH_PWM]
+        self.__servo_min = self.__model[CONFIG][SERVO][TX_LOW_PWM]
+        self.__servo_max = self.__model[CONFIG][SERVO][TX_HIGH_PWM]
         self.__net_send((CMD_ANT_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
         
     #========================================================================================    
@@ -116,7 +113,7 @@ class TunerClient(QMainWindow):
         self.setToolTip('Remote Auto-Tuner')
         
         # Arrange window
-        x,y,w,h = model.auto_tune_model[STATE][MAIN_WIN]
+        x,y,w,h = self.__model[STATE][MAIN_WIN]
         self.setGeometry(x,y,w,h)
                          
         self.setWindowTitle('Remote Auto-Tuner')
@@ -172,10 +169,10 @@ class TunerClient(QMainWindow):
         range_lbl = QLabel("Select Range")
         self.__rangegrid.addWidget(range_lbl, 0,0)
         
-        self.__crb_low_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][LABEL])
+        self.__crb_low_range = QRadioButton(self.__model[CONFIG][RELAY][LOW_RANGE][LABEL])
         self.__crb_low_range.setToolTip('Check box to select low frequency range')
         self.__rangegrid.addWidget(self.__crb_low_range, 0,1)
-        self.__crb_high_range = QRadioButton(model.auto_tune_model[CONFIG][RELAY][HIGH_RANGE][LABEL])
+        self.__crb_high_range = QRadioButton(self.__model[CONFIG][RELAY][HIGH_RANGE][LABEL])
         self.__crb_high_range.setToolTip('Check box to select high frequency range')
         self.__rangegrid.addWidget(self.__crb_high_range, 0,2)
         self.__crb_low_range.toggled.connect(lambda:self.__do_range_changed(self.__crb_low_range))
@@ -289,12 +286,12 @@ class TunerClient(QMainWindow):
     # Populate UI
     def __populate(self, ):
         
-        if model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][ENERGISE]:
+        if self.__model[CONFIG][RELAY][LOW_RANGE][ENERGISE]:
             self.__crb_low_range.setChecked(True)
         else:
             self.__crb_high_range.setChecked(True)
             
-        if model.auto_tune_model[CONFIG][SERVO][MODE] == MODE_TRACK:
+        if self.__model[CONFIG][SERVO][MODE] == MODE_TRACK:
             self.__crb_track.setChecked(True)
         else:
             self.__crb_wait.setChecked(True)
@@ -350,17 +347,17 @@ class TunerClient(QMainWindow):
         self.__sock.close()
         
         # Save model
-        persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
+        persist.saveCfg(CONFIG_PATH, self.__model)
 
     def resizeEvent(self, event):
         # Update config
-        x,y,w,h = model.auto_tune_model[STATE][MAIN_WIN]
-        model.auto_tune_model[STATE][MAIN_WIN] = [x,y,event.size().width(),event.size().height()]
+        x,y,w,h = self.__model[STATE][MAIN_WIN]
+        self.__model[STATE][MAIN_WIN] = [x,y,event.size().width(),event.size().height()]
         
     def moveEvent(self, event):
         # Update config
-        x,y,w,h = model.auto_tune_model[STATE][MAIN_WIN]
-        model.auto_tune_model[STATE][MAIN_WIN] = [event.pos().x(),event.pos().y(),w,h]
+        x,y,w,h = self.__model[STATE][MAIN_WIN]
+        self.__model[STATE][MAIN_WIN] = [event.pos().x(),event.pos().y(),w,h]
         
     #=======================================================
     # Button events
@@ -426,7 +423,7 @@ class TunerClient(QMainWindow):
         self.__do_nudge(self.__ant_cap, self.__ant_cap_val, CMD_ANT_SERVO_MOVE, val)
     
     def __get_inc(self):
-        return model.auto_tune_model[CONFIG][SERVO][NUDGE_INC]
+        return self.__model[CONFIG][SERVO][NUDGE_INC]
         
     def __do_nudge(self, w_slider, w_value, cmd, val):
         if val >= 0 and val <=180:
@@ -439,18 +436,18 @@ class TunerClient(QMainWindow):
     def __do_range_changed(self, rb):
         # Collect parameters
         params = []
-        inv = model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE]
-        for pin in model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP]:
+        inv = self.__model[CONFIG][RELAY][RELAY_INVERSE]
+        for pin in self.__model[CONFIG][RELAY][INDUCTOR_PINMAP]:
             params.append((pin, inv))
             
         # Do a complete relay init
         self.__net_send([CMD_RELAYS_INIT, params])
         
         # Set relays for bands
-        if rb.text() == model.auto_tune_model[CONFIG][RELAY][LOW_RANGE][LABEL]:
+        if rb.text() == self.__model[CONFIG][RELAY][LOW_RANGE][LABEL]:
             if rb.isChecked() == True:
                 self.__net_send([CMD_RELAYS_RESET, params])
-        if rb.text() == model.auto_tune_model[CONFIG][RELAY][HIGH_RANGE][LABEL]:
+        if rb.text() == self.__model[CONFIG][RELAY][HIGH_RANGE][LABEL]:
             if rb.isChecked() == True:
                 self.__net_send([CMD_RELAYS_SET, params])
         
@@ -501,10 +498,10 @@ class TunerClient(QMainWindow):
         
     def __send_settings(self):
         params = (
-            model.auto_tune_model[CONFIG][SERVO][TRACK_INC],
-            model.auto_tune_model[CONFIG][SERVO][TRACK_DELAY],
-            model.auto_tune_model[CONFIG][SERVO][SCAN_INC],
-            model.auto_tune_model[CONFIG][SERVO][SCAN_DELAY]
+            self.__model[CONFIG][SERVO][TRACK_INC],
+            self.__model[CONFIG][SERVO][TRACK_DELAY],
+            self.__model[CONFIG][SERVO][SCAN_INC],
+            self.__model[CONFIG][SERVO][SCAN_DELAY]
         )
         self.__net_send([CMD_SERVO_SETTINGS, params])
         # Send the servos home
@@ -530,8 +527,8 @@ class TunerClient(QMainWindow):
         
         # Collect parameters for relays
         params = []
-        inv = model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE]
-        for pin in model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP]:
+        inv = self.__model[CONFIG][RELAY][RELAY_INVERSE]
+        for pin in self.__model[CONFIG][RELAY][INDUCTOR_PINMAP]:
             params.append((pin, inv))
         # Set relays and adjust UI
         if ind == 'low-range':
@@ -555,7 +552,7 @@ class TunerClient(QMainWindow):
     #======================================================= 
     # Net send
     def __net_send(self, data):
-        self.__sock.sendto(pickle.dumps(data), (model.auto_tune_model[CONFIG][RPi][IP], model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
+        self.__sock.sendto(pickle.dumps(data), (self.__model[CONFIG][RPi][IP], self.__model[CONFIG][RPi][RQST_PORT]))
     
 #======================================================================================================================
 # Monitor thread

@@ -86,13 +86,11 @@ auto_tune_model = {
 # Manage model
 auto_tune_model_clone = None
 
-def copy_model():
-    global auto_tune_model
+def copy_model(model):
     global auto_tune_model_clone
-    auto_tune_model_clone = copy.deepcopy(auto_tune_model)
+    auto_tune_model_clone = copy.deepcopy(model)
     
-def restore_model():
-    global auto_tune_model
+def restore_model(model):
     global auto_tune_model_clone
     if auto_tune_model_clone != None:
-        auto_tune_model = copy.deepcopy(auto_tune_model_clone)
+        model = copy.deepcopy(auto_tune_model_clone)

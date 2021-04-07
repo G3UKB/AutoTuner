@@ -28,10 +28,11 @@ from imports import *
 # Configuration window
 class Config(QMainWindow):
     
-    def __init__(self, callback):
+    def __init__(self, model, callback):
         
         super(Config, self).__init__()
         
+        self.__model = model
         self.__callback = callback
         
         # Assume tuner off-line
@@ -64,7 +65,7 @@ class Config(QMainWindow):
         self.setToolTip('Configuration')
         
         # Arrange window
-        x,y,w,h = model.auto_tune_model[STATE][CONFIG_WIN]
+        x,y,w,h = self.__model[STATE][CONFIG_WIN]
         self.setGeometry(x,y,w,h)
                          
         self.setWindowTitle('Configure Auto-Tuner')
@@ -103,10 +104,10 @@ class Config(QMainWindow):
         w4.setLayout(self.__cntrl_grid)
         self.__grid.addWidget(w4, 4,0)
         
-        self.__btn_save = QPushButton("Save")
-        self.__cntrl_grid.addWidget(self.__btn_save, 0,0)
-        self.__btn_save.setToolTip('Save configuration and close window')
-        self.__btn_save.clicked.connect(self.__do_save)
+        self.__btn_close = QPushButton("Close")
+        self.__cntrl_grid.addWidget(self.__btn_close, 0,0)
+        self.__btn_close.setToolTip('Configuration will be save on app exit')
+        self.__btn_close.clicked.connect(self.__do_close)
         self.__btn_cancel = QPushButton("Cancel")
         self.__btn_cancel.setToolTip('Cancel changes and close window')
         self.__cntrl_grid.addWidget(self.__btn_cancel, 0,1)
@@ -248,18 +249,18 @@ class Config(QMainWindow):
     #-------------------------------------------------------------
     # Initialise all fields
     def __init_fields(self):
-        self.__iptxt.setText(model.auto_tune_model[CONFIG][RPi][IP])
-        self.__txt_rqst_port.setText(str(model.auto_tune_model[CONFIG][RPi][RQST_PORT]))
-        self.__txt_evnt_port.setText(str(model.auto_tune_model[CONFIG][RPi][EVNT_PORT]))
-        self.__sb_tx_lower.setValue(model.auto_tune_model[CONFIG][SERVO][TX_LOW_PWM])
-        self.__sb_tx_upper.setValue(model.auto_tune_model[CONFIG][SERVO][TX_HIGH_PWM])
-        self.__sb_ant_lower.setValue(model.auto_tune_model[CONFIG][SERVO][ANT_LOW_PWM])
-        self.__sb_ant_upper.setValue(model.auto_tune_model[CONFIG][SERVO][ANT_HIGH_PWM])
+        self.__iptxt.setText(self.__model[CONFIG][RPi][IP])
+        self.__txt_rqst_port.setText(str(self.__model[CONFIG][RPi][RQST_PORT]))
+        self.__txt_evnt_port.setText(str(self.__model[CONFIG][RPi][EVNT_PORT]))
+        self.__sb_tx_lower.setValue(self.__model[CONFIG][SERVO][TX_LOW_PWM])
+        self.__sb_tx_upper.setValue(self.__model[CONFIG][SERVO][TX_HIGH_PWM])
+        self.__sb_ant_lower.setValue(self.__model[CONFIG][SERVO][ANT_LOW_PWM])
+        self.__sb_ant_upper.setValue(self.__model[CONFIG][SERVO][ANT_HIGH_PWM])
         
         self.__cb_ind.setCurrentIndex(0)
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP][0])))
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(self.__model[CONFIG][RELAY][INDUCTOR_PINMAP][0])))
         
-        self.__cb_inv.setChecked(model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE])
+        self.__cb_inv.setChecked(self.__model[CONFIG][RELAY][RELAY_INVERSE])
         
     #========================================================================================
     # PUBLIC procs
@@ -267,7 +268,7 @@ class Config(QMainWindow):
     def show_window(self):
         
         # Make a copy of the current model
-        model.copy_model()
+        model.copy_model(self.__model)
         
         # (Re)populate everything
         self.__init_fields()
@@ -283,26 +284,26 @@ class Config(QMainWindow):
     # Event procs
     
     def closeEvent(self, event):
-        model.restore_model()
+        model.restore_model(self.__model)
         self.hide()
     
     def resizeEvent(self, event):
         # Update config
-        x,y,w,h = model.auto_tune_model[STATE][CONFIG_WIN]
-        model.auto_tune_model[STATE][CONFIG_WIN] = [x,y,event.size().width(),event.size().height()]
+        x,y,w,h = self.__model[STATE][CONFIG_WIN]
+        self.__model[STATE][CONFIG_WIN] = [x,y,event.size().width(),event.size().height()]
         
     def moveEvent(self, event):
         # Update config
-        x,y,w,h = model.auto_tune_model[STATE][CONFIG_WIN]
-        model.auto_tune_model[STATE][CONFIG_WIN] = [event.pos().x(),event.pos().y(),w,h]
+        x,y,w,h = self.__model[STATE][CONFIG_WIN]
+        self.__model[STATE][CONFIG_WIN] = [event.pos().x(),event.pos().y(),w,h]
         
-    def __do_save(self):
-        # Save the model
-        persist.saveCfg(CONFIG_PATH, model.auto_tune_model)
+    def __do_close(self):
+        # Just hide
         self.hide()
         
     def __do_cancel(self):
-        model.restore_model()
+        # Reinstate model
+        model.restore_model(self.__model)
         self.hide()
         
     #======================================================= 
@@ -321,25 +322,25 @@ class Config(QMainWindow):
         QtCore.QTimer.singleShot(IDLE_TICKER, self.__idleProcessing)
         
     def __ip_changed(self):
-        model.auto_tune_model[CONFIG][RPi][IP] = self.__iptxt.text()
+        self.__model[CONFIG][RPi][IP] = self.__iptxt.text()
         
     def __rqst_port_changed(self):
-        model.auto_tune_model[CONFIG][RPi][RQST_PORT] = int(self.__txt_rqst_port.text())
+        self.__model[CONFIG][RPi][RQST_PORT] = int(self.__txt_rqst_port.text())
     
     def __evnt_port_changed(self):
-        model.auto_tune_model[CONFIG][RPi][EVNT_PORT] = int(self.__txt_evnt_port.text())
+        self.__model[CONFIG][RPi][EVNT_PORT] = int(self.__txt_evnt_port.text())
         
     def __do_tx_set_pwm(self):
-        model.auto_tune_model[CONFIG][SERVO][TX_LOW_PWM] = self.__sb_tx_lower.value()
-        model.auto_tune_model[CONFIG][SERVO][TX_HIGH_PWM] = self.__sb_tx_upper.value()
+        self.__model[CONFIG][SERVO][TX_LOW_PWM] = self.__sb_tx_lower.value()
+        self.__model[CONFIG][SERVO][TX_HIGH_PWM] = self.__sb_tx_upper.value()
     
     def __do_tx_test_range(self):
         self.__callback(CMD_TX_SERVO_SET_PWM, (self.__sb_tx_lower.value(), self.__sb_tx_upper.value()))
         self.__callback(CMD_TX_SERVO_TEST, ())
     
     def __do_ant_set_pwm(self):
-        model.auto_tune_model[CONFIG][ANT_LOW_PWM] = self.__sb_ant_lower.value()
-        model.auto_tune_model[CONFIG][ANT_HIGH_PWM] = self.__sb_ant_upper.value()
+        self.__model[CONFIG][SERVO][ANT_LOW_PWM] = self.__sb_ant_lower.value()
+        self.__model[CONFIG][SERVO][ANT_HIGH_PWM] = self.__sb_ant_upper.value()
     
     def __do_ant_test_range(self):
         self.__callback(CMD_ANT_SERVO_SET_PWM, (self.__sb_ant_lower.value(), self.__sb_ant_upper.value()))
@@ -347,21 +348,21 @@ class Config(QMainWindow):
             
     def __ind_changed(self):
         ind = self.__cb_ind.currentText()
-        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP][int(ind)-1])))    
+        self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(self.__model[CONFIG][RELAY][INDUCTOR_PINMAP][int(ind)-1])))    
         
     def __do_set_ind(self):
         # Set pinmap for this inductor tap
         tap = self.__cb_ind.currentText()
         pin = self.__cb_indmap.currentText()
         inv = self.__cb_inv.isChecked()
-        model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP][int(tap)-1] =  int(pin)
-        model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE] = inv
+        self.__model[CONFIG][RELAY][INDUCTOR_PINMAP][int(tap)-1] =  int(pin)
+        self.__model[CONFIG][RELAY][RELAY_INVERSE] = inv
     
     def __do_test_ind(self):
         # Test pinmap
         params = []
-        inv = model.auto_tune_model[CONFIG][RELAY][RELAY_INVERSE]
-        for pin in model.auto_tune_model[CONFIG][RELAY][INDUCTOR_PINMAP]:
+        inv = self.__model[CONFIG][RELAY][RELAY_INVERSE]
+        for pin in self.__model[CONFIG][RELAY][INDUCTOR_PINMAP]:
             params.append((pin, inv))
             
         self.__callback(CMD_RELAYS_INIT, params)
