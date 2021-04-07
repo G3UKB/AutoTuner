@@ -506,6 +506,7 @@ class TunerClient(QMainWindow):
         self.__net_send([CMD_SERVO_SETTINGS, params])
         # Send the servos home
         self.__net_send([CMD_TX_SERVO_HOME, []])
+        sleep(2)
         self.__net_send([CMD_ANT_SERVO_HOME, []])
         
     #======================================================= 
