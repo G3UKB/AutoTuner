@@ -439,7 +439,13 @@ class Config(QMainWindow):
         self.__callback(CMD_RELAYS_CYCLE, (params, 'exclusive'))
     
     def __do_servo_params(self):
-        pass
+        params = (
+            self.__model[CONFIG][SERVO][TRACK_INC],
+            self.__model[CONFIG][SERVO][TRACK_DELAY],
+            self.__model[CONFIG][SERVO][SCAN_INC],
+            self.__model[CONFIG][SERVO][SCAN_DELAY]
+        )
+        self.__callback(CMD_SERVO_SETTINGS, params)
     
 #======================================================================================================================
 # Test code
