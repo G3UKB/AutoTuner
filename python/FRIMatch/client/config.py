@@ -93,16 +93,22 @@ class Config(QMainWindow):
         w3.setLayout(self.__map_grid)
         self.__grid.addWidget(w3, 2,0)
         
+        self.__set_grid = QGridLayout()
+        w4 = QGroupBox('Servo Parameters')
+        w4.setLayout(self.__set_grid)
+        self.__grid.addWidget(w4, 3,0)
+        
         # Populate grids
         self.__rpi(self.__rpi_grid)
         self.__pop_span(self.__span_grid)
         self.__pop_map(self.__map_grid)
+        self.__set_params(self.__set_grid)
         
         # Control buttons
         self.__cntrl_grid = QGridLayout()
-        w4 = QWidget()
-        w4.setLayout(self.__cntrl_grid)
-        self.__grid.addWidget(w4, 4,0)
+        w5 = QWidget()
+        w5.setLayout(self.__cntrl_grid)
+        self.__grid.addWidget(w5, 4,0)
         
         self.__btn_save = QPushButton("Save")
         self.__cntrl_grid.addWidget(self.__btn_save, 0,0)
@@ -247,6 +253,61 @@ class Config(QMainWindow):
         self.__btn_ind_test.clicked.connect(self.__do_test_ind)
     
     #-------------------------------------------------------------
+    # Set the servo params
+    def __set_params(self, g):
+        # Set the following
+        # NUDGE_INC
+        # TRACK_INC
+        # TRACK_DELAY
+        # SCAN_INC
+        # SCAN_DELAY
+
+        # Labels
+        nudge_inc_lbl = QLabel("Nudge inc")
+        track_inc_lbl = QLabel("Track inc")
+        track_delay_lbl = QLabel("Track delay")
+        scan_inc_lbl = QLabel("Scan inc")
+        scan_delay_lbl = QLabel("Scan delay")
+        g.addWidget(nudge_inc_lbl, 0,0)
+        g.addWidget(track_inc_lbl, 1,0)
+        g.addWidget(track_delay_lbl, 1,2)
+        g.addWidget(scan_inc_lbl, 2,0)
+        g.addWidget(scan_delay_lbl, 2,2)
+        
+        # Entry fields
+        self.__sb_nudge_inc = QSpinBox()
+        self.__sb_nudge_inc.setRange(1, 10)
+        self.__sb_nudge_inc.setToolTip('Degrees increment for nudge buttons')
+        
+        self.__sb_track_inc = QSpinBox()
+        self.__sb_track_inc.setRange(1, 5)
+        self.__sb_track_inc.setToolTip('Degrees increment while tracking')
+        
+        self.__sb_track_delay = QSpinBox()
+        self.__sb_track_delay.setRange(1, 100)
+        self.__sb_track_delay.setToolTip('Wait time between track increments in ms')
+        
+        self.__sb_scan_inc = QSpinBox()
+        self.__sb_scan_inc.setRange(1, 5)
+        self.__sb_scan_inc.setToolTip('Degrees increment on wait scan mode')
+        
+        self.__sb_scan_delay = QSpinBox()
+        self.__sb_scan_delay.setRange(1, 100)
+        self.__sb_scan_delay.setToolTip('Wait time between wait increments in ms')
+        
+        g.addWidget(self.__sb_nudge_inc, 0,1)
+        g.addWidget(self.__sb_track_inc, 1,1)
+        g.addWidget(self.__sb_track_delay, 1,3)
+        g.addWidget(self.__sb_scan_inc, 2,1)
+        g.addWidget(self.__sb_scan_delay, 2,3)
+        
+        # Activation button
+        self.__btn_servo_params = QPushButton("Set")
+        self.__btn_servo_params.setToolTip('Set servo parameters')
+        g.addWidget(self.__btn_servo_params, 3,3)
+        self.__btn_servo_params.clicked.connect(self.__do_servo_params)
+        
+    #-------------------------------------------------------------
     # Initialise all fields
     def __init_fields(self):
         self.__iptxt.setText(self.__model[CONFIG][RPi][IP])
@@ -261,6 +322,12 @@ class Config(QMainWindow):
         self.__cb_indmap.setCurrentIndex(self.__cb_indmap.findText(str(self.__model[CONFIG][RELAY][INDUCTOR_PINMAP][0])))
         
         self.__cb_inv.setChecked(self.__model[CONFIG][RELAY][RELAY_INVERSE])
+        
+        self.__sb_nudge_inc.setValue(self.__model[CONFIG][SERVO][NUDGE_INC])
+        self.__sb_track_inc.setValue(self.__model[CONFIG][SERVO][TRACK_INC])
+        self.__sb_track_delay.setValue(self.__model[CONFIG][SERVO][TRACK_DELAY])
+        self.__sb_scan_inc.setValue(self.__model[CONFIG][SERVO][SCAN_INC])
+        self.__sb_scan_delay.setValue(self.__model[CONFIG][SERVO][SCAN_DELAY])
         
     #========================================================================================
     # PUBLIC procs
@@ -370,6 +437,9 @@ class Config(QMainWindow):
             
         self.__callback(CMD_RELAYS_INIT, params)
         self.__callback(CMD_RELAYS_CYCLE, (params, 'exclusive'))
+    
+    def __do_servo_params(self):
+        pass
     
 #======================================================================================================================
 # Test code
