@@ -494,7 +494,7 @@ class TunerClient(QMainWindow):
         else:
             self.__w2.setEnabled(False)
             self.__w3.setEnabled(False)
-            self.__mem.setEnabled(False)
+            #self.__mem.setEnabled(False)
         
     def __send_settings(self):
         params = (

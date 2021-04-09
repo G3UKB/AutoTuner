@@ -101,7 +101,7 @@ class Memories(QMainWindow):
         self.__auxgrid = QGridLayout()
         w2 = QGroupBox()
         w2.setLayout(self.__auxgrid)
-        self.__ctrlgrid.addWidget(w2, 0,0)
+        self.__ctrlgrid.addWidget(w2, 0,0,1,2)
 
         self.__run = QPushButton("Run")
         self.__run.setToolTip('Execute memory')
@@ -119,7 +119,7 @@ class Memories(QMainWindow):
         self.__detgrid = QGridLayout()
         w2 = QGroupBox()
         w2.setLayout(self.__detgrid)
-        self.__ctrlgrid.addWidget(w2, 1,0)
+        self.__ctrlgrid.addWidget(w2, 1,0,1,2)
         
         name_tag = QLabel("Name")
         self.__detgrid.addWidget(name_tag, 0,0)
@@ -145,23 +145,33 @@ class Memories(QMainWindow):
         self.__update.clicked.connect(self.__do_update_mem)
         self.__update.setMaximumHeight(20)
         
-        # Exit
-        self.__add = QPushButton("Exit")
-        self.__add.setToolTip('Exit memories')
-        self.__ctrlgrid.addWidget(self.__add, 2,0)
-        self.__add.clicked.connect(self.__do_exit)
-        self.__add.setMaximumHeight(20)
+        # Save
+        self.__save = QPushButton("Save")
+        self.__save.setToolTip('Save memories and close window')
+        self.__ctrlgrid.addWidget(self.__save, 2,0)
+        self.__save.clicked.connect(self.__do_save)
+        self.__save.setMaximumHeight(20)
         
+        # Cancel
+        self.__cancel = QPushButton("Cancel")
+        self.__cancel.setToolTip('Cancel memories and close window')
+        self.__ctrlgrid.addWidget(self.__cancel, 2,1)
+        self.__cancel.clicked.connect(self.__do_cancel)
+        self.__cancel.setMaximumHeight(20)
         
     #========================================================================================
     # PUBLIC procs
     
     def show_window(self):
+        # Make a copy of the current model
+        model.copy_model(self.__model)
+        
         # Show our window
         self.show()
         self.repaint()
     
     def closeEvent(self, event):
+        model.restore_model(self.__model)
         self.hide()
 
     def resizeEvent(self, event):
@@ -243,7 +253,16 @@ class Memories(QMainWindow):
     def __row_double_click(self):
         self.__do_run_mem
         
-    def __do_exit(self):
+    def __do_save(self):
+        # Save model
+        persist.saveCfg(CONFIG_PATH, self.__model)
+        # and hide window
+        self.hide()
+        
+    def __do_cancel(self):
+        # Reinstate model
+        model.restore_model(self.__model)
+        # and hide window
         self.hide()
         
     #========================================================================================

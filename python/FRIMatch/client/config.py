@@ -104,12 +104,12 @@ class Config(QMainWindow):
         w4.setLayout(self.__cntrl_grid)
         self.__grid.addWidget(w4, 4,0)
         
-        self.__btn_close = QPushButton("Close")
-        self.__cntrl_grid.addWidget(self.__btn_close, 0,0)
-        self.__btn_close.setToolTip('Configuration will be save on app exit')
-        self.__btn_close.clicked.connect(self.__do_close)
+        self.__btn_save = QPushButton("Save")
+        self.__cntrl_grid.addWidget(self.__btn_save, 0,0)
+        self.__btn_save.setToolTip('Configuration will be saved and window closed')
+        self.__btn_save.clicked.connect(self.__do_save)
         self.__btn_cancel = QPushButton("Cancel")
-        self.__btn_cancel.setToolTip('Cancel changes and close window')
+        self.__btn_cancel.setToolTip('Changes will be canceled and window closed')
         self.__cntrl_grid.addWidget(self.__btn_cancel, 0,1)
         self.__btn_cancel.clicked.connect(self.__do_cancel)
     
@@ -297,13 +297,16 @@ class Config(QMainWindow):
         x,y,w,h = self.__model[STATE][CONFIG_WIN]
         self.__model[STATE][CONFIG_WIN] = [event.pos().x(),event.pos().y(),w,h]
         
-    def __do_close(self):
-        # Just hide
+    def __do_save(self):
+        # Save model
+        persist.saveCfg(CONFIG_PATH, self.__model)
+        # and hide window
         self.hide()
         
     def __do_cancel(self):
         # Reinstate model
         model.restore_model(self.__model)
+        # and hide window
         self.hide()
         
     #======================================================= 
