@@ -22,6 +22,7 @@
 #
 
 # The application model contains persisted configuration and state data
+from defs import *
 
 # -----------------------------------------------------------
 # IP helper
