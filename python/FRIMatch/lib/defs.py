@@ -68,7 +68,7 @@ DEFAULT_SCAN_DELAY = 20     # ms
 
 #=======================================================================
 # UI
-CONFIG_PATH = '../config/auto_tuner.cfg'
+CONFIG_PATH = 'E:/Projects/AutoTuner/trunk/python/FRIMatch/config/auto_tuner.cfg'
 
 #=======================================================================
 # Command types

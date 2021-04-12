@@ -44,7 +44,7 @@ class Tuner_API:
         # Retrieve model
         self.__model = persist.getSavedCfg(CONFIG_PATH)
         if self.__model == None:
-            print ('Configuration not found. Please run full application to configure.')
+            print ('Tuner configuration not found. Please run full tuner application to configure.')
             return
         
         # Create a datagram socket
