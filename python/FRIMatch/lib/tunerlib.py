@@ -31,14 +31,9 @@ import socket
 import pickle
 
 # Application imports
-# Relies on some client files
-sys.path.append('../client')
-from client_defs import *
+from defs import *
 import model
 import persist
-# and the server definitions
-sys.path.append('../server')
-from server_defs import *
 
 """
     The Tuner API class
