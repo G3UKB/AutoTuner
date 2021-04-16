@@ -40,9 +40,9 @@ import persist
 """
 class Tuner_API:
     
-    def __init__(self):
+    def __init__(self, path):
         # Retrieve model
-        self.__model = persist.getSavedCfg(CONFIG_PATH)
+        self.__model = persist.getSavedCfg(path)
         if self.__model == None:
             print ('Tuner configuration not found. Please run full tuner application to configure.')
             return

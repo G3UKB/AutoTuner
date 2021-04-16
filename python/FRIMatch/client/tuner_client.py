@@ -28,12 +28,13 @@ from imports import *
 # Main application window
 class TunerClient(QMainWindow):
     
-    def __init__(self, qt_app):
+    def __init__(self, path, qt_app):
         
         super(TunerClient, self).__init__()
         
         # Manage configuration
         self.__configured = True
+        CONFIG_PATH = path
         self.__model = persist.getSavedCfg(CONFIG_PATH)
         if self.__model == None:
             print ('Configuration not found, using defaults')
@@ -595,16 +596,20 @@ class Monitor(threading.Thread):
 # Main code
 def main():
     
-    try:
-        # The one and only QApplication 
-        qt_app = QApplication(sys.argv)
-        # Crete instance
-        client = TunerClient(qt_app)
-        # Run application loop
-        sys.exit(client.run())
-       
-    except Exception as e:
-        print ('Exception [%s][%s]' % (str(e), traceback.format_exc()))
+    if len(sys.argv) != 2:
+        print("Please supply a configuration filename!")
+        print("python tuner_client.py <path>/filename")
+    else:
+        try:
+            # The one and only QApplication 
+            qt_app = QApplication(sys.argv)
+            # Crete instance
+            client = TunerClient(sys.argv[1], qt_app)
+            # Run application loop
+            sys.exit(client.run())
+           
+        except Exception as e:
+            print ('Exception [%s][%s]' % (str(e), traceback.format_exc()))
  
 # Entry point       
 if __name__ == '__main__':
