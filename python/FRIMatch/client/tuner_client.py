@@ -100,11 +100,11 @@ class TunerClient(QMainWindow):
         # Set default range
         self.__servo_min = self.__model[CONFIG][SERVO][ANT_LOW_PWM]
         self.__servo_max = self.__model[CONFIG][SERVO][ANT_HIGH_PWM]
-        self.__net_send((CMD_TX_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
+        self.__net_send((CMD_ANT_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
 
         self.__servo_min = self.__model[CONFIG][SERVO][TX_LOW_PWM]
         self.__servo_max = self.__model[CONFIG][SERVO][TX_HIGH_PWM]
-        self.__net_send((CMD_ANT_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
+        self.__net_send((CMD_TX_SERVO_SET_PWM, (self.__servo_min, self.__servo_max)))
         
     #========================================================================================    
     # UI initialisation and window event handlers
