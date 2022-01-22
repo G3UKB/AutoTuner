@@ -439,7 +439,17 @@ class Config(QMainWindow):
         self.__callback(CMD_RELAYS_CYCLE, (params, 'exclusive'))
     
     def __do_servo_params(self):
+        
+        # Write new values to config
+        self.__model[CONFIG][SERVO][NUDGE_INC] = self.__sb_nudge_inc.value()
+        self.__model[CONFIG][SERVO][TRACK_INC] = self.__sb_track_inc.value()
+        self.__model[CONFIG][SERVO][TRACK_DELAY] = self.__sb_track_delay.value()
+        self.__model[CONFIG][SERVO][SCAN_INC] = self.__sb_scan_inc.value()
+        self.__model[CONFIG][SERVO][SCAN_DELAY] = self.__sb_scan_delay.value()
+        
+        # Set values
         params = (
+            self.__model[CONFIG][SERVO][NUDGE_INC],
             self.__model[CONFIG][SERVO][TRACK_INC],
             self.__model[CONFIG][SERVO][TRACK_DELAY],
             self.__model[CONFIG][SERVO][SCAN_INC],
